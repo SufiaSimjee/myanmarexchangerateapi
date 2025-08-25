@@ -42,8 +42,8 @@ This API aims to provide a general overview of current foreign currency rates in
 
 Create a `.env` file in the project root with the following variables:
 
--   **PORT** (Install Dependency)
--   **MONGODBURL** (your_chosen_port_number).
+-   **PORT** (your_chosen_port_number)
+-   **MONGODBURL** (your database connection string).
 -   **HOST** (0.0.0.0).
 -   **JWT_SECRET** (your_jwt_secret).
 -   **NODE_ENV** (production).
