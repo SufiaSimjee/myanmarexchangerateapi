@@ -22,7 +22,6 @@ The main purpose of this API is to inform users about daily exchange rates from 
 2.  Bank Rate
 3. Market Rate
 
-This API aims to provide a general overview of current foreign currency rates in Myanmar.
 
 ## Data Sources
 
