@@ -42,9 +42,16 @@ This API aims to provide a general overview of current foreign currency rates in
 
 Create a `.env` file in the project root with the following variables:
 
-```env
-PORT=your_chosen_port_number
-MONGODBURL=your_mongodb_atlas_connection_string
-HOST=0.0.0.0
-JWT_SECRET=your_jwt_secret
-NODE_ENV=production
+-   **PORT** (Install Dependency)
+-   **MONGODBURL** (your_chosen_port_number).
+-   **HOST** (0.0.0.0).
+-   **JWT_SECRET** (your_jwt_secret).
+-   **JNODE_ENV** (production).
+
+### 3. Install Dependencies and Start the Server
+-   **npm install** (Install Dependency)
+-   **NODE_ENV** (Start Server).
+
+
+
+
