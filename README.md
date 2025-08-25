@@ -18,7 +18,7 @@ Note: All requests and responses use JSON format for simplicity and compatibilit
 
 The main purpose of this API is to inform users about daily exchange rates from both unofficial and official sources. In Myanmar, multiple rates exist, such as:
 
-1.  Central Bank Rate
+1.  Central Bank of Myanmar Rate
 2.  Bank Rate
 3. Market Rate
 
