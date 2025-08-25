@@ -46,11 +46,11 @@ Create a `.env` file in the project root with the following variables:
 -   **MONGODBURL** (your_chosen_port_number).
 -   **HOST** (0.0.0.0).
 -   **JWT_SECRET** (your_jwt_secret).
--   **JNODE_ENV** (production).
+-   **NODE_ENV** (production).
 
 ### 3. Install Dependencies and Start the Server
 -   **npm install** (Install Dependency)
--   **NODE_ENV** (Start Server).
+-   **npm start** (Start Server).
 
 
 
