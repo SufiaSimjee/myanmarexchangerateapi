@@ -4,7 +4,11 @@
 
 This API provides information about foreign currency exchange rates in Myanmar. The data is collected personally by the developer from various publicly available online resources, including Facebook pages, the Myanmar Market Price app, and other websites reporting currency rates.
 
-This API is intended to offer a general overview of currency rates in Myanmar and does not intend to replace official sources or guarantee complete accuracy. Users should treat the data as indicative rather than authoritative.
+It is designed to help people conveniently check exchange rates from a single place, rather than browsing multiple sources individually.
+
+This API is intended to offer a general overview of currency rates in Myanmar and does not intend to replace official, unofficial, or other sources.
+
+Users should treat the data as indicative rather than authoritative, and the developer cannot be held responsible for any inaccuracies, misinterpretations, or outcomes resulting from its use.
 
 Note: All requests and responses use JSON format for simplicity and compatibility across different platforms and programming environments.
 
