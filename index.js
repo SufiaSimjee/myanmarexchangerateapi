@@ -30,8 +30,9 @@ try{
 
 
     //certificate
+    let cert;
     if(useHttp){
-        const cert = {
+        cert = {
             key: fs.readFileSync(path.join(__dirname, "localhost-key.pem")),
             cert: fs.readFileSync(path.join(__dirname, "localhost.pem")),
         }
