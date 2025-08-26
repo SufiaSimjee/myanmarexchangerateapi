@@ -39,7 +39,7 @@ The main purpose of this API is to inform users about daily exchange rates from 
 2.  **Database:** MongoDB (MongoDB Atlas)
 3.  **Protocols:** HTTPS and WebSocket
 
-## Getting Started
+## Getting Started (Self Hosting)
 
 ### 1. Prerequisites
 

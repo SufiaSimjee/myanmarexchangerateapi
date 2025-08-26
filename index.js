@@ -190,6 +190,74 @@ try{
     }
 
 
+    try {
+        let previousHashes = [];
+        cron.schedule("0 */1 * * * *", async function() {
+            try {
+                console.log("🕒 [Cron] Running currency rates update job...");
+                let defaultSource = process.env.DEFAULT_SOURCE;
+
+                const uniqueCurrencies = await CurrencyRate.aggregate([
+                    {
+                        $group: {
+                            _id: "$currencyCode",
+                            currencyName: { $first: "$currencyName" }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            currencyCode: "$_id",
+                            currencyName: 1
+                        }
+                    }
+                ]);
+
+                let currentHashes = [];
+
+                for (let index = 0; index < uniqueCurrencies?.length; index++) {
+                    const currency = uniqueCurrencies[index];
+                    console.log(index, currency);
+
+                    const currencyRate = await CurrencyRate.findOne({
+                        currencyCode: currency.currencyCode,
+                        uploadedBy: defaultSource
+                    }).sort({ uploadedDate: -1 }).lean();
+
+
+                    if (currencyRate) {
+
+                        const currencyRateString = JSON.stringify(currencyRate);
+
+                        currentHashes[index] = crypto.createHash('sha1')
+                            .update(currencyRateString)
+                            .digest('hex');
+
+                        if(previousHashes.length !== 0 ){
+                            if (previousHashes[index].toString() !== currentHashes[index].toString()) {
+                                io.emit(currency.currencyCode, JSON.stringify(currencyRate));
+                            }
+                        }
+
+                        if (previousHashes.length === 0 || previousHashes === undefined || previousHashes === null){
+                            io.emit(currency.currencyCode, JSON.stringify(currencyRate));
+                        }
+                    }
+                }
+
+                // Update previousHashes for next run
+                previousHashes = [...currentHashes];
+                console.log("Previous hashes updated:", previousHashes);
+
+            } catch (error) {
+                console.log("Failed to check and send currency rates error through cron job:", error);
+            }
+        });
+    } catch (error) {
+        console.log("Failed to schedule cron job", error);
+    }
+
+
 
 
 } catch (error) {
