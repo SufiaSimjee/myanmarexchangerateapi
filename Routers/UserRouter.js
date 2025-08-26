@@ -101,7 +101,7 @@ userRouter.post("/signup", async (req, res) => {
                 { email: email },
                 { username: username },
             ]
-        });
+        }).lean();
         const token = generateJWTToken(userAccount);
 
         return res.status(201).json({ // 201 Created

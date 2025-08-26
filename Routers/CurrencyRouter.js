@@ -10,6 +10,80 @@ const CurrencyRate = require("../Models/CurrencyRateSchema");
 let currencyRateUpdateTracker = 0;
 let defaultSource = process.env.DEFAULT_SOURCE|| "testuser"
 
+
+currencyRouter.get("/currencyList", async (req, res) => {
+    try {
+        const uniqueCurrencies = await CurrencyRate.aggregate([
+            {
+                $group: {
+                    _id: "$currencyCode",
+                    currencyName: { $first: "$currencyName" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    currencyCode: "$_id",
+                    currencyName: 1
+                }
+            }
+        ]);
+
+        if (!uniqueCurrencies) {
+            return res.status(404).json({
+                message: "No currencies found in the database."
+            });
+        }
+
+        return res.status(200).json({
+            message: "Currencies retrieved successfully.",
+            data: uniqueCurrencies,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "An unexpected error occurred while fetching the currency list.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
+    }
+});
+
+
+currencyRouter.get("/sourceList", async (req, res) => {
+    try {
+        const uniqueSources = await CurrencyRate.aggregate([
+            {
+                $group: {
+                    _id: "$uploadedBy"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    source: "$_id"
+                }
+            }
+        ]);
+
+        if (!uniqueSources) {
+            return res.status(404).json({
+                message: "No sources found in the database."
+            });
+        }
+
+        return res.status(200).json({
+            message: "Sources retrieved successfully.",
+            data: uniqueSources,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "An unexpected error occurred while fetching the source list.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
+    }
+});
+
 currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
         let { currencyName, currencyCode, currencyIcon, unit, buyRate, sellRate, uploadedDate, source } = req.body;
@@ -162,14 +236,14 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
 });
 
 currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
-    const { currencyCode } = req.params;
     try {
-        console.log(currencyCode);
+        const { currencyCode } = req.params;
+
         if(currencyCode !== "all") {
             const currencyRate = await CurrencyRate.findOne({
                 currencyCode: currencyCode,
                 uploadedBy: defaultSource
-            }).sort({ uploadedDate: -1 });
+            }).sort({ uploadedDate: -1 }).lean();
 
             if (!currencyRate) {
                 return res.status(404).json({
@@ -243,11 +317,23 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
 currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => { console.log(`Cache removed for key: ${key}`); }}) ,async (req, res) => {
     try {
         const { currencyCode, date } = req.params;
+        const {skip, limit} = req.query;
+
+        if (!skip || !limit) {
+            return res.status(400).json({
+                message: "Both 'skip' and 'limit' query parameters are required for pagination."
+            });
+        }
+
+        if (skip < 0 || limit < 1) {
+            return res.status(400).json({
+                message: "'skip' must be 0 or greater and 'limit' must be at least 1."
+            });
+        }
 
         // Validate date format (YYYY-MM-DD)
         if (!moment(date, "YYYY-MM-DD", true).isValid()) {
             return res.status(400).json({
-                error: "Invalid Date Format",
                 message: "The date must be in 'YYYY-MM-DD' format. Example: 2025-08-25."
             });
         }
@@ -257,20 +343,61 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 
 
         // Query DB
-        const currencyRates = await CurrencyRate.find({
-            currencyCode: currencyCode,
-            uploadedBy: defaultSource,
-            uploadedDate: { $gte: startOfDay, $lte: endOfDay }
-        }).sort({ uploadedDate: -1 });
+        let count;
+        if (currencyCode  === "all") {
+            count = await CurrencyRate.countDocuments({
+                uploadedBy: defaultSource,
+                uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+            });
+        } else {
+            count = await CurrencyRate.countDocuments({
+                currencyCode: currencyCode,
+                uploadedBy: defaultSource,
+                uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+            });
+        }
 
-        if (!currencyRates) {
+
+        if (!count || count <= 1) {
             return res.status(404).json({
-                message: `No exchange rate record found for '${currencyCode}' on ${date} from the default source.`
+                message: `No exchange rate record found for '${currencyCode}' on ${date} from the default source.`,
+                count: count,
+                skip: skip,
+                limit: limit
+            });
+        }
+
+        let currencyRates;
+
+        if(currencyCode === "all") {
+            currencyRates = await CurrencyRate.find({
+                uploadedBy: defaultSource,
+                uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
+
+        } else {
+            currencyRates = await CurrencyRate.find({
+                currencyCode: currencyCode,
+                uploadedBy: defaultSource,
+                uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
+        }
+
+
+        if (!currencyRates ) {
+            return res.status(404).json({
+                message: `No exchange rate record found for '${currencyCode}' on ${date} from the default source.`,
+                count: count,
+                skip: skip,
+                limit: limit
             });
         }
 
         return res.status(200).json({
             message: `Exchange rate for '${currencyCode}' on ${date} retrieved successfully.`,
+            count: count,
+            skip: skip,
+            limit: limit,
             data: currencyRates
         });
 
@@ -285,11 +412,77 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 });
 
 
+currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => {console.log(`Cache removed for key: ${key}`);}}),
+    async (req, res) => {
+        try {
+            const { currencyCode, date } = req.params;
+
+            // Validate date format (YYYY-MM-DD)
+            if (!moment(date, "YYYY-MM-DD", true).isValid()) {
+                return res.status(400).json({
+                    message: "The date must be in 'YYYY-MM-DD' format. Example: 2025-08-25."
+                });
+            }
+
+            const startOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
+            const endOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
+
+            // Query DB
+            let count;
+
+            if(currencyCode === "all") {
+                count = await CurrencyRate.countDocuments({
+                    uploadedBy: defaultSource,
+                    uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+                });
+            } else{
+                count = await CurrencyRate.countDocuments({
+                    currencyCode: currencyCode,
+                    uploadedBy: defaultSource,
+                    uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+                });
+            }
+
+
+            if (!count) {
+                return res.status(404).json({
+                    message: `No exchange rate records found for currency '${currencyCode}' on ${date}.`
+                });
+            }
+
+            return res.status(200).json({
+                message: `Exchange rate record count fetched successfully for '${currencyCode}' on ${date}.`,
+                data: count
+            });
+
+        } catch (error) {
+            console.error("Error fetching currency rate count:", error);
+
+            return res.status(500).json({
+                message: "Something went wrong while fetching the exchange rate count. Please try again later.",
+                details: process.env.NODE_ENV === "development" ? error.message : undefined
+            });
+        }
+    }
+);
 
 
 currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode, fromDate, toDate } = req.params;
+        const {skip, limit} = req.query;
+
+        if (!skip || !limit) {
+            return res.status(400).json({
+                message: "Both 'skip' and 'limit' query parameters are required for pagination."
+            });
+        }
+
+        if (skip < 0 || limit < 1) {
+            return res.status(400).json({
+                message: "'skip' must be 0 or greater and 'limit' must be at least 1."
+            });
+        }
 
         // Validate both dates
         if (!moment(fromDate, "YYYY-MM-DD", true).isValid()) {
@@ -310,20 +503,61 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
 
 
         // Query database
-        const currencyRates = await CurrencyRate.find({
-            currencyCode: currencyCode,
-            uploadedBy: defaultSource,
-            uploadedDate: { $gte: startDate, $lte: endDate }
-        }).sort({ uploadedDate: -1 });
+        let count;
+
+        if(currencyCode === "all") {
+            count = await CurrencyRate.countDocuments({
+                uploadedBy: defaultSource,
+                uploadedDate: { $gte: startDate, $lte: endDate }
+            });
+        } else{
+            count = await CurrencyRate.countDocuments({
+                currencyCode: currencyCode,
+                uploadedBy: defaultSource,
+                uploadedDate: { $gte: startDate, $lte: endDate }
+            });
+        }
+
+
+        if (!count || count < 1) {
+            return res.status(404).json({
+                message: `No exchange rate found for currency '${currencyCode}' between ${fromDate} and ${toDate}.`,
+                count: count,
+                skip: skip,
+                limit: limit
+            });
+        }
+
+        let currencyRates;
+
+        if(currencyCode === "all") {
+            currencyRates = await CurrencyRate.find({
+                uploadedBy: defaultSource,
+                uploadedDate: { $gte: startDate, $lte: endDate }
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
+        } else{
+            currencyRates = await CurrencyRate.find({
+                currencyCode: currencyCode,
+                uploadedBy: defaultSource,
+                uploadedDate: { $gte: startDate, $lte: endDate }
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
+        }
+
 
         if (!currencyRates) {
             return res.status(404).json({
-                message: `No exchange rate found for currency '${currencyCode}' between ${fromDate} and ${toDate}.`
+                message: `No exchange rate found for currency '${currencyCode}' between ${fromDate} and ${toDate}.`,
+                count: count,
+                skip: skip,
+                limit: limit
             });
         }
 
         return res.status(200).json({
             message: "Exchange rate retrieved successfully.",
+            count: count,
+            skip: skip,
+            limit: limit,
             data: currencyRates
         });
 
@@ -337,6 +571,65 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
     }
 });
 
+currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => {console.log(`Cache removed for key: ${key}`);}}),
+    async (req, res) => {
+        try {
+            const { currencyCode, fromDate, toDate } = req.params;
+
+            // Validate both dates
+            if (!moment(fromDate, "YYYY-MM-DD", true).isValid()) {
+                return res.status(400).json({
+                    message: "Invalid date format for 'fromDate'. Please use 'YYYY-MM-DD'."
+                });
+            }
+
+            if (!moment(toDate, "YYYY-MM-DD", true).isValid()) {
+                return res.status(400).json({
+                    message: "Invalid date format for 'toDate'. Please use 'YYYY-MM-DD'."
+                });
+            }
+
+            // Convert to Date objects with startOf/endOf for inclusive range in Yangon timezone
+            const startDate = moment.tz(fromDate, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
+            const endDate = moment.tz(toDate, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
+
+            // Query database
+            let count;
+            if(currencyCode === "all") {
+                count = await CurrencyRate.countDocuments({
+                    uploadedBy: defaultSource,
+                    uploadedDate: { $gte: startDate, $lte: endDate }
+                });
+
+            } else{
+                count = await CurrencyRate.countDocuments({
+                    currencyCode: currencyCode,
+                    uploadedBy: defaultSource,
+                    uploadedDate: { $gte: startDate, $lte: endDate }
+                });
+            }
+
+            if (!count) {
+                return res.status(404).json({
+                    message: `No currency rate records found for ${currencyCode} between ${fromDate} and ${toDate}.`
+                });
+            }
+
+            return res.status(200).json({
+                message: `Found ${count} record(s) for ${currencyCode} between ${fromDate} and ${toDate}.`,
+                data: count
+            });
+
+        } catch (error) {
+            console.error("Error fetching currency rate count:", error.message);
+
+            return res.status(500).json({
+                message: "Unexpected error occurred while fetching currency rate count.",
+                details: process.env.NODE_ENV === "development" ? error.message : undefined
+            });
+        }
+    }
+);
 
 
 
