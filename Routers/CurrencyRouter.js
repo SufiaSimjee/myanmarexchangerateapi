@@ -314,7 +314,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
             currencyCode: currencyCode,
             uploadedBy: defaultSource,
             uploadedDate: { $gte: startDate, $lte: endDate }
-        });
+        }).sort({ uploadedDate: -1 });
 
         if (!currencyRates) {
             return res.status(404).json({
