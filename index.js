@@ -125,137 +125,142 @@ try{
         });
     });
 
-    try{
-        let previousCurrencyRatesHash = "";
-        cron.schedule("0 */5 * * * *", async function() {
-            try{
-                console.log("🕒 [Cron] Running currency rates update job...");
-                let defaultSource = process.env.DEFAULT_SOURCE|| "testuser"
+    let liveNotificationEnable = process.env.LIVE_NOTIFICATION || "true";
+    if(liveNotificationEnable === "true"){
+        try{
+            let previousCurrencyRatesHash = "";
+            cron.schedule("0 */5 * * * *", async function() {
+                try{
+                    console.log("🕒 [Cron] Running currency rates update job...");
+                    let defaultSource = process.env.DEFAULT_SOURCE|| "testuser"
 
-                const currencyRates = await CurrencyRate.aggregate([
-                    // Only include records uploaded by default source
-                    { $match: { uploadedBy: defaultSource } },
+                    const currencyRates = await CurrencyRate.aggregate([
+                        // Only include records uploaded by default source
+                        { $match: { uploadedBy: defaultSource } },
 
-                    // Sort by uploadedDate descending so the latest comes first
-                    { $sort: { uploadedDate: -1 } },
+                        // Sort by uploadedDate descending so the latest comes first
+                        { $sort: { uploadedDate: -1 } },
 
-                    // Group by currencyName and take the first document (latest)
-                    {
-                        $group: {
-                            _id: "$currencyName",          // grouping key (currencyName)
-                            docId: { $first: "$_id" },     // store original _id
-                            currencyName: { $first: "$currencyName" },
-                            currencyCode: { $first: "$currencyCode" },
-                            currencyIcon: { $first: "$currencyIcon" },
-                            unit: { $first: "$unit" },
-                            buyRate: { $first: "$buyRate" },
-                            sellRate: { $first: "$sellRate" },
-                            source: { $first: "$source" },
-                            uploadedDate: { $first: "$uploadedDate" },
-                            uploadedBy: { $first: "$uploadedBy" }
+                        // Group by currencyName and take the first document (latest)
+                        {
+                            $group: {
+                                _id: "$currencyName",          // grouping key (currencyName)
+                                docId: { $first: "$_id" },     // store original _id
+                                currencyName: { $first: "$currencyName" },
+                                currencyCode: { $first: "$currencyCode" },
+                                currencyIcon: { $first: "$currencyIcon" },
+                                unit: { $first: "$unit" },
+                                buyRate: { $first: "$buyRate" },
+                                sellRate: { $first: "$sellRate" },
+                                source: { $first: "$source" },
+                                uploadedDate: { $first: "$uploadedDate" },
+                                uploadedBy: { $first: "$uploadedBy" }
+                            }
+                        },
+
+                        // Optional: rename docId back to _id
+                        {
+                            $addFields: { _id: "$docId" }
+                        },
+
+                        // Optional: remove temporary docId
+                        {
+                            $project: { docId: 0 }
                         }
-                    },
+                    ]);
 
-                    // Optional: rename docId back to _id
-                    {
-                        $addFields: { _id: "$docId" }
-                    },
+                    const currencyRatesString = JSON.stringify(currencyRates);
+                    const currentHash = crypto.createHash('sha1')
+                        .update(currencyRatesString)
+                        .digest('hex');
 
-                    // Optional: remove temporary docId
-                    {
-                        $project: { docId: 0 }
+                    if (currentHash.toString() !== previousCurrencyRatesHash.toString()) {
+                        console.log("Current CurrencyRates Hash:", currentHash);
+                        console.log("previousCurrencyRates Hash:", previousCurrencyRatesHash);
+                        io.emit("all", currencyRatesString);
+                        previousCurrencyRatesHash = currentHash;
+                        console.log(`Currency rates updated and emitted to clients.`);
+                    } else {
+                        console.log("No changes detected in currency rates. Skipping emit.");
                     }
-                ]);
-
-                const currencyRatesString = JSON.stringify(currencyRates);
-                const currentHash = crypto.createHash('sha1')
-                    .update(currencyRatesString)
-                    .digest('hex');
-
-                if (currentHash.toString() !== previousCurrencyRatesHash.toString()) {
-                    console.log("Current CurrencyRates Hash:", currentHash);
-                    console.log("previousCurrencyRates Hash:", previousCurrencyRatesHash);
-                    io.emit("all", currencyRatesString);
-                    previousCurrencyRatesHash = currentHash;
-                    console.log(`Currency rates updated and emitted to clients.`);
-                } else {
-                    console.log("No changes detected in currency rates. Skipping emit.");
+                } catch (error) {
+                    console.log("Failed to check and send currency rates error through cron job:", error);
                 }
-            } catch (error) {
-                console.log("Failed to check and send currency rates error through cron job:", error);
-            }
-        });
-    } catch (error) {
-        console.log("Failed to schedule cron job", error);
-    }
+            });
+        } catch (error) {
+            console.log("Failed to schedule cron job", error);
+        }
 
+        try {
+            let previousHashes = [];
+            cron.schedule("0 */1 * * * *", async function() {
+                try {
+                    console.log("🕒 [Cron] Running currency rates update job...");
+                    let defaultSource = process.env.DEFAULT_SOURCE;
 
-    try {
-        let previousHashes = [];
-        cron.schedule("0 */1 * * * *", async function() {
-            try {
-                console.log("🕒 [Cron] Running currency rates update job...");
-                let defaultSource = process.env.DEFAULT_SOURCE;
-
-                const uniqueCurrencies = await CurrencyRate.aggregate([
-                    {
-                        $group: {
-                            _id: "$currencyCode",
-                            currencyName: { $first: "$currencyName" }
+                    const uniqueCurrencies = await CurrencyRate.aggregate([
+                        {
+                            $group: {
+                                _id: "$currencyCode",
+                                currencyName: { $first: "$currencyName" }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                                currencyCode: "$_id",
+                                currencyName: 1
+                            }
                         }
-                    },
-                    {
-                        $project: {
-                            _id: 0,
-                            currencyCode: "$_id",
-                            currencyName: 1
-                        }
-                    }
-                ]);
+                    ]);
 
-                let currentHashes = [];
+                    let currentHashes = [];
 
-                for (let index = 0; index < uniqueCurrencies?.length; index++) {
-                    const currency = uniqueCurrencies[index];
-                    console.log(index, currency);
+                    for (let index = 0; index < uniqueCurrencies?.length; index++) {
+                        const currency = uniqueCurrencies[index];
+                        console.log(index, currency);
 
-                    const currencyRate = await CurrencyRate.findOne({
-                        currencyCode: currency.currencyCode,
-                        uploadedBy: defaultSource
-                    }).sort({ uploadedDate: -1 }).lean();
+                        const currencyRate = await CurrencyRate.findOne({
+                            currencyCode: currency.currencyCode,
+                            uploadedBy: defaultSource
+                        }).sort({ uploadedDate: -1 }).lean();
 
 
-                    if (currencyRate) {
+                        if (currencyRate) {
 
-                        const currencyRateString = JSON.stringify(currencyRate);
+                            const currencyRateString = JSON.stringify(currencyRate);
 
-                        currentHashes[index] = crypto.createHash('sha1')
-                            .update(currencyRateString)
-                            .digest('hex');
+                            currentHashes[index] = crypto.createHash('sha1')
+                                .update(currencyRateString)
+                                .digest('hex');
 
-                        if(previousHashes.length !== 0 ){
-                            if (previousHashes[index].toString() !== currentHashes[index].toString()) {
+                            if(previousHashes.length !== 0 ){
+                                if (previousHashes[index].toString() !== currentHashes[index].toString()) {
+                                    io.emit(currency.currencyCode, JSON.stringify(currencyRate));
+                                }
+                            }
+
+                            if (previousHashes.length === 0){
                                 io.emit(currency.currencyCode, JSON.stringify(currencyRate));
                             }
                         }
-
-                        if (previousHashes.length === 0){
-                            io.emit(currency.currencyCode, JSON.stringify(currencyRate));
-                        }
                     }
+
+                    // Update previousHashes for next run
+                    previousHashes = currentHashes;
+                    console.log("Previous hashes updated:", previousHashes);
+
+                } catch (error) {
+                    console.log("Failed to check and send currency rates error through cron job:", error);
                 }
-
-                // Update previousHashes for next run
-                previousHashes = currentHashes;
-                console.log("Previous hashes updated:", previousHashes);
-
-            } catch (error) {
-                console.log("Failed to check and send currency rates error through cron job:", error);
-            }
-        });
-    } catch (error) {
-        console.log("Failed to schedule cron job", error);
+            });
+        } catch (error) {
+            console.log("Failed to schedule cron job", error);
+        }
     }
+
+
+
 
 
 
