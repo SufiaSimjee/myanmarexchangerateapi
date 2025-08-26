@@ -12,6 +12,8 @@ Users should treat the data as indicative rather than authoritative, and the dev
 
 Note: All requests and responses use JSON format for simplicity and compatibility across different platforms and programming environments.
 
+Api Url = https://myanmarexchangerateapi.onrender.com/
+
 ## Disclaimer
 
 1. The data may not be 100% accurate.
