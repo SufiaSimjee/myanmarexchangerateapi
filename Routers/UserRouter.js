@@ -11,20 +11,23 @@ const generateJWTToken = require("../Auth/JwtTokenGenerator");
 let userUpdateTracker = 0;
 
 
-userRouter.get("/user/test-token", passport.authenticate("jwt", { session: false }), (req, res) => {
+userRouter.get("/test-token", passport.authenticate("jwt", { session: false }), (req, res) => {
         try {
             delete req.user.password;
             res.status(200).json({message: "Token is valid!", user: req.user});
         } catch (error) {
             console.error("Error in /test-token:", error);
-            res.status(500).json({ message: "An error occurred while processing the request.", error: error.message});
+            res.status(500).json({
+                message: "An error occurred while processing the request.",
+                details: process.env.NODE_ENV === "development" ? error.message : undefined
+            });
         }
     }
 );
 
 
 
-userRouter.delete('/user/delete/:id', passport.authenticate("jwt", { session: false }), async (req, res) => {
+userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
         const { id } = req.params;
 
@@ -51,12 +54,13 @@ userRouter.delete('/user/delete/:id', passport.authenticate("jwt", { session: fa
     } catch (error) {
         console.error("Delete User Error:", error);
         return res.status(500).json({
-            message: "An unexpected error occurred while deleting the account."
+            message: "An unexpected error occurred while deleting the account.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     }
 })
 
-userRouter.post("/user/signup", async (req, res) => {
+userRouter.post("/signup", async (req, res) => {
     try {
         let { email, username, password, role } = req.body;
 
@@ -109,13 +113,14 @@ userRouter.post("/user/signup", async (req, res) => {
     } catch (error) {
         console.error("Sign Up error:", error);
         return res.status(500).json({
-            message: "An unexpected error occurred. Please try again later."
+            message: "An unexpected error occurred. Please try again later.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     }
 });
 
 
-userRouter.post("/user/login", async (req, res) => {
+userRouter.post("/login", async (req, res) => {
     try {
         let { email, username, password } = req.body;
 
@@ -156,7 +161,8 @@ userRouter.post("/user/login", async (req, res) => {
     } catch (error) {
         console.error("Login error:", error);
         return res.status(500).json({
-            message: "An unexpected error occurred. Please try again later."
+            message: "An unexpected error occurred. Please try again later.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     }
 });

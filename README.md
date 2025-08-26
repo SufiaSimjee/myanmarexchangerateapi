@@ -2,7 +2,7 @@
 
 ## Description
 
-This API provides information about foreign currency exchange rates in Myanmar. The data is collected personally by the developer from various publicly available online resources, including Facebook pages, the Myanmar Market Price app, and other websites reporting currency rates.
+This API provides information about foreign currency exchange rates in Myanmar. The data is collected personally by the developer from various publicly available online resources, including Facebook pages, the Myanmar Market Price app, and other app/websites reporting currency rates.
 
 It is designed to help people conveniently check exchange rates from a single place, rather than browsing multiple sources individually.
 
@@ -22,8 +22,8 @@ Note: All requests and responses use JSON format for simplicity and compatibilit
 
 The main purpose of this API is to inform users about daily exchange rates from both unofficial and official sources. In Myanmar, multiple rates exist, such as:
 
-1.  Central Bank of Myanmar Rate
-2.  Bank Rate
+1. Central Bank of Myanmar Rate
+2. Bank Rate
 3. Market Rate
 
 

@@ -8,10 +8,14 @@ const fs  = require('fs');
 const cors = require("cors");
 const morgan = require('morgan');
 const passport = require('passport');
+const { join } = require('node:path');
+
+const { Server } = require("socket.io");
 
 const {connectDb} = require('./Services/DbService');
 const userRouter = require("./Routers/UserRouter");
 const strategy = require("./Auth/JwtStrategy");
+const currencyRouter = require("./Routers/CurrencyRouter");
 
 try{
     const app = express();
@@ -42,8 +46,21 @@ try{
     app.use(passport.initialize());
     console.log("Registered JWT strategy:", passport._strategy('jwt')?.name);
 
-    //auth route
-    app.use("/",userRouter);
+    //route
+    app.use("/user",userRouter);
+    app.use("/currency", currencyRouter)
+
+    app.get('/', (req, res) => {
+        try{
+            res.sendFile(join(__dirname, 'README.md'));
+        } catch(error){
+            console.log(error);
+            res.status(500).json({
+                message: "An error occurred while processing the request.",
+                details: process.env.NODE_ENV === "development" ? error.message : undefined
+            });
+        }
+    });
 
 
     //set-up server

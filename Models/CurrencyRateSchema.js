@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const bcrypt = require("bcrypt");
+const moment = require("moment");
 const { Schema, model } = mongoose;
 
 const CurrencyRateSchema = new Schema({
@@ -38,6 +40,19 @@ const CurrencyRateSchema = new Schema({
     uploadedDate:{
         type: Date,
         required: true,
+        validate: {
+            validator: function(value){
+                const isoString = value.toString();
+                const uploadedDate = moment(isoString);
+                const currentDate = moment();
+                if(uploadedDate.isSameOrBefore(currentDate)){
+                    return true;
+                }
+                return false
+            },
+            message: `Uploaded date cannot be in the future!`
+
+        }
     },
     uploadedBy:{
         type: String,
@@ -46,6 +61,8 @@ const CurrencyRateSchema = new Schema({
     }
 
 },{timestamps: true});
+
+
 
 
 const CurrencyRate = model('CurrencyRate', CurrencyRateSchema);
