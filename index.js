@@ -1,5 +1,5 @@
 const express = require('express');
-//const https = require('https');
+const https = require('https');
 const http = require('http');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -69,8 +69,18 @@ try{
 
 
     //set-up server
-    //const server = https.createServer(cert, app);
-    const server = http.createServer(app);
+    const useHttp = process.env.ON_RENDER === "true";
+    let server;
+
+    if (useHttp) {
+        // Use HTTP
+        server = http.createServer(app);
+        console.log("Server running over HTTP");
+    } else {
+        server = https.createServer(cert, app);
+        console.log("Server running over HTTPS");
+    }
+
 
     const io = new Server(server, {
         cors: { origin: "*" },
