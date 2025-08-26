@@ -55,7 +55,7 @@ Create a `.env` file in the project root with the following variables:
 -   **PORT** (The port your Api will run on)
 -   **MONGODB_URL** (Your MongoDB connection string)
 -   **HOST** (The host for the api. keep 0.0.0.0 for external accessibility)
--   **JWT_SECRET** (Secret key for signing JSON Web Tokens)
+-   **JWT_SECRET** (Secret key for signing JWT Tokens)
 -   **NODE_ENV** (development or production)
 -   **DEFAULT_SOURCE** (Label for the default source of exchange rates (e.g., Private Bank).)
 -   **DEFAULT_UPLOADER** (Username of the default data uploader)
