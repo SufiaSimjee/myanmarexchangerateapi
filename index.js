@@ -9,8 +9,8 @@ const cors = require("cors");
 const morgan = require('morgan');
 const passport = require('passport');
 const { join } = require('node:path');
-
-
+const cron = require("node-cron");
+const crypto = require('crypto');
 
 const { Server } = require("socket.io");
 
@@ -18,6 +18,7 @@ const {connectDb} = require('./Services/DbService');
 const userRouter = require("./Routers/UserRouter");
 const strategy = require("./Auth/JwtStrategy");
 const currencyRouter = require("./Routers/CurrencyRouter");
+const CurrencyRate = require("./Models/CurrencyRateSchema");
 
 
 
@@ -109,6 +110,67 @@ try{
         }).catch(err => {
             console.error("Database connection error:", err);
         });
+    });
+
+    let latestCurrencyRatesHash = "";
+    cron.schedule("0 */1 * * * *", async function() {
+        try{
+            console.log("🕒 [Cron] Running currency rates update job...");
+            let defaultSource = process.env.DEFAULT_SOURCE|| "testuser"
+
+            const currencyRates = await CurrencyRate.aggregate([
+                // Only include records uploaded by default source
+                { $match: { uploadedBy: defaultSource } },
+
+                // Sort by uploadedDate descending so the latest comes first
+                { $sort: { uploadedDate: -1 } },
+
+                // Group by currencyName and take the first document (latest)
+                {
+                    $group: {
+                        _id: "$currencyName",          // grouping key (currencyName)
+                        docId: { $first: "$_id" },     // store original _id
+                        currencyName: { $first: "$currencyName" },
+                        currencyCode: { $first: "$currencyCode" },
+                        currencyIcon: { $first: "$currencyIcon" },
+                        unit: { $first: "$unit" },
+                        buyRate: { $first: "$buyRate" },
+                        sellRate: { $first: "$sellRate" },
+                        source: { $first: "$source" },
+                        uploadedDate: { $first: "$uploadedDate" },
+                        uploadedBy: { $first: "$uploadedBy" }
+                    }
+                },
+
+                // Optional: rename docId back to _id
+                {
+                    $addFields: { _id: "$docId" }
+                },
+
+                // Optional: remove temporary docId
+                {
+                    $project: { docId: 0 }
+                }
+            ]);
+
+            const currencyRatesString = JSON.stringify(currencyRates);
+            const currentHash = crypto.createHash('sha1')
+                .update(currencyRatesString)
+                .digest('hex');
+
+            if (currentHash.toString() !== latestCurrencyRatesHash.toString()) {
+                console.log("Current CurrencyRates Hash:", currentHash);
+                console.log("latestCurrencyRates Hash:", latestCurrencyRatesHash);
+                io.emit("all", currencyRatesString);
+                latestCurrencyRatesHash = currentHash;
+                console.log(`Currency rates updated and emitted to clients.`);
+            } else {
+                console.log("No changes detected in currency rates. Skipping emit.");
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     });
 
 

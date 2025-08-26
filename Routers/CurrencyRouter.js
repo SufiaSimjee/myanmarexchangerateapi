@@ -2,7 +2,7 @@ const passport = require("passport");
 const express = require("express");
 const expressCache = require("cache-express")
 
-const moment = require("moment");
+const moment = require("moment-timezone");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
 
@@ -29,12 +29,14 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
             });
         }
 
-        // Convert to Date object including time
-        const unformattedDate = moment(uploadedDate, ["YYYY-MM-DD HH:mm:ss", moment.ISO_8601]);
+        // Convert uploadedDate to a moment object (assuming it's in "YYYY-MM-DD HH:mm:ss" or ISO format)
+        const unformattedDate = moment.tz(uploadedDate, ["YYYY-MM-DD HH:mm:ss", moment.ISO_8601], "Asia/Yangon");
 
-        const currentDate = moment();
+        // Get current time in Yangon
+        const currentDate = moment.tz("Asia/Yangon");
 
-        if(unformattedDate.isAfter(currentDate)){
+       // Check if uploadedDate is in the future
+        if (unformattedDate.isAfter(currentDate)) {
             return res.status(400).json({
                 message: "Uploaded date cannot be in the future!",
             });
@@ -215,8 +217,6 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 }
             ]);
 
-            console.log(currencyRates);
-
             if (!currencyRates) {
                 return res.status(404).json({
                     message: `No latest exchange rate found.`
@@ -252,17 +252,18 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
             });
         }
 
-        const startOfDay = moment(date, "YYYY-MM-DD").startOf("day").toDate();
-        const endOfDay = moment(date, "YYYY-MM-DD").endOf("day").toDate();
+        const startOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
+        const endOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
+
 
         // Query DB
-        const currencyRate = await CurrencyRate.findOne({
+        const currencyRates = await CurrencyRate.find({
             currencyCode: currencyCode,
             uploadedBy: defaultSource,
             uploadedDate: { $gte: startOfDay, $lte: endOfDay }
-        });
+        }).sort({ uploadedDate: -1 });
 
-        if (!currencyRate) {
+        if (!currencyRates) {
             return res.status(404).json({
                 message: `No exchange rate record found for '${currencyCode}' on ${date} from the default source.`
             });
@@ -270,7 +271,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 
         return res.status(200).json({
             message: `Exchange rate for '${currencyCode}' on ${date} retrieved successfully.`,
-            data: currencyRate
+            data: currencyRates
         });
 
     } catch (error) {
@@ -303,18 +304,19 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
             });
         }
 
-        // Convert to Date objects with startOf/endOf for inclusive range
-        const startDate = moment(fromDate, "YYYY-MM-DD").startOf("day").toDate();
-        const endDate = moment(toDate, "YYYY-MM-DD").endOf("day").toDate();
+        // Convert to Date objects with startOf/endOf for inclusive range in Yangon timezone
+        const startDate = moment.tz(fromDate, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
+        const endDate = moment.tz(toDate, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
+
 
         // Query database
-        const currencyRate = await CurrencyRate.findOne({
+        const currencyRates = await CurrencyRate.find({
             currencyCode: currencyCode,
             uploadedBy: defaultSource,
             uploadedDate: { $gte: startDate, $lte: endDate }
         });
 
-        if (!currencyRate) {
+        if (!currencyRates) {
             return res.status(404).json({
                 message: `No exchange rate found for currency '${currencyCode}' between ${fromDate} and ${toDate}.`
             });
@@ -322,7 +324,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
 
         return res.status(200).json({
             message: "Exchange rate retrieved successfully.",
-            data: currencyRate
+            data: currencyRates
         });
 
     } catch (error) {

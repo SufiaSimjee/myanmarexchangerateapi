@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require("bcrypt");
-const moment = require("moment");
+const moment = require("moment-timezone");
 const { Schema, model } = mongoose;
 
 const CurrencyRateSchema = new Schema({
@@ -42,9 +42,10 @@ const CurrencyRateSchema = new Schema({
         required: true,
         validate: {
             validator: function (value) {
-                const uploadedDate = moment(value, [moment.ISO_8601, "YYYY-MM-DD HH:mm:ss"], true);
-                const currentDate = moment();
+                const uploadedDate = moment.tz(value, "Asia/Yangon");
+                const currentDate = moment.tz("Asia/Yangon");
 
+                // Check if uploadedDate is valid and not in the future
                 return uploadedDate.isValid() && uploadedDate.isSameOrBefore(currentDate);
             },
             message: `Uploaded date cannot be in the future!`

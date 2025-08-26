@@ -1,5 +1,5 @@
 const CurrencyRate = require("../CurrencyRateSchema");
-const moment = require("moment");
+const moment = require("moment-timezone");
 
 
 const CurrencyRates = [
@@ -12,7 +12,7 @@ const CurrencyRates = [
         buyRate: 2100,
         sellRate: 2150,
         source: "Central Bank",
-        uploadedDate: moment().subtract(5, "days").toDate(),
+        uploadedDate: moment.tz("Asia/Yangon").subtract(5, "days").toDate(),
         uploadedBy: "System"
     }),
     new CurrencyRate({
@@ -23,7 +23,7 @@ const CurrencyRates = [
         buyRate: 2300,
         sellRate: 2350,
         source: "Central Bank",
-        uploadedDate: moment().subtract(4, "days").toDate(),
+        uploadedDate: moment.tz("Asia/Yangon").subtract(4, "days").toDate(),
         uploadedBy: "System"
     }),
     new CurrencyRate({
@@ -34,7 +34,7 @@ const CurrencyRates = [
         buyRate: 2700,
         sellRate: 2750,
         source: "Central Bank",
-        uploadedDate: moment().subtract(3, "days").toDate(),
+        uploadedDate: moment.tz("Asia/Yangon").subtract(3, "days").toDate(),
         uploadedBy: "System"
     }),
     new CurrencyRate({
@@ -45,7 +45,7 @@ const CurrencyRates = [
         buyRate: 15,
         sellRate: 16,
         source: "Central Bank",
-        uploadedDate: moment().subtract(2, "days").toDate(),
+        uploadedDate: moment.tz("Asia/Yangon").subtract(2, "days").toDate(),
         uploadedBy: "System"
     }),
 
@@ -58,7 +58,7 @@ const CurrencyRates = [
         buyRate: 4800,
         sellRate: 5000,
         source: "Bank",
-        uploadedDate: moment().subtract(1, "days").toDate(),
+        uploadedDate: moment.tz("Asia/Yangon").subtract(1, "days").toDate(),
         uploadedBy: "defaultadmin"
     }),
     new CurrencyRate({
@@ -69,7 +69,7 @@ const CurrencyRates = [
         buyRate: 4900,
         sellRate: 5100,
         source: "Bank",
-        uploadedDate: moment().toDate(),
+        uploadedDate: moment.tz("Asia/Yangon").toDate(),
         uploadedBy: "defaultadmin"
     }),
     new CurrencyRate({
@@ -80,7 +80,7 @@ const CurrencyRates = [
         buyRate: 5000,
         sellRate: 5200,
         source: "Facebook Page",
-        uploadedDate: moment().subtract(6, "hours").toDate(),
+        uploadedDate: moment.tz("Asia/Yangon").subtract(6, "hours").toDate(),
         uploadedBy: "defaultadmin"
     }),
     new CurrencyRate({
@@ -91,7 +91,7 @@ const CurrencyRates = [
         buyRate: 50,
         sellRate: 60,
         source: "Myanmar Market Price",
-        uploadedDate: moment().subtract(12, "hours").toDate(),
+        uploadedDate: moment.tz("Asia/Yangon").subtract(12, "hours").toDate(),
         uploadedBy: "defaultadmin"
     }),
 
@@ -104,8 +104,8 @@ const CurrencyRates = [
         buyRate: 5000,
         sellRate: 5200,
         source: "Private Bank",
-        uploadedDate: moment().subtract(2, "hours").toDate(),
-        uploadedBy: "tester"
+        uploadedDate: moment.tz("Asia/Yangon").subtract(2, "hours").toDate(),
+        uploadedBy: "testuser"
     }),
     new CurrencyRate({
         currencyName: "Euro",
@@ -115,8 +115,8 @@ const CurrencyRates = [
         buyRate: 5200,
         sellRate: 5400,
         source: "Private Bank",
-        uploadedDate: moment().subtract(1, "hours").toDate(),
-        uploadedBy: "tester"
+        uploadedDate: moment.tz("Asia/Yangon").subtract(1, "hours").toDate(),
+        uploadedBy: "testuser"
     }),
 ];
 
