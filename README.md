@@ -31,7 +31,7 @@ The main purpose of this API is to inform users about daily exchange rates from 
 
 ## Data Sources
 
-1.  Facebook Pages/Group reporting currency rates
+1.  Facebook Pages/Groups reporting currency rates
 2.  Myanmar Market Price App
 3.  Other Online Sources
 
