@@ -31,7 +31,7 @@ try{
 
     //certificate
     let cert;
-    if(useHttp){
+    if(!useHttp){
         cert = {
             key: fs.readFileSync(path.join(__dirname, "localhost-key.pem")),
             cert: fs.readFileSync(path.join(__dirname, "localhost.pem")),
@@ -77,7 +77,6 @@ try{
     let server;
 
     if (useHttp) {
-        // Use HTTP
         server = http.createServer(app);
         console.log("Server running over HTTP");
     } else {
