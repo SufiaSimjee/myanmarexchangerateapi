@@ -24,13 +24,17 @@ const CurrencyRate = require("./Models/CurrencyRateSchema");
 
 
 try{
+    const useHttp = process.env.ON_RENDER === "true";
+
     const app = express();
 
 
     //certificate
-    const cert = {
-        key: fs.readFileSync(path.join(__dirname, "localhost-key.pem")),
-        cert: fs.readFileSync(path.join(__dirname, "localhost.pem")),
+    if(useHttp){
+        const cert = {
+            key: fs.readFileSync(path.join(__dirname, "localhost-key.pem")),
+            cert: fs.readFileSync(path.join(__dirname, "localhost.pem")),
+        }
     }
 
     //rate limit
@@ -69,7 +73,6 @@ try{
 
 
     //set-up server
-    const useHttp = process.env.ON_RENDER === "true";
     let server;
 
     if (useHttp) {
