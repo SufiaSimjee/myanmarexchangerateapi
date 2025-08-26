@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require("moment-timezone");
 const { Schema, model } = mongoose;
 
 const FuelRateSchema = new Schema({
@@ -32,7 +33,6 @@ const FuelRateSchema = new Schema({
         type: String,
         index: true,
         required: true,
-        trim: true
     },
     location: {
         type: String,
@@ -43,7 +43,18 @@ const FuelRateSchema = new Schema({
     uploadedDate: {
         type: Date,
         index: true,
-        default: Date.now
+        default: Date.now,
+        validate: {
+            validator: function (value) {
+                const uploadedDate = moment.tz(value, "Asia/Yangon");
+                const currentDate = moment.tz("Asia/Yangon");
+
+                // Check if uploadedDate is valid and not in the future
+                return uploadedDate.isValid() && uploadedDate.isSameOrBefore(currentDate);
+            },
+            message: `Uploaded date cannot be in the future!`
+
+        }
     },
     uploadedBy: {
         type: String,

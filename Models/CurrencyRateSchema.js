@@ -38,7 +38,6 @@ const CurrencyRateSchema = new Schema({
         type: String,
         index: true,
         required: true,
-        trim: true
     },
     uploadedDate:{
         type: Date,
