@@ -4,7 +4,7 @@ const Users = [
     new User({
         username: process.env.DEFAULT_ADMIN_USERNAME,
         email: "defaultadmin@example.com",
-        password: process.env.DEFAULT_PASSWORD,
+        password: process.env.DEFAULT_ADMIN_PASSWORD,
         role: "admin"
     }),
     new User({
