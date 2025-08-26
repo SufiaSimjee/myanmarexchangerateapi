@@ -52,17 +52,19 @@ The main purpose of this API is to inform users about daily exchange rates from 
 
 Create a `.env` file in the project root with the following variables:
 
--   **PORT** (The port your API server will run on)
+-   **PORT** (The port your Api will run on)
 -   **MONGODB_URL** (Your MongoDB connection string)
 -   **HOST** (The host for the api. keep 0.0.0.0 for external accessibility)
 -   **JWT_SECRET** (Secret key for signing JSON Web Tokens)
 -   **NODE_ENV** (development or production)
 -   **DEFAULT_SOURCE** (Label for the default source of exchange rates (e.g., Private Bank).)
 -   **DEFAULT_UPLOADER** (Username of the default data uploader)
--   **DEFAULT_ADMIN_USERNAME** (Admin panel default username for first login setup)
--   **DEFAULT_ADMIN_PASSWORD** (Admin panel default password for first login setup)
+-   **DEFAULT_ADMIN_USERNAME** (Username of default admin account)
+-   **DEFAULT_ADMIN_PASSWORD** (Password of default admin account)
 -   **ON_RENDER** (Boolean flag (true / false) to check if app is running on Render hosting)
--   **LIVE_NOTIFICATION** (Enables/disables live socket notifications for real-time updates)
+-   **LIVE_NOTIFICATION** (Enables/disables websocket (Socket Io) notifications for real-time updates)
+
+Note: The default admin account (configured via DEFAULT_ADMIN_USERNAME and DEFAULT_ADMIN_PASSWORD) has full privileges to perform any action in the system.
 
 ### 3. Install Dependencies and Start the Server
 -   **npm install** (Install Dependency)
