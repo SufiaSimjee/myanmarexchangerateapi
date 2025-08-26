@@ -10,6 +10,8 @@ const morgan = require('morgan');
 const passport = require('passport');
 const { join } = require('node:path');
 
+
+
 const { Server } = require("socket.io");
 
 const {connectDb} = require('./Services/DbService');
@@ -17,8 +19,11 @@ const userRouter = require("./Routers/UserRouter");
 const strategy = require("./Auth/JwtStrategy");
 const currencyRouter = require("./Routers/CurrencyRouter");
 
+
+
 try{
     const app = express();
+
 
     //certificate
     const cert = {
@@ -46,9 +51,7 @@ try{
     app.use(passport.initialize());
     console.log("Registered JWT strategy:", passport._strategy('jwt')?.name);
 
-    //route
-    app.use("/user",userRouter);
-    app.use("/currency", currencyRouter)
+
 
     app.get('/', (req, res) => {
         try{
@@ -65,9 +68,38 @@ try{
 
     //set-up server
     const server = https.createServer(cert, app);
+    const io = new Server(server, {
+        cors: { origin: "*" },
+        connectionStateRecovery: {}
+    });
 
-    server.listen(process.env.PORT, process.env.HOST,()=> {
+    app.use((req, res, next) => {
+        req.io = io;
+        return next();
+    });
+
+
+
+    io.on('connection', async (socket) => {
+      try{
+          console.log('a user connected');
+          socket.on('disconnect', () => {
+              console.log('user disconnected');
+          });
+
+      } catch(error){
+          console.log(error);
+      }
+    });
+
+    //route
+    app.use("/user",userRouter);
+    app.use("/currency", currencyRouter)
+
+
+    server.listen(process.env.PORT, process.env.HOST,async ()=> {
         console.log(`listening on ${process.env.HOST}:${process.env.PORT}`);
+
         connectDb().then(result => {
             if (result) {
                 console.log("Connected to Database");
@@ -78,6 +110,8 @@ try{
             console.error("Database connection error:", err);
         });
     });
+
+
 
 } catch (error) {
     console.log(error);

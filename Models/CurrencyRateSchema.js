@@ -41,14 +41,11 @@ const CurrencyRateSchema = new Schema({
         type: Date,
         required: true,
         validate: {
-            validator: function(value){
-                const isoString = value.toString();
-                const uploadedDate = moment(isoString);
+            validator: function (value) {
+                const uploadedDate = moment(value, [moment.ISO_8601, "YYYY-MM-DD HH:mm:ss"], true);
                 const currentDate = moment();
-                if(uploadedDate.isSameOrBefore(currentDate)){
-                    return true;
-                }
-                return false
+
+                return uploadedDate.isValid() && uploadedDate.isSameOrBefore(currentDate);
             },
             message: `Uploaded date cannot be in the future!`
 

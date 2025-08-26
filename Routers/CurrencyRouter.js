@@ -6,6 +6,7 @@ const moment = require("moment");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
 
+
 let currencyRateUpdateTracker = 0;
 let defaultSource = process.env.DEFAULT_SOURCE|| "testuser"
 
@@ -40,8 +41,6 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
         }
 
         const formattedDate = unformattedDate.toDate();
-
-
 
         const existingRate = await CurrencyRate.findOne({
             $and: [
@@ -78,6 +77,9 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
         const result = await newRate.save();
 
         currencyRateUpdateTracker++;
+
+
+        req.io.emit(result.currencyCode, JSON.stringify(result));
 
         return res.status(201).json({ // 201 Created
             message: `Exchange rate for ${currencyName} added successfully.`,
