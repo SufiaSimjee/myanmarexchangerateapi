@@ -39,7 +39,7 @@ The main purpose of this API is to inform users about daily exchange rates from 
 
 1.  **Backend:** Node.js (Express.js)
 2.  **Database:** MongoDB (MongoDB Atlas)
-3.  **Protocols:** HTTPS and WebSocket
+3.  **Protocols:** HTTPS and WebSocket (Socket Io)
 
 ## Getting Started (Self Hosting)
 
@@ -52,15 +52,21 @@ The main purpose of this API is to inform users about daily exchange rates from 
 
 Create a `.env` file in the project root with the following variables:
 
--   **PORT** (your_chosen_port_number)
--   **MONGODBURL** (your database connection string).
--   **HOST** (0.0.0.0).
--   **JWT_SECRET** (your_jwt_secret).
--   **NODE_ENV** (production).
+-   **PORT** (The port your API server will run on)
+-   **MONGODB_URL** (Your MongoDB connection string)
+-   **HOST** (The host for the api. keep 0.0.0.0 for external accessibility)
+-   **JWT_SECRET** (Secret key for signing JSON Web Tokens)
+-   **NODE_ENV** (development or production)
+-   **DEFAULT_SOURCE** (Default source label for uploaded exchange rates (e.g., Private Bank).)
+-   **DEFAULT_UPLOADER** (Default username for the data uploader)
+-   **DEFAULT_ADMIN_USERNAME** (Admin panel default username for first login setup)
+-   **DEFAULT_ADMIN_PASSWORD** (Admin panel default password for first login setup)
+-   **ON_RENDER** (Boolean flag (true / false) to check if app is running on Render hosting)
+-   **LIVE_NOTIFICATION** (Enables/disables live socket notifications for real-time updates)
 
 ### 3. Install Dependencies and Start the Server
 -   **npm install** (Install Dependency)
--   **npm start** (Start Server).
+-   **pm2-runtime index.js** (Start Server).
 
 
 

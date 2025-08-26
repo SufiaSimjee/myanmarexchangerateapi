@@ -4,7 +4,7 @@ const seedMetalRates = require("../Models/Seeds/MetalRateSeed");
 const seedCurrencyRates = require("../Models/Seeds/CurrencyRateSeed");
 const seedUsers = require("../Models/Seeds/UserSeed");
 
-const mongoDbUrl = process.env.MONGODBURL;
+const mongoDbUrl = process.env.MONGODB_URL;
 
 
 
