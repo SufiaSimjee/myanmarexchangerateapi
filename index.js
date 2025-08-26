@@ -131,7 +131,7 @@ try{
             let previousCurrencyRatesHash = "";
             cron.schedule("0 */5 * * * *", async function() {
                 try{
-                    console.log("🕒 [Cron] Running currency rates update job...");
+                    console.log(" [Cron] Running currency rates update job...");
                     let defaultSource = process.env.DEFAULT_SOURCE|| "Private Bank";
                     let defaultUploader = process.env.DEFAULT_UPLOADER || "testuser";
 
@@ -194,12 +194,17 @@ try{
             let previousHashes = [];
             cron.schedule("0 */1 * * * *", async function() {
                 try {
-                    console.log("🕒 [Cron] Running currency rates update job...");
+                    console.log(" [Cron] Running currency rates update job...");
 
                     let defaultSource = process.env.DEFAULT_SOURCE|| "Private Bank";
                     let defaultUploader = process.env.DEFAULT_UPLOADER || "testuser";
 
                     const uniqueCurrencies = await CurrencyRate.aggregate([
+                        {
+                            $match: {
+                                uploadedBy: defaultUploader,
+                            }
+                        },
                         {
                             $group: {
                                 _id: "$currencyCode",
