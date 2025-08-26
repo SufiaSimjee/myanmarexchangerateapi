@@ -6,12 +6,14 @@ const { Schema, model } = mongoose;
 const UserSchema = new Schema({
     username: {
         type: String,
+        index: true,
         required: true,
         trim: true,
         unique: true
     },
     email: {
         type: String,
+        index: true,
         required: true,
         unique: true,
     },

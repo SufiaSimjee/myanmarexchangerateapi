@@ -6,12 +6,14 @@ const { Schema, model } = mongoose;
 const CurrencyRateSchema = new Schema({
     currencyName: {
         type: String,
+        index: true,
         required: true,
-        trim: true
     },
     currencyCode: {
         type: String,
+        index: true,
         required: true,
+        uppercase: true,
         trim: true
     },
     currencyIcon:{
@@ -34,11 +36,13 @@ const CurrencyRateSchema = new Schema({
     },
     source:{
         type: String,
+        index: true,
         required: true,
         trim: true
     },
     uploadedDate:{
         type: Date,
+        index: true,
         required: true,
         validate: {
             validator: function (value) {
@@ -54,6 +58,7 @@ const CurrencyRateSchema = new Schema({
     },
     uploadedBy:{
         type: String,
+        index: true,
         required: true,
         default: ""
     }

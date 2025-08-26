@@ -150,7 +150,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
         const existingRate = await CurrencyRate.findOne({
             $and: [
                 { currencyName: currencyName },
-                { currencyCode: currencyCode },
+                { currencyCode: currencyCode.toUpperCase()},
                 { currencyIcon: currencyIcon },
                 { unit: unit },
                 { buyRate: buyRate },
@@ -169,7 +169,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
 
         const newRate = new CurrencyRate({
             currencyName: currencyName,
-            currencyCode: currencyCode,
+            currencyCode: currencyCode.toUpperCase(),
             currencyIcon: currencyIcon,
             unit: unit,
             buyRate: buyRate,
@@ -289,7 +289,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
 
         if(currencyCode !== "all") {
             const currencyRate = await CurrencyRate.findOne({
-                currencyCode: currencyCode,
+                currencyCode: currencyCode.toUpperCase(),
                 uploadedBy: source,
                 source: uploader
             }).sort({ uploadedDate: -1 }).lean();
@@ -411,7 +411,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
             });
         } else {
             count = await CurrencyRate.countDocuments({
-                currencyCode: currencyCode,
+                currencyCode: currencyCode.toUpperCase(),
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
@@ -430,7 +430,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 
         let currencyRates;
 
-        if(currencyCode === "all") {
+        if(currencyCode === "all" || currencyCode === "All" || currencyCode === "ALL") {
             currencyRates = await CurrencyRate.find({
                 uploadedBy: uploader,
                 source: source,
@@ -439,7 +439,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 
         } else {
             currencyRates = await CurrencyRate.find({
-                currencyCode: currencyCode,
+                currencyCode: currencyCode.toUpperCase(),
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
@@ -502,7 +502,7 @@ currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, d
             // Query DB
             let count;
 
-            if(currencyCode === "all") {
+            if(currencyCode === "all" || currencyCode === "All" || currencyCode === "ALL") {
                 count = await CurrencyRate.countDocuments({
                     uploadedBy: uploader,
                     source: source,
@@ -510,7 +510,7 @@ currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, d
                 });
             } else{
                 count = await CurrencyRate.countDocuments({
-                    currencyCode: currencyCode,
+                    currencyCode: currencyCode.toUpperCase(),
                     uploadedBy: uploader,
                     source: source,
                     uploadedDate: { $gte: startOfDay, $lte: endOfDay }
@@ -589,7 +589,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
         // Query database
         let count;
 
-        if(currencyCode === "all") {
+        if(currencyCode === "all" || currencyCode === "All" || currencyCode === "ALL") {
             count = await CurrencyRate.countDocuments({
                 uploadedBy: uploader,
                 source: source,
@@ -597,7 +597,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
             });
         } else{
             count = await CurrencyRate.countDocuments({
-                currencyCode: currencyCode,
+                currencyCode: currencyCode.toUpperCase(),
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
@@ -616,7 +616,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
 
         let currencyRates;
 
-        if(currencyCode === "all") {
+        if(currencyCode === "all" || currencyCode === "All" || currencyCode === "ALL") {
             currencyRates = await CurrencyRate.find({
                 uploadedBy: uploader,
                 source: source,
@@ -624,7 +624,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
             }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
         } else{
             currencyRates = await CurrencyRate.find({
-                currencyCode: currencyCode,
+                currencyCode: currencyCode.toUpperCase(),
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
@@ -692,7 +692,7 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
 
             // Query database
             let count;
-            if(currencyCode === "all") {
+            if(currencyCode === "all" || currencyCode === "All" || currencyCode === "ALL") {
                 count = await CurrencyRate.countDocuments({
                     uploadedBy: uploader,
                     source: source,
@@ -701,7 +701,7 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
 
             } else{
                 count = await CurrencyRate.countDocuments({
-                    currencyCode: currencyCode,
+                    currencyCode: currencyCode.toUpperCase(),
                     uploadedBy: uploader,
                     source: source,
                     uploadedDate: { $gte: startDate, $lte: endDate }

@@ -4,11 +4,12 @@ const { Schema, model } = mongoose;
 const FuelRateSchema = new Schema({
     fuelName: {
         type: String,
-        required: true,
-        trim: true
+        index: true,
+        required: true
     },
     fuelCode: {
         type: String,
+        index: true,
         required: true,
         uppercase: true,
         trim: true
@@ -29,20 +30,24 @@ const FuelRateSchema = new Schema({
     },
     source: {
         type: String,
+        index: true,
         required: true,
         trim: true
     },
     location: {
         type: String,
+        index: true,
         required: true,
         trim: true
     },
     uploadedDate: {
         type: Date,
+        index: true,
         default: Date.now
     },
     uploadedBy: {
         type: String,
+        index: true,
         required: true,
         default: ""
     }
