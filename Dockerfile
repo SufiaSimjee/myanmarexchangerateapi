@@ -20,14 +20,13 @@ RUN npm install pm2 -g
 # Copy app source code
 COPY . .
 
-ENV PORT=5500 \
-    MONGODBURL="mongodb+srv://kaungmyattnaing123:naing786@cluster0.lsruoup.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" \
+ENV PORT=3000 \
     HOST="0.0.0.0"\
     NODE_ENV="production"\
     JWT_SECRET="e418bf6b497b5e39f7e5466b7f6fb8c9a3e796a1c864ab22696f3cd484cde76c"
 
 # Expose port
-EXPOSE 5500
+EXPOSE 3000
 
 # Start the application with PM2 in foreground
 CMD ["pm2-runtime", "index.js"]
