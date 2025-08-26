@@ -1,5 +1,6 @@
 const express = require('express');
-const https = require('https');
+//const https = require('https');
+const http = require('http');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
 const compression = require("compression");
@@ -68,7 +69,9 @@ try{
 
 
     //set-up server
-    const server = https.createServer(cert, app);
+    //const server = https.createServer(cert, app);
+    const server = http.createServer(app);
+
     const io = new Server(server, {
         cors: { origin: "*" },
         connectionStateRecovery: {}
