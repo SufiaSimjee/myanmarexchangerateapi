@@ -126,8 +126,8 @@ try{
     });
 
     try{
-        let latestCurrencyRatesHash = "";
-        cron.schedule("0 */1 * * * *", async function() {
+        let previousCurrencyRatesHash = "";
+        cron.schedule("0 */5 * * * *", async function() {
             try{
                 console.log("🕒 [Cron] Running currency rates update job...");
                 let defaultSource = process.env.DEFAULT_SOURCE|| "testuser"
@@ -172,11 +172,11 @@ try{
                     .update(currencyRatesString)
                     .digest('hex');
 
-                if (currentHash.toString() !== latestCurrencyRatesHash.toString()) {
+                if (currentHash.toString() !== previousCurrencyRatesHash.toString()) {
                     console.log("Current CurrencyRates Hash:", currentHash);
-                    console.log("latestCurrencyRates Hash:", latestCurrencyRatesHash);
+                    console.log("previousCurrencyRates Hash:", previousCurrencyRatesHash);
                     io.emit("all", currencyRatesString);
-                    latestCurrencyRatesHash = currentHash;
+                    previousCurrencyRatesHash = currentHash;
                     console.log(`Currency rates updated and emitted to clients.`);
                 } else {
                     console.log("No changes detected in currency rates. Skipping emit.");
@@ -239,14 +239,14 @@ try{
                             }
                         }
 
-                        if (previousHashes.length === 0 || previousHashes === undefined || previousHashes === null){
+                        if (previousHashes.length === 0){
                             io.emit(currency.currencyCode, JSON.stringify(currencyRate));
                         }
                     }
                 }
 
                 // Update previousHashes for next run
-                previousHashes = [...currentHashes];
+                previousHashes = currentHashes;
                 console.log("Previous hashes updated:", previousHashes);
 
             } catch (error) {
