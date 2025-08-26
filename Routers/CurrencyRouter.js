@@ -8,12 +8,29 @@ const CurrencyRate = require("../Models/CurrencyRateSchema");
 
 
 let currencyRateUpdateTracker = 0;
-let defaultSource = process.env.DEFAULT_SOURCE|| "testuser"
+let defaultSource = process.env.DEFAULT_SOURCE|| "Private Bank"
+let defaultUploader = process.env.DEFAULT_UPLOADER || "testuser";
 
 
 currencyRouter.get("/currencyList", async (req, res) => {
     try {
+        let {source, uploader} = req.query;
+
+        if (!source) {
+            source = defaultSource;
+        }
+
+        if (!uploader) {
+            uploader = defaultUploader;
+        }
+
         const uniqueCurrencies = await CurrencyRate.aggregate([
+            {
+                $match: {
+                    source: source,
+                    uploadedBy: uploader
+                }
+            },
             {
                 $group: {
                     _id: "$currencyCode",
@@ -51,7 +68,19 @@ currencyRouter.get("/currencyList", async (req, res) => {
 
 currencyRouter.get("/sourceList", async (req, res) => {
     try {
+        let {uploader} = req.query;
+
+        if (!uploader) {
+            uploader = defaultUploader;
+        }
+
+
         const uniqueSources = await CurrencyRate.aggregate([
+            {
+                $match: {
+                    uploadedBy: uploader
+                }
+            },
             {
                 $group: {
                     _id: "$uploadedBy"
@@ -176,15 +205,25 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
 currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }), async (req, res) => {
     try {
         const { id } = req.params;
+        let {username} = req.user
 
         // Find the currency rate by ID
-        const exchangeRate = await CurrencyRate.findById(id);
+        const exchangeRate = await CurrencyRate.findById(id).lean();
 
         if (!exchangeRate) {
             return res.status(404).json({
                 message: `No currency exchange rate found with ID '${id}'.`
             });
         }
+
+        if(username !== process.env.DEFAULT_ADMIN_USERNAME){
+            if (exchangeRate.uploadedBy !== username) {
+                return res.status(403).json({
+                    message: "You do not have permission to delete an exchange rate uploaded by another user."
+                });
+            }
+        }
+
 
         // Delete the currency rate
         await CurrencyRate.findByIdAndDelete(id);
@@ -208,7 +247,7 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
 });
 
 
-currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
+currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -235,14 +274,24 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
     }
 });
 
-currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
+currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode } = req.params;
+        let {source, uploader} = req.query;
+
+        if (!source) {
+            source = defaultSource;
+        }
+
+        if (!uploader) {
+            uploader = defaultUploader;
+        }
 
         if(currencyCode !== "all") {
             const currencyRate = await CurrencyRate.findOne({
                 currencyCode: currencyCode,
-                uploadedBy: defaultSource
+                uploadedBy: source,
+                source: uploader
             }).sort({ uploadedDate: -1 }).lean();
 
             if (!currencyRate) {
@@ -258,7 +307,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
         } else {
             const currencyRates = await CurrencyRate.aggregate([
                 // Only include records uploaded by default source
-                { $match: { uploadedBy: defaultSource } },
+                { $match: { uploadedBy: uploader, source: source } },
 
                 // Sort by uploadedDate descending so the latest comes first
                 { $sort: { uploadedDate: -1 } },
@@ -314,10 +363,20 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
 });
 
 
-currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => { console.log(`Cache removed for key: ${key}`); }}) ,async (req, res) => {
+currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}) ,async (req, res) => {
     try {
         const { currencyCode, date } = req.params;
         const {skip, limit} = req.query;
+
+        let {source, uploader} = req.query;
+
+        if (!source) {
+            source = defaultSource;
+        }
+
+        if (!uploader) {
+            uploader = defaultUploader;
+        }
 
         if (!skip || !limit) {
             return res.status(400).json({
@@ -346,13 +405,15 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
         let count;
         if (currencyCode  === "all") {
             count = await CurrencyRate.countDocuments({
-                uploadedBy: defaultSource,
+                uploadedBy: uploader,
+                source: source,
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
             });
         } else {
             count = await CurrencyRate.countDocuments({
                 currencyCode: currencyCode,
-                uploadedBy: defaultSource,
+                uploadedBy: uploader,
+                source: source,
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
             });
         }
@@ -371,14 +432,16 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 
         if(currencyCode === "all") {
             currencyRates = await CurrencyRate.find({
-                uploadedBy: defaultSource,
+                uploadedBy: uploader,
+                source: source,
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
             }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
 
         } else {
             currencyRates = await CurrencyRate.find({
                 currencyCode: currencyCode,
-                uploadedBy: defaultSource,
+                uploadedBy: uploader,
+                source: source,
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
             }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
         }
@@ -412,10 +475,19 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 });
 
 
-currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => {console.log(`Cache removed for key: ${key}`);}}),
+currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
     async (req, res) => {
         try {
             const { currencyCode, date } = req.params;
+            let {source, uploader} = req.query;
+
+            if (!source) {
+                source = defaultSource;
+            }
+
+            if (!uploader) {
+                uploader = defaultUploader;
+            }
 
             // Validate date format (YYYY-MM-DD)
             if (!moment(date, "YYYY-MM-DD", true).isValid()) {
@@ -432,13 +504,15 @@ currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, d
 
             if(currencyCode === "all") {
                 count = await CurrencyRate.countDocuments({
-                    uploadedBy: defaultSource,
+                    uploadedBy: uploader,
+                    source: source,
                     uploadedDate: { $gte: startOfDay, $lte: endOfDay }
                 });
             } else{
                 count = await CurrencyRate.countDocuments({
                     currencyCode: currencyCode,
-                    uploadedBy: defaultSource,
+                    uploadedBy: uploader,
+                    source: source,
                     uploadedDate: { $gte: startOfDay, $lte: endOfDay }
                 });
             }
@@ -467,10 +541,20 @@ currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, d
 );
 
 
-currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
+currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode, fromDate, toDate } = req.params;
         const {skip, limit} = req.query;
+
+        let {source, uploader} = req.query;
+
+        if (!source) {
+            source = defaultSource;
+        }
+
+        if (!uploader) {
+            uploader = defaultUploader;
+        }
 
         if (!skip || !limit) {
             return res.status(400).json({
@@ -507,13 +591,15 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
 
         if(currencyCode === "all") {
             count = await CurrencyRate.countDocuments({
-                uploadedBy: defaultSource,
+                uploadedBy: uploader,
+                source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
             });
         } else{
             count = await CurrencyRate.countDocuments({
                 currencyCode: currencyCode,
-                uploadedBy: defaultSource,
+                uploadedBy: uploader,
+                source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
             });
         }
@@ -532,13 +618,15 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
 
         if(currencyCode === "all") {
             currencyRates = await CurrencyRate.find({
-                uploadedBy: defaultSource,
+                uploadedBy: uploader,
+                source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
             }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
         } else{
             currencyRates = await CurrencyRate.find({
                 currencyCode: currencyCode,
-                uploadedBy: defaultSource,
+                uploadedBy: uploader,
+                source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
             }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
         }
@@ -571,10 +659,19 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
     }
 });
 
-currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, value) => {console.log(`Cache removed for key: ${key}`);}}),
+currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
     async (req, res) => {
         try {
             const { currencyCode, fromDate, toDate } = req.params;
+            let {source, uploader} = req.query;
+
+            if (!source) {
+                source = defaultSource;
+            }
+
+            if (!uploader) {
+                uploader = defaultUploader;
+            }
 
             // Validate both dates
             if (!moment(fromDate, "YYYY-MM-DD", true).isValid()) {
@@ -597,14 +694,16 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
             let count;
             if(currencyCode === "all") {
                 count = await CurrencyRate.countDocuments({
-                    uploadedBy: defaultSource,
+                    uploadedBy: uploader,
+                    source: source,
                     uploadedDate: { $gte: startDate, $lte: endDate }
                 });
 
             } else{
                 count = await CurrencyRate.countDocuments({
                     currencyCode: currencyCode,
-                    uploadedBy: defaultSource,
+                    uploadedBy: uploader,
+                    source: source,
                     uploadedDate: { $gte: startDate, $lte: endDate }
                 });
             }

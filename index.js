@@ -132,11 +132,12 @@ try{
             cron.schedule("0 */5 * * * *", async function() {
                 try{
                     console.log("🕒 [Cron] Running currency rates update job...");
-                    let defaultSource = process.env.DEFAULT_SOURCE|| "testuser"
+                    let defaultSource = process.env.DEFAULT_SOURCE|| "Private Bank";
+                    let defaultUploader = process.env.DEFAULT_UPLOADER || "testuser";
 
                     const currencyRates = await CurrencyRate.aggregate([
                         // Only include records uploaded by default source
-                        { $match: { uploadedBy: defaultSource } },
+                        { $match: { uploadedBy: defaultUploader, source: defaultSource } },
 
                         // Sort by uploadedDate descending so the latest comes first
                         { $sort: { uploadedDate: -1 } },
@@ -175,8 +176,6 @@ try{
                         .digest('hex');
 
                     if (currentHash.toString() !== previousCurrencyRatesHash.toString()) {
-                        console.log("Current CurrencyRates Hash:", currentHash);
-                        console.log("previousCurrencyRates Hash:", previousCurrencyRatesHash);
                         io.emit("all", currencyRatesString);
                         previousCurrencyRatesHash = currentHash;
                         console.log(`Currency rates updated and emitted to clients.`);
@@ -196,7 +195,9 @@ try{
             cron.schedule("0 */1 * * * *", async function() {
                 try {
                     console.log("🕒 [Cron] Running currency rates update job...");
-                    let defaultSource = process.env.DEFAULT_SOURCE;
+
+                    let defaultSource = process.env.DEFAULT_SOURCE|| "Private Bank";
+                    let defaultUploader = process.env.DEFAULT_UPLOADER || "testuser";
 
                     const uniqueCurrencies = await CurrencyRate.aggregate([
                         {
@@ -222,7 +223,8 @@ try{
 
                         const currencyRate = await CurrencyRate.findOne({
                             currencyCode: currency.currencyCode,
-                            uploadedBy: defaultSource
+                            uploadedBy: defaultUploader,
+                            source: defaultSource,
                         }).sort({ uploadedDate: -1 }).lean();
 
 

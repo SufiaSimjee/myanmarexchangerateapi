@@ -30,14 +30,23 @@ userRouter.get("/test-token", passport.authenticate("jwt", { session: false }), 
 userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
         const { id } = req.params;
+        const {username} = req.user;
 
         // Find the user
-        const userAccount = await User.findById(id);
+        const userAccount = await User.findById(id).lean();
 
         if (!userAccount) {
             return res.status(404).json({
                 message: "No account found with the provided ID."
             });
+        }
+
+        if(username !== process.env.DEFAULT_ADMIN_USERNAME){
+            if (userAccount.username !== username) {
+                return res.status(403).json({
+                    message: "You do not have permission to delete an account of another user."
+                });
+            }
         }
 
         // Delete the user

@@ -2,15 +2,15 @@ const User = require("../UserSchema");
 
 const Users = [
     new User({
-        username: "defaultadmin",
-        email: "admin@example.com",
-        password: "admin123",
+        username: process.env.DEFAULT_ADMIN_USERNAME,
+        email: "defaultadmin@example.com",
+        password: process.env.DEFAULT_PASSWORD,
         role: "admin"
     }),
     new User({
-        username: "admin",
-        email: "admin@example.com",
-        password: "admin123",
+        username: "admin2",
+        email: "admin2@example.com",
+        password: "admin2123",
         role: "admin"
     }),
     new User({
