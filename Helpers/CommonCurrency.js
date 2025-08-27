@@ -5,6 +5,7 @@ const CurrencyList = {
         "symbol_native": "$",
         "decimal_digits": 2,
         "rounding": 0,
+        "icon": "💵",
         "code": "USD",
         "name_plural": "US dollars"
     },
@@ -24,6 +25,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "EUR",
+        "icon": "💶",
         "name_plural": "euros"
     },
     "AED": {
@@ -32,6 +34,7 @@ const CurrencyList = {
         "symbol_native": "د.إ.‏",
         "decimal_digits": 2,
         "rounding": 0,
+        "icon": "🇦🇪",
         "code": "AED",
         "name_plural": "UAE dirhams"
     },
@@ -222,6 +225,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "CNY",
+        "icon": "🇨🇳",
         "name_plural": "Chinese yuan"
     },
     "COP": {
@@ -338,6 +342,7 @@ const CurrencyList = {
         "symbol_native": "£",
         "decimal_digits": 2,
         "rounding": 0,
+        "icon": "💷",
         "code": "GBP",
         "name_plural": "British pounds sterling"
     },
@@ -437,6 +442,7 @@ const CurrencyList = {
         "symbol_native": "টকা",
         "decimal_digits": 2,
         "rounding": 0,
+        "icon": "🇮🇳",
         "code": "INR",
         "name_plural": "Indian rupees"
     },
@@ -491,6 +497,7 @@ const CurrencyList = {
         "symbol_native": "￥",
         "decimal_digits": 0,
         "rounding": 0,
+        "icon": "💴",
         "code": "JPY",
         "name_plural": "Japanese yen"
     },
@@ -634,6 +641,7 @@ const CurrencyList = {
         "name": "Myanma Kyat",
         "symbol_native": "K",
         "decimal_digits": 0,
+        "icon": "🇲🇲",
         "rounding": 0,
         "code": "MMK",
         "name_plural": "Myanma kyats"
@@ -671,6 +679,7 @@ const CurrencyList = {
         "symbol_native": "RM",
         "decimal_digits": 2,
         "rounding": 0,
+        "icon": "🇲🇾",
         "code": "MYR",
         "name_plural": "Malaysian ringgits"
     },
@@ -878,6 +887,7 @@ const CurrencyList = {
         "symbol_native": "$",
         "decimal_digits": 2,
         "rounding": 0,
+        "icon": "🇸🇬",
         "code": "SGD",
         "name_plural": "Singapore dollars"
     },
@@ -905,6 +915,7 @@ const CurrencyList = {
         "symbol_native": "฿",
         "decimal_digits": 2,
         "rounding": 0,
+        "icon": "🇹🇭",
         "code": "THB",
         "name_plural": "Thai baht"
     },
@@ -1013,6 +1024,7 @@ const CurrencyList = {
         "symbol_native": "₫",
         "decimal_digits": 0,
         "rounding": 0,
+        "icon": "🇻🇳",
         "code": "VND",
         "name_plural": "Vietnamese dong"
     },

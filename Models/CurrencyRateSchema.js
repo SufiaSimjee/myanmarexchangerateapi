@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const moment = require("moment-timezone");
 const ISO4217Codes = require("../Helpers/ISO4217Codes");
+const {CurrencyList} = require("../Helpers/CommonCurrency");
 const { Schema, model } = mongoose;
 
 
@@ -9,7 +10,8 @@ const CurrencyRateSchema = new Schema({
     currencyName: {
         type: String,
         index: true,
-        required: true,
+        required: false,
+        default: ""
     },
     currencyCode: {
         type: String,
@@ -67,6 +69,26 @@ const CurrencyRateSchema = new Schema({
 
 },{timestamps: true});
 
+
+CurrencyRateSchema.pre('save', function (next) {
+    try{
+
+        let currencyName = CurrencyList[this.currencyCode].name;
+        let currencyIcon = CurrencyList[this.currencyCode].icon;
+
+        if (currencyName) {
+            this.currencyName = currencyName;
+        }
+
+        if (currencyIcon) {
+            this.currencyIcon = currencyIcon;
+        }
+        next();
+    } catch (error){
+        console.error("Error while setting currency name and currency icon before saving:", error.message);
+        next(error);
+    }
+})
 
 
 

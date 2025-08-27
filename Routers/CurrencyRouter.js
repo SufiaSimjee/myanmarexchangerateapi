@@ -153,21 +153,16 @@ currencyRouter.get("/currencyList", async (req, res) => {
 
 currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
-        let { currencyCode, currencyIcon, unit, buyRate, sellRate, uploadedDate, source } = req.body;
+        let { currencyCode, unit, buyRate, sellRate, uploadedDate, source } = req.body;
         let {username} = req.user
 
 
-        if (!currencyCode || !currencyIcon || !unit || !buyRate || !sellRate || !uploadedDate || !source) {
+        if (!currencyCode || !unit || !buyRate || !sellRate || !uploadedDate || !source) {
             return res.status(400).json({
-                message: "These fields are required: currencyCode, currencyIcon, unit, buyRate, sellRate, uploadedDate, source.",
+                message: "These fields are required: currencyCode, unit, buyRate, sellRate, uploadedDate, source.",
             });
         }
 
-        let currencyName = CurrencyList[currencyCode].name;
-
-        if (!currencyName) {
-            currencyName = "";
-        }
 
         // Validate uploadedDate format with time included
         if (!moment(uploadedDate, "YYYY-MM-DD HH:mm:ss", true).isValid() && !moment(uploadedDate, moment.ISO_8601, true).isValid()) {
