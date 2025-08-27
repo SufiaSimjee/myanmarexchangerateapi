@@ -76,23 +76,12 @@ const CurrencyRateSchema = new Schema({
 
 });
 
-CurrencyRateSchema.virtual("percentageChange").get(function () {
-    try{
-        return this.$locals.percentageChange || {
-            buyRateChange: null,
-            sellRateChange: null
-        };
-    } catch(error){
-        return null;
-    }
-});
-
 
 CurrencyRateSchema.path("createdAt").get(yangonDate);
 CurrencyRateSchema.path("updatedAt").get(yangonDate);
 
 
-CurrencyRateSchema.pre('save', async function (next) {
+CurrencyRateSchema.pre('save',  function (next) {
     try{
 
         let currencyName = CurrencyList[this.currencyCode].name;
@@ -105,12 +94,15 @@ CurrencyRateSchema.pre('save', async function (next) {
         if (currencyIcon) {
             this.currencyIcon = currencyIcon;
         }
-        const prevRates = await this.constructor.findOne({
+        let prevRates;
+        this.constructor.findOne({
             currencyCode: this.currencyCode,
             unit: this.unit,
             source: { $regex: `^${this.source}$`, $options: 'i' },
             uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' }
-        }).sort({ uploadedDate: -1 });
+        }).sort({ uploadedDate: -1 }).then(rate => {
+            prevRates = rate;
+        });
 
         if(prevRates) {
             const buyRateChange = ((this.buyRate - prevRates.buyRate) / prevRates.buyRate) * 100;
@@ -124,9 +116,20 @@ CurrencyRateSchema.pre('save', async function (next) {
         next();
     } catch (error){
         console.error("Error while setting currency name and currency icon before saving:", error.message);
-        next(error);
+        next();
     }
 })
+
+CurrencyRateSchema.virtual("percentageChange").get(function () {
+    try{
+        return this.$locals.percentageChange || {
+            buyRateChange: null,
+            sellRateChange: null
+        };
+    } catch(error){
+        return null;
+    }
+});
 
 
 
