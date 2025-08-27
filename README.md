@@ -60,7 +60,7 @@ The main purpose of this API is to inform users about daily exchange rates from 
 1. **express (^5.1.0)** – Web framework for building the API and handling HTTP requests.
 2. **dotenv (^17.2.1)** – Loads environment variables from a `.env` file.
 3. **mongoose (^8.18.0)** – MongoDB object modeling tool for Node.js.
-4. **moment (^2.30.1)** & **moment-timezone (^0.6.0)** – Utilities for parsing, formatting, and handling dates and timezones.
+4. **moment-timezone (^0.6.0)** – Utilities for parsing, formatting, and handling dates and timezones.
 
 ### Security & Authentication
 1. **bcrypt (^6.0.0)** – Hashing library for securely storing passwords.
