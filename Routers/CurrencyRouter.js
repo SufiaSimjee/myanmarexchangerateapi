@@ -26,8 +26,11 @@ currencyRouter.get("/uploaderList", async (req, res) => {
                     _id: 0,
                     uploadedBy: "$_id"
                 }
+            },
+            {
+                $sort: { uploadedBy: 1 }
             }
-        ]).sort({ uploadedBy: -1 });
+        ]);
 
 
         if (!uniqueUploader) {
@@ -77,8 +80,11 @@ currencyRouter.get("/sourceList", async (req, res) => {
                     _id: 0,
                     source: "$_id"
                 }
+            },
+            {
+                $sort: { source: 1 }
             }
-        ]).sort({ source: -1 });
+        ]);
 
         if (!uniqueSources) {
             return res.status(404).json({
@@ -134,8 +140,11 @@ currencyRouter.get("/currencyList", async (req, res) => {
                     currencyCode: "$_id",
                     currencyName: 1
                 }
+            },
+            {
+                $sort: { currencyCode: 1 }
             }
-        ]).sort({ currencyCode: -1 });
+        ]);
 
         if (!uniqueCurrencies) {
             return res.status(404).json({
