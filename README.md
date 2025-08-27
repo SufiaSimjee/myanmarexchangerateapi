@@ -10,9 +10,10 @@ This API is intended to offer a general overview of currency rates in Myanmar an
 
 Users should treat the data as indicative rather than authoritative, and the developer cannot be held responsible for any inaccuracies, misinterpretations, or outcomes resulting from its use.
 
-#### Api Url: https://myanmarexchangerateapi.onrender.com
+#### i. Api Url: https://myanmarexchangerateapi.onrender.com
+This API is hosted on **Render** for the backend and uses **MongoDB Atlas** as its database.
 
-#### Note
+#### ii. Note
 1. All requests and responses use JSON format for simplicity and compatibility across different platforms and programming environments.
 2. The notification feature is currently disabled due to a known bug and will be re-enabled once fixed.
 
