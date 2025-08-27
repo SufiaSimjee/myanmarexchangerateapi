@@ -150,7 +150,7 @@ try{
     let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 1;
     if (liveExchangeRate){
 
-        io.on('connection', (socket) => {
+        io.on('connection', (_) => {
             let previousHashes = {};
 
             cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
