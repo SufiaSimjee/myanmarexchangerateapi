@@ -85,7 +85,7 @@ const CurrencyRates = [
         unit: 1,
         buyRate: 5000,
         sellRate: 5200,
-        source: "Myanmar Market Price",
+        source: "Myanmar Market Price App",
         uploadedDate: moment.tz("Asia/Yangon").subtract(2, "hours").toDate(),
         uploadedBy: "testuser"
     }),
@@ -94,7 +94,7 @@ const CurrencyRates = [
         unit: 1,
         buyRate: 5200,
         sellRate: 5400,
-        source: "Myanmar Market Price",
+        source: "Myanmar Market Price App",
         uploadedDate: moment.tz("Asia/Yangon").subtract(1, "hours").toDate(),
         uploadedBy: "testuser"
     }),

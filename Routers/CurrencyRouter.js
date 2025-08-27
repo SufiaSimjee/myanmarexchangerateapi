@@ -27,7 +27,7 @@ currencyRouter.get("/uploaderList", async (req, res) => {
                     uploadedBy: "$_id"
                 }
             }
-        ]);
+        ]).sort({ uploadedBy: -1 });
 
 
         if (!uniqueUploader) {
@@ -64,7 +64,7 @@ currencyRouter.get("/sourceList", async (req, res) => {
         const uniqueSources = await CurrencyRate.aggregate([
             {
                 $match: {
-                    uploadedBy: uploader
+                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' }
                 }
             },
             {
@@ -78,7 +78,7 @@ currencyRouter.get("/sourceList", async (req, res) => {
                     source: "$_id"
                 }
             }
-        ]);
+        ]).sort({ source: -1 });
 
         if (!uniqueSources) {
             return res.status(404).json({
@@ -118,8 +118,8 @@ currencyRouter.get("/currencyList", async (req, res) => {
         const uniqueCurrencies = await CurrencyRate.aggregate([
             {
                 $match: {
-                    source: source,
-                    uploadedBy: uploader
+                    source: { $regex: `^${source}$`, $options: 'i' },      // case-insensitive match
+                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' } // case-insensitive match
                 }
             },
             {
@@ -135,7 +135,7 @@ currencyRouter.get("/currencyList", async (req, res) => {
                     currencyName: 1
                 }
             }
-        ]);
+        ]).sort({ currencyCode: -1 });
 
         if (!uniqueCurrencies) {
             return res.status(404).json({
@@ -368,7 +368,11 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
         } else {
             const currencyRates = await CurrencyRate.aggregate([
                 // Only include records uploaded by default source
-                { $match: { uploadedBy: uploader, source: source } },
+                {  $match: {
+                        source: { $regex: `^${source}$`, $options: 'i' },      // case-insensitive match
+                        uploadedBy: { $regex: `^${uploader}$`, $options: 'i' } // case-insensitive match
+
+                }},
 
                 // Sort by uploadedDate descending so the latest comes first
                 { $sort: { uploadedDate: -1 } },
