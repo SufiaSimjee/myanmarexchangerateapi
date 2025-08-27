@@ -3,6 +3,8 @@ const TutorialRouter = express.Router();
 
 
 
+
+
 TutorialRouter.get('/currency-docs', (req, res) => {
     try {
         const protocol = req.protocol;
@@ -12,7 +14,6 @@ TutorialRouter.get('/currency-docs', (req, res) => {
         if(process.env.ON_RENDER === "true"){
             baseUrl = 'https://myanmarexchangerateapi.onrender.com/currency'
         }
-
         res.render('CurrencyDocs', { baseUrl });
     } catch (error) {
         console.error("Error rendering currency docs:", error);
@@ -30,14 +31,12 @@ TutorialRouter.get('/auth-docs', (req, res) => {
         if(process.env.ON_RENDER === "true"){
             baseUrl = 'https://myanmarexchangerateapi.onrender.com/user'
         }
-
         res.render('AuthDocs', { baseUrl });
     } catch (error) {
         console.error("Error rendering AuthDocs docs:", error);
         res.status(500).send("An error occurred while rendering documentation.");
     }
 });
-
 
 TutorialRouter.get('/notification-docs', (req, res) => {
     try {
