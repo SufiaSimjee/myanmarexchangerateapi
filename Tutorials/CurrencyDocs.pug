@@ -2,242 +2,144 @@ doctype html
 html(lang="en")
     head
         meta(charset="UTF-8")
-        title Currency API Documentation (Version 0 – Under Development)
+        title Myanmar Currency Exchange API Documentation
+        style.
+            body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
+            h1, h2, h3 { color: #2c3e50; }
+            pre { background: #ecf0f1; padding: 10px; border-radius: 5px; }
+            code { background: #ecf0f1; padding: 2px 4px; border-radius: 3px; }
+
     body
-        h1 Currency API Documentation
+
+
+        h1 Myanmar Currency Exchange API Documentation
         p Base URL:
-            strong #{baseUrl}
-        p
-            | This API provides a comprehensive set of endpoints to manage currency exchange rates. It allows users to add, retrieve, and delete rates.
-            | The API supports filtering based on uploader, source, currency code, and date. Additionally, it provides computed percentage changes between successive rates for the same currency.
+            strong #{baseUrl}/
 
         h2 Authentication
-        p
-            | Certain endpoints, specifically POST and DELETE operations, require authentication via JWT (JSON Web Token).
-            | Include your token in the
-            strong Authorization
-            |  header as follows:
-        pre Authorization: Bearer &lt;your_jwt_token&gt;
+        p Some endpoints (Update & Delete) require JWT authentication in header (Bearer).
 
         h2 Endpoints
 
-        h3 0. Retrieve Unique Uploaders and Sources for a Currency
-        p
-            | This endpoint returns a list of unique combinations of uploaders and sources that have provided exchange rates for the specified currency.
-            | It allows clients to identify all contributors and the sources they utilized for a particular currency.
-        p
-            strong GET /findUploader&Source/:currencyCode
+        // --- Uploader List ---
+        h3 GET /uploaderList
+        p Retrieves a paginated list of all unique uploaders.
+        p Query Parameters:
+        ul
+            li skip (optional, default: 0)
+            li limit (optional, default: 10)
         p Example URL:
-            strong
-                a(href="#{baseUrl}findUploader&Source/USD") #{baseUrl}findUploader&Source/USD
+        pre
+            code #{baseUrl}/uploaderList?skip=0&limit=10
 
-        p Response:
-            | Each item in the response includes:
+        // --- Source List ---
+        h3 GET /sourceList
+        p Retrieves unique sources filtered by uploader.
+        p Query Parameters:
         ul
-            li currencyCode: | The ISO currency code (e.g., USD, EUR).
-            li currencyName: | The full name of the currency.
-            li uploadedBy: | The name of the user who submitted the rate.
-            li source: | The origin or source of the currency rate.
-        p Notes:
-        ul
-            li Performs a **case-insensitive** match on the currency code.
-            li Groups results by both uploader and source to avoid duplicates.
-            li Results are sorted alphabetically by `uploadedBy` and then by `source`.
-            li Returns HTTP 404 if no matching combinations are found.
-
-        h3 1. Retrieve All Uploaders
-        p
-            | Retrieves a complete list of all users who have submitted currency exchange rates.
-            | This endpoint provides an overview of contributors within the system.
-        p
-            strong GET /uploaderList
+            li uploader (optional, default: admin123)
+            li skip, limit (pagination)
         p Example URL:
-            strong
-                a(href="#{baseUrl}uploaderList") #{baseUrl}uploaderList
+        pre
+            code #{baseUrl}/sourceList?uploader=admin123&skip=0&limit=10
 
-        p Response:
-            | Each item includes:
+        // --- Currency List ---
+        h3 GET /currencyList
+        p Retrieves unique currencies filtered by uploader and source.
+        p Query Parameters:
         ul
-            li uploadedBy: | The name of the uploader.
-        p Notes:
-        ul
-            li Results are sorted alphabetically by `uploadedBy`.
-            li Returns HTTP 404 if no uploaders exist in the system.
-
-        h3 2. Retrieve Sources by Uploader
-        p
-            | This endpoint fetches all sources associated with a specific uploader.
-            | It allows clients to understand which sources were used by a particular contributor to submit currency rates.
-        p
-            strong GET /sourceList?uploader=&lt;uploader&gt;
+            li uploader (optional, default: admin123)
+            li source (optional, default: MM Exchange)
+            li skip, limit (pagination)
         p Example URL:
-            strong
-                a(href="#{baseUrl}sourceList?uploader=admin123") #{baseUrl}sourceList?uploader=admin123
+        pre
+            code #{baseUrl}/currencyList?uploader=admin123&source=MM%20Exchange&skip=0&limit=10
 
-        p Response:
-            | Each item contains:
+        // --- Currency Uploader & Source ---
+        h3 GET /findUploader&Source/:currencyCode
+        p Returns all uploader-source pairs for a given currency code.
+        p URL Parameters:
         ul
-            li source: | The name of the source.
-        p Notes:
-        ul
-            li If the `uploader` parameter is omitted, a default uploader is used.
-            li The match on the uploader is case-insensitive.
-            li Returns HTTP 404 if no sources are found for the specified uploader.
-
-        h3 3. Retrieve Currencies by Source and Uploader
-        p
-            | Retrieves all currencies that a specific uploader has submitted under a particular source.
-            | This endpoint helps clients identify which currencies are available from a given source for a contributor.
-        p
-            strong GET /currencyList?source=&lt;source&gt;&uploader=&lt;uploader&gt;
+            li currencyCode (e.g., USD)
+        p Query Parameters:
+            ul
+                li skip, limit (pagination)
         p Example URL:
-            strong
-                a(href="#{baseUrl}currencyList?source=MM Exchange&uploader=admin123") #{baseUrl}currencyList?source=MM Exchange&uploader=admin123
+        pre
+            code #{baseUrl}/findUploader&Source/USD?skip=0&limit=10
 
-        p Response:
-            | Each item contains:
+        // --- Add Currency Rate ---
+        h3 POST /add
+        p Adds a new currency exchange rate. JWT authentication required.
+        p Body Parameters (JSON):
         ul
-            li currencyCode: | ISO currency code (e.g., USD, EUR).
-            li currencyName: | The full name of the currency.
-        p Notes:
-        ul
-            li Performs **case-insensitive** matching for both `source` and `uploader`.
-            li Results are sorted alphabetically by `currencyCode`.
-
-        h3 4. Add a New Currency Rate (JWT Required)
-        p
-            | Allows an authenticated user to add a new currency rate to the system.
-            | Upon successful addition, a Socket.IO event is emitted to notify subscribers in real-time.
-        p
-            strong POST /add
+            li currencyCode
+            li unit
+            li buyRate
+            li sellRate
+            li uploadedDate (YYYY-MM-DD HH:mm:ss)
+            li source
         p Example URL:
-            strong
-                a(href="#{baseUrl}add") #{baseUrl}add
+        pre
+            code #{baseUrl}/add
 
-        p Request Body (Required Fields):
+        // --- Delete Currency Rate ---
+        h3 DELETE /delete/:id
+        p Deletes a currency exchange rate. JWT authentication required.
+        p URL Parameters:
         ul
-            li currencyCode (string): | ISO code of the currency (e.g., USD, EUR).
-            li unit (number): | The unit value for the currency rate.
-            li buyRate (number): | Buying rate of the currency.
-            li sellRate (number): | Selling rate of the currency.
-            li uploadedDate (YYYY-MM-DD HH:mm:ss): | Timestamp of the rate submission. Must not be in the future.
-            li source (string): | Source of the currency rate.
-        p Notes:
-        ul
-            li Returns HTTP 400 if any required fields are missing or the date format is invalid.
-            li Returns HTTP 409 if an identical rate already exists for the same uploader, source, and currency.
-            li Emits a Socket.IO event to notify subscribers upon successful addition.
-
-        h3 5. Delete a Currency Rate (JWT Required)
-        p
-            | Enables an authenticated user to delete a specific currency rate using its unique identifier.
-            | Only the uploader or a designated admin can perform this operation.
-        p
-            strong DELETE /delete/:id
+            li id - Currency rate document ID
         p Example URL:
-            strong
-                a(href="#{baseUrl}delete/64e8d3f2a2b7b2a5c1f12345") #{baseUrl}delete/64e8d3f2a2b7b2a5c1f12345
+        pre
+            code #{baseUrl}/delete/64ebf0b9c3a1f24e3e6d7d1a
 
-        p Notes:
-        ul
-            li Returns HTTP 403 if a user attempts to delete a rate uploaded by another user.
-            li Returns HTTP 204 if deletion is successful.
-
-        h3 6. Retrieve a Currency Rate by ID (Includes Percentage Change)
-        p
-            | Retrieves a single currency rate by its unique identifier, along with the calculated percentage change compared to the most recent previous rate for the same currency, unit, source, and uploader.
-        p
-            strong GET /:id
+        // --- Get Currency Rate by ID ---
+        h3 GET /:id
+        p Retrieves a currency exchange rate by ID with percentage change.
+        p URL Parameters:
+            ul
+                li id - Currency rate document ID
         p Example URL:
-            strong
-                a(href="#{baseUrl}68aebc40a6e743a5b92498b6") #{baseUrl}68aebc40a6e743a5b92498b6
+        pre
+            code #{baseUrl}/64ebf0b9c3a1f24e3e6d7d1a
 
-        p Notes:
+        // --- Latest Currency Rate ---
+        h3 GET /:currencyCode/latest
+        p Retrieves the latest currency rate for a currency code. Use "ALL" to get all latest rates.
+        p Query Parameters:
         ul
-            li Percentage change is computed relative to the most recent previous rate for the same currency, unit, source, and uploader.
-            li Returns HTTP 404 if the specified ID is not found.
-
-        h3 7. Retrieve the Latest Currency Rate
-        p
-            | Fetches the most recent currency rate for a specific currency or for all currencies from a given source and uploader.
-        p
-            strong GET /:currencyCode/latest?source=&uploader=
-        p Single currency example:
-            strong
-                a(href="#{baseUrl}USD/latest?source=MM Exchange&uploader=admin123") #{baseUrl}USD/latest?source=MM Exchange&uploader=admin123
-        p All currencies example:
-            strong
-                a(href="#{baseUrl}ALL/latest?source=MM Exchange&uploader=admin123") #{baseUrl}ALL/latest?source=MM Exchange&uploader=admin123
-
-        p Notes:
-        ul
-            li Use `ALL` as the `currencyCode` to fetch the latest rates for all currencies.
-            li Returns HTTP 404 if no rate is found for the specified currency/source/uploader combination.
-
-        h3 8. Retrieve Currency Rate by Date
-        p
-            | Fetches currency rates for a specified date. This endpoint supports retrieval of a single currency or all currencies and allows pagination using `skip` and `limit` query parameters.
-        p
-            strong GET /:currencyCode/:date?skip=0&limit=10
-        p Single currency example:
-            strong
-                a(href="#{baseUrl}USD/2025-08-27?source=MM Exchange&uploader=admin123&skip=0&limit=10") #{baseUrl}USD/2025-08-27?source=MM Exchange&uploader=admin123&skip=0&limit=10
-        p All currencies example:
-            strong
-                a(href="#{baseUrl}ALL/2025-08-27?source=MM Exchange&uploader=admin123&skip=0&limit=10") #{baseUrl}ALL/2025-08-27?source=MM Exchange&uploader=admin123&skip=0&limit=10
-
-        p Notes:
-        ul
-            li Supports pagination through `skip` and `limit` parameters.
-            li Returns HTTP 404 if no rates exist for the given date.
-            li Dates are interpreted in the Asia/Yangon timezone.
-
-        h3 9. Retrieve Currency Rate Count by Date
-        p
-            | Returns the total number of currency rates available for a specific currency on a given date.
-            | Optional query parameters allow filtering by source and uploader.
-        p
-            strong GET /count/:currencyCode/:date
+            li source, uploader (optional, default: MM Exchange, admin123)
         p Example URL:
-            strong
-                a(href="#{baseUrl}count/USD/2025-08-27?source=MM Exchange&uploader=admin123") #{baseUrl}count/USD/2025-08-27?source=MM Exchange&uploader=admin123
+        pre
+            code #{baseUrl}/USD/latest?uploader=admin123&source=MM%20Exchange
 
-        p Notes:
+        // --- Currency Rate by Date ---
+        h3 GET /:currencyCode/:date
+        p Retrieves currency rate for a specific date. Use "ALL" for all currencies.
+        p Query Parameters:
         ul
-            li Returns zero if no rates exist for the specified currency and date.
-
-        h3 10. Retrieve Currency Rates Between Two Dates
-        p
-            | Retrieves currency rates for a specified period between two dates. Can fetch a single currency or all currencies. Supports pagination via `skip` and `limit`.
-        p
-            strong GET /:currencyCode/:fromDate/:toDate?skip=0&limit=10
-        p Single currency example:
-            strong
-                a(href="#{baseUrl}USD/2025-08-01/2025-08-27?source=MM Exchange&uploader=admin123&skip=0&limit=10") #{baseUrl}USD/2025-08-01/2025-08-27?source=MM Exchange&uploader=admin123&skip=0&limit=10
-        p All currencies example:
-            strong
-                a(href="#{baseUrl}ALL/2025-08-01/2025-08-27?source=MM Exchange&uploader=admin123&skip=0&limit=10") #{baseUrl}ALL/2025-08-01/2025-08-27?source=MM Exchange&uploader=admin123&skip=0&limit=10
-
-        p Notes:
-        ul
-            li Date range is inclusive.
-            li Returns HTTP 404 if no rates exist within the specified period.
-            li Supports pagination through `skip` and `limit`.
-            li Dates are interpreted in the Asia/Yangon timezone.
-
-        h3 11. Retrieve Currency Rate Count Between Two Dates
-        p
-            | Returns the total number of currency rates available between two specified dates for a given currency. Optional filters for source and uploader may be applied.
-        p
-            strong GET /count/:currencyCode/:fromDate/:toDate
+            li skip, limit
+            li source, uploader (optional, default: MM Exchange, admin123)
+        p URL Parameters:
+            ul
+                li currencyCode
+                li date (YYYY-MM-DD)
         p Example URL:
-            strong
-                a(href="#{baseUrl}count/USD/2025-08-01/2025-08-27?source=MM Exchange&uploader=admin123") #{baseUrl}count/USD/2025-08-01/2025-08-27?source=MM Exchange&uploader=admin123
+        pre
+            code #{baseUrl}/USD/2025-08-27?uploader=admin123&source=Exchange%20Myanmar&skip=0&limit=10
 
-        h2 General Notes
+        // --- Currency Rate by Date Range ---
+        h3 GET /:currencyCode/:fromDate/:toDate
+        p Retrieves currency rates between two dates.
+        p Query Parameters:
         ul
-            li All dates and times are handled in the Asia/Yangon timezone.
-            li The `uploadedDate` field must not be set to a future timestamp.
-            li Parameters `skip` and `limit` are used for pagination. `skip` specifies the number of records to skip, `limit` specifies the maximum number of records returned.
-            li Many GET endpoints are cached for 60 seconds to optimize performance; cache automatically refreshes when underlying data changes.
-            li Percentage change values are calculated relative to the most recent previous rate for the same currency, unit, source, and uploader.
+            li skip, limit
+            li source, uploader (optional, default: MM Exchange, admin123)
+        p URL Parameters:
+            ul
+                li currencyCode
+                li fromDate (YYYY-MM-DD)
+                li toDate (YYYY-MM-DD)
+        p Example URL:
+        pre
+            code #{baseUrl}/USD/2025-08-01/2025-08-27?uploader=admin123&source=MM%20Exchange&skip=0&limit=10

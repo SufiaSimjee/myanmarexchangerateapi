@@ -15,6 +15,26 @@ let defaultUploader = process.env.DEFAULT_UPLOADER;
 
 currencyRouter.get("/uploaderList", async (req, res) => {
     try {
+        let { skip, limit } = req.query;
+
+        skip = parseInt(skip) || 0;
+        limit = parseInt(limit) || 10;
+
+        if (isNaN(skip) || isNaN(limit) || skip < 0 || limit < 1) {
+            return res.status(400).json({
+                message: "'skip' must be 0 or greater and 'limit' must be at least 1."
+            });
+        }
+
+
+        const totalCount = await CurrencyRate.distinct("uploadedBy").then(arr => arr.length);
+
+        if (totalCount === 0) {
+            return res.status(404).json({
+                message: "No uploaders found in the database.",
+                totalCount: 0
+            });
+        }
 
         const uniqueUploader = await CurrencyRate.aggregate([
             {
@@ -30,20 +50,30 @@ currencyRouter.get("/uploaderList", async (req, res) => {
             },
             {
                 $sort: { uploadedBy: 1 }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
             }
         ]);
 
 
         if (!uniqueUploader) {
             return res.status(404).json({
-                message: "No uploader found in the database.",
-                count: 0
+                message: "No uploader found in the database for the given pagination.",
+                totalCount: totalCount,
+                skip: skip,
+                limit: limit,
             });
         }
 
         return res.status(200).json({
             message: "Uploader List retrieved successfully.",
-            count: uniqueUploader?.length,
+            totalCount: totalCount,
+            skip: skip,
+            limit: limit,
             data: uniqueUploader,
         });
 
@@ -58,12 +88,31 @@ currencyRouter.get("/uploaderList", async (req, res) => {
 
 currencyRouter.get("/sourceList", async (req, res) => {
     try {
-        let {uploader} = req.query;
+        let {uploader, skip, limit} = req.query;
 
         if (!uploader) {
             uploader = defaultUploader;
         }
 
+        // Validate pagination parameters
+        skip = parseInt(skip) || 0;
+        limit = parseInt(limit) || 10;
+
+        if (isNaN(skip) || isNaN(limit) || skip < 0 || limit < 1) {
+            return res.status(400).json({
+                message: "'skip' must be 0 or greater and 'limit' must be at least 1."
+            });
+        }
+
+        const totalCount = await CurrencyRate.distinct("source", { uploadedBy: { $regex: `^${uploader}$`, $options: 'i' } }).then(arr => arr.length);
+
+        if (totalCount === 0) {
+            return res.status(404).json({
+                message: "No sources found in the database.",
+                uploader: uploader,
+                totalCount: 0
+            });
+        }
 
         const uniqueSources = await CurrencyRate.aggregate([
             {
@@ -84,13 +133,21 @@ currencyRouter.get("/sourceList", async (req, res) => {
             },
             {
                 $sort: { source: 1 }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
             }
         ]);
 
         if (!uniqueSources) {
             return res.status(404).json({
-                message: "No sources found in the database.",
-                count: 0,
+                message: "No sources found in the database for the given pagination.",
+                totalCount: totalCount,
+                skip: skip,
+                limit: limit,
                 uploader: uploader
             });
         }
@@ -98,7 +155,9 @@ currencyRouter.get("/sourceList", async (req, res) => {
         return res.status(200).json({
             message: "Sources retrieved successfully.",
             uploader: uploader,
-            count: uniqueSources?.length,
+            totalCount: totalCount,
+            skip: skip,
+            limit: limit,
             data: uniqueSources,
         });
 
@@ -112,7 +171,7 @@ currencyRouter.get("/sourceList", async (req, res) => {
 
 currencyRouter.get("/currencyList", async (req, res) => {
     try {
-        let {source, uploader} = req.query;
+        let {source, uploader, skip, limit} = req.query;
 
         if (!source) {
             source = defaultSource;
@@ -121,6 +180,33 @@ currencyRouter.get("/currencyList", async (req, res) => {
         if (!uploader) {
             uploader = defaultUploader;
         }
+
+        // Validate pagination parameters
+        skip = parseInt(skip) || 0;
+        limit = parseInt(limit) || 10;
+
+        if (isNaN(skip) || isNaN(limit) || skip < 0 || limit < 1) {
+            return res.status(400).json({
+                message: "'skip' must be 0 or greater and 'limit' must be at least 1."
+            });
+        }
+
+        const totalCount = await CurrencyRate.distinct("currencyCode", {
+            source: { $regex: `^${source}$`, $options: 'i' },
+            uploadedBy: { $regex: `^${uploader}$`, $options: 'i' }
+        }).then(arr => arr.length);
+
+
+
+        if (totalCount === 0) {
+            return res.status(404).json({
+                message: "No currencies found in the database.",
+                uploader: uploader,
+                source: source,
+                totalCount: 0
+            });
+        }
+
 
         const uniqueCurrencies = await CurrencyRate.aggregate([
             {
@@ -144,15 +230,23 @@ currencyRouter.get("/currencyList", async (req, res) => {
             },
             {
                 $sort: { currencyCode: 1 }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
             }
         ]);
 
         if (!uniqueCurrencies) {
             return res.status(404).json({
-                message: "No currencies found in the database.",
-                uploader: { $regex: `^${uploader}$`, $options: 'i' },
-                source: { $regex: `^${source}$`, $options: 'i' },
-                count: 0,
+                message: "No currencies found in the database for the given pagination.",
+                uploader: uploader,
+                source: source,
+                totalCount: totalCount,
+                skip: skip,
+                limit: limit,
             });
         }
 
@@ -160,7 +254,9 @@ currencyRouter.get("/currencyList", async (req, res) => {
             message: "Currencies retrieved successfully.",
             uploader: uploader,
             source: source,
-            count: uniqueCurrencies?.length,
+            totalCount: totalCount,
+            skip: skip,
+            limit: limit,
             data: uniqueCurrencies,
         });
 
@@ -176,6 +272,30 @@ currencyRouter.get("/currencyList", async (req, res) => {
 currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
     try {
         let {currencyCode} = req.params;
+
+        let { skip, limit } = req.query;
+
+        skip = parseInt(skip) || 0;
+        limit = parseInt(limit) || 10;
+
+        if (isNaN(skip) || isNaN(limit) || skip < 0 || limit < 1) {
+            return res.status(400).json({
+                message: "'skip' must be 0 or greater and 'limit' must be at least 1."
+            });
+        }
+
+        const totalCount = await CurrencyRate.distinct("uploadedBy", { currencyCode: { $regex: `^${currencyCode}$`, $options: 'i' } })
+            .then(uploaderArr => {
+                return CurrencyRate.distinct("source", { currencyCode: { $regex: `^${currencyCode}$`, $options: 'i' } })
+                    .then(sourceArr => uploaderArr.length * sourceArr.length);
+            });
+
+        if (totalCount === 0) {
+            return res.status(404).json({
+                message: "No currency uploader and source found in the database.",
+                totalCount: 0
+            });
+        }
 
         const uniqueUploaderAndSource = await CurrencyRate.aggregate([
             {
@@ -201,19 +321,29 @@ currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
             },
             {
                 $sort: { uploadedBy: 1, source: 1 }
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
             }
         ]);
 
-        if (!uniqueUploaderAndSource || uniqueUploaderAndSource?.length === 0) {
+        if (!uniqueUploaderAndSource) {
             return res.status(404).json({
-                message: "No currency uploader and source found in the database.",
-                count: 0,
+                message: "No currency uploader and source found in the database for the given pagination.",
+                totalCount: totalCount,
+                skip: skip,
+                limit: limit
             });
         }
 
         return res.status(200).json({
             message: "Currency uploader and source retrieved successfully.",
-            count: uniqueUploaderAndSource?.length,
+            totalCount: totalCount,
+            skip: skip,
+            limit: limit,
             data: uniqueUploaderAndSource,
         });
 
@@ -298,7 +428,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
 
         return res.status(201).json({ // 201 Created
             message: `Exchange rate for ${currencyCode} added successfully.`,
-            count: 1,
+            totalCount: 1,
             data: result,
         });
 
@@ -324,7 +454,7 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
         if (!exchangeRate) {
             return res.status(404).json({
                 message: `No currency exchange rate found with ID '${id}'.`,
-                count: 0
+                totalCount: 0
             });
         }
 
@@ -368,7 +498,7 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
         if (!exchangeRate) {
             return res.status(404).json({
                 message: `No currency exchange rate found with ID '${id}'.`,
-                count: 0
+                totalCount: 0
             });
         }
 
@@ -377,7 +507,7 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
 
         return res.status(200).json({ // 200 OK
             message: `Currency exchange rate with ID '${id}' has been retrieve successfully.`,
-            count: 1,
+            totalCount: 1,
             uploader: exchangeRate.uploadedBy,
             source: exchangeRate.source,
             data: rateWithChange
@@ -419,7 +549,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                     message: `No latest exchange rate found for currency '${normalizedCode}' from the default source.`,
                     uploader: uploader,
                     source: source,
-                    count: 0
+                    totalCount: 0
                 });
             }
 
@@ -427,7 +557,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 message: "Latest exchange rate retrieved successfully.",
                 uploader: uploader,
                 source: source,
-                count: 1,
+                totalCount: 1,
                 data: currencyRate
             });
         } else {
@@ -475,7 +605,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                     message: `No latest exchange rate found.`,
                     uploader: uploader,
                     source: source,
-                    count: 0
+                    totalCount: 0
                 });
             }
 
@@ -492,7 +622,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 message: "Exchange rate retrieved successfully.",
                 uploader: uploader,
                 source: source,
-                count: currencyRates?.length,
+                totalCount: currencyRates?.length,
                 data: currencyRates
             });
         }
@@ -511,7 +641,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
 currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}) ,async (req, res) => {
     try {
         const { currencyCode, date } = req.params;
-        const {skip, limit} = req.query;
+        let {skip, limit} = req.query;
 
         let {source, uploader} = req.query;
 
@@ -526,13 +656,11 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
             uploader = defaultUploader;
         }
 
-        if (!skip || !limit) {
-            return res.status(400).json({
-                message: "Both 'skip' and 'limit' query parameters are required for pagination."
-            });
-        }
 
-        if (skip < 0 || limit < 1) {
+        skip = parseInt(skip) || 0;
+        limit = parseInt(limit) || 10;
+
+        if (isNaN(skip) || isNaN(limit) || skip < 0 || limit < 1) {
             return res.status(400).json({
                 message: "'skip' must be 0 or greater and 'limit' must be at least 1."
             });
@@ -574,7 +702,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
                 message: `No exchange rate record found for '${currencyCode}' on ${date} from the default source.`,
                 uploader: uploader,
                 source: source,
-                count: count,
+                totalCount: count,
                 skip: skip,
                 limit: limit
             });
@@ -606,7 +734,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
                 message: `No exchange rate record found for '${currencyCode}' on ${date} from the default source.`,
                 uploader: uploader,
                 source: source,
-                count: count,
+                totalCount: count,
                 skip: skip,
                 limit: limit
             });
@@ -624,7 +752,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
             message: `Exchange rate for '${currencyCode}' on ${date} retrieved successfully.`,
             uploader: uploader,
             source: source,
-            count: count,
+            totalCount: count,
             skip: skip,
             limit: limit,
             data: currencyRates
@@ -640,88 +768,11 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
     }
 });
 
-
-currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
-    async (req, res) => {
-        try {
-            const { currencyCode, date } = req.params;
-            let {source, uploader} = req.query;
-
-            const normalizedCode = currencyCode.trim().toUpperCase();
-
-            if (!source) {
-                source = defaultSource;
-            }
-
-            if (!uploader) {
-                uploader = defaultUploader;
-            }
-
-            // Validate date format (YYYY-MM-DD)
-            if (!moment(date, "YYYY-MM-DD", true).isValid()) {
-                return res.status(400).json({
-                    message: "The date must be in 'YYYY-MM-DD' format. Example: 2025-08-25."
-                });
-            }
-
-            const startOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
-            const endOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
-
-            // Query DB
-            let count;
-
-            if(normalizedCode === "ALL") {
-                count = await CurrencyRate.countDocuments({
-                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
-                    source: { $regex: `^${source}$`, $options: 'i' },
-                    uploadedDate: { $gte: startOfDay, $lte: endOfDay }
-                });
-            }
-
-            if(normalizedCode !== "ALL") {
-                count = await CurrencyRate.countDocuments({
-                    currencyCode: normalizedCode,
-                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
-                    source: { $regex: `^${source}$`, $options: 'i' },
-                    uploadedDate: { $gte: startOfDay, $lte: endOfDay }
-                });
-            }
-
-
-            if (!count) {
-                return res.status(404).json({
-                    message: `No exchange rate records found for currency '${currencyCode}' on ${date}.`,
-                    uploader: uploader,
-                    source: source,
-                    count: 0
-                });
-            }
-
-            return res.status(200).json({
-                message: `Exchange rate record count fetched successfully for '${currencyCode}' on ${date}.`,
-                uploader: uploader,
-                source: source,
-                count: count
-            });
-
-        } catch (error) {
-            console.error("Error fetching currency rate count:", error);
-
-            return res.status(500).json({
-                message: "Something went wrong while fetching the exchange rate count. Please try again later.",
-                details: process.env.NODE_ENV === "development" ? error.message : undefined
-            });
-        }
-    }
-);
-
-
 currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode, fromDate, toDate } = req.params;
-        const {skip, limit} = req.query;
+        let {source, uploader, skip, limit} = req.query;
 
-        let {source, uploader} = req.query;
 
         const normalizedCode = currencyCode.trim().toUpperCase();
 
@@ -733,13 +784,10 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
             uploader = defaultUploader;
         }
 
-        if (!skip || !limit) {
-            return res.status(400).json({
-                message: "Both 'skip' and 'limit' query parameters are required for pagination."
-            });
-        }
+        skip = parseInt(skip) || 0;
+        limit = parseInt(limit) || 10;
 
-        if (skip < 0 || limit < 1) {
+        if (isNaN(skip) || isNaN(limit) || skip < 0 || limit < 1) {
             return res.status(400).json({
                 message: "'skip' must be 0 or greater and 'limit' must be at least 1."
             });
@@ -789,7 +837,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 message: `No exchange rate found for currency '${normalizedCode}' between ${fromDate} and ${toDate}.`,
                 uploader: uploader,
                 source: source,
-                count: count,
+                totalCount: count,
                 skip: skip,
                 limit: limit
             });
@@ -802,7 +850,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
-            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean({virtuals: true});
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
         }
 
         if(normalizedCode !== "ALL") {
@@ -811,7 +859,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
-            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean({virtuals: true});
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
         }
 
 
@@ -820,7 +868,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 message: `No exchange rate found for currency '${normalizedCode}' between ${fromDate} and ${toDate}.`,
                 uploader: uploader,
                 source: source,
-                count: count,
+                totalCount: count,
                 skip: skip,
                 limit: limit
             });
@@ -838,7 +886,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
             message: "Exchange rate retrieved successfully.",
             uploader: uploader,
             source: source,
-            count: count,
+            totalCount: count,
             skip: skip,
             limit: limit,
             data: currencyRates
@@ -854,7 +902,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
     }
 });
 
-currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
+/*currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
     async (req, res) => {
         try {
             const { currencyCode, fromDate, toDate } = req.params;
@@ -912,7 +960,7 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
                     message: `No currency rate records found for ${normalizedCode} between ${fromDate} and ${toDate}.`,
                     uploader: uploader,
                     source: source,
-                    count: 0
+                    totalCount: 0
                 });
             }
 
@@ -920,11 +968,11 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
                 message: `Found ${count} record(s) for ${normalizedCode} between ${fromDate} and ${toDate}.`,
                 uploader: uploader,
                 source: source,
-                count: count
+                totalCount: count
             });
 
         } catch (error) {
-            console.error("Error fetching currency rate count:", error.message);
+            console.error("Error fetching currency rate total count:", error.message);
 
             return res.status(500).json({
                 message: "Unexpected error occurred while fetching currency rate count.",
@@ -932,7 +980,84 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
             });
         }
     }
-);
+);*/
+
+
+
+/*currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
+    async (req, res) => {
+        try {
+            const { currencyCode, date } = req.params;
+            let {source, uploader} = req.query;
+
+            const normalizedCode = currencyCode.trim().toUpperCase();
+
+            if (!source) {
+                source = defaultSource;
+            }
+
+            if (!uploader) {
+                uploader = defaultUploader;
+            }
+
+            // Validate date format (YYYY-MM-DD)
+            if (!moment(date, "YYYY-MM-DD", true).isValid()) {
+                return res.status(400).json({
+                    message: "The date must be in 'YYYY-MM-DD' format. Example: 2025-08-25."
+                });
+            }
+
+            const startOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
+            const endOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
+
+            // Query DB
+            let count;
+
+            if(normalizedCode === "ALL") {
+                count = await CurrencyRate.countDocuments({
+                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                    source: { $regex: `^${source}$`, $options: 'i' },
+                    uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+                });
+            }
+
+            if(normalizedCode !== "ALL") {
+                count = await CurrencyRate.countDocuments({
+                    currencyCode: normalizedCode,
+                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                    source: { $regex: `^${source}$`, $options: 'i' },
+                    uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+                });
+            }
+
+
+            if (!count) {
+                return res.status(404).json({
+                    message: `No exchange rate records found for currency '${currencyCode}' on ${date}.`,
+                    uploader: uploader,
+                    source: source,
+                    totalCount: 0
+                });
+            }
+
+            return res.status(200).json({
+                message: `Exchange rate record total count fetched successfully for '${currencyCode}' on ${date}.`,
+                uploader: uploader,
+                source: source,
+                totalCount: count
+            });
+
+        } catch (error) {
+            console.error("Error fetching currency rate total count:", error);
+
+            return res.status(500).json({
+                message: "Something went wrong while fetching the exchange rate count. Please try again later.",
+                details: process.env.NODE_ENV === "development" ? error.message : undefined
+            });
+        }
+    }
+);*/
+
 
 
 

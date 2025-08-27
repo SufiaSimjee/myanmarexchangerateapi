@@ -7,10 +7,10 @@ TutorialRouter.get('/currency-docs', (req, res) => {
     try {
         const protocol = req.protocol;
         const host = req.get('host');
-        let baseUrl = `${protocol}://${host}/currency/`;
+        let baseUrl = `${protocol}://${host}/currency`;
 
         if(process.env.ON_RENDER === "true"){
-            baseUrl = 'https://myanmarexchangerateapi.onrender.com/currency/'
+            baseUrl = 'https://myanmarexchangerateapi.onrender.com/currency'
         }
 
         res.render('CurrencyDocs', { baseUrl });
@@ -25,10 +25,10 @@ TutorialRouter.get('/auth-docs', (req, res) => {
     try {
         const protocol = req.protocol;
         const host = req.get('host');
-        let baseUrl = `${protocol}://${host}/user/`;
+        let baseUrl = `${protocol}://${host}/user`;
 
         if(process.env.ON_RENDER === "true"){
-            baseUrl = 'https://myanmarexchangerateapi.onrender.com/user/'
+            baseUrl = 'https://myanmarexchangerateapi.onrender.com/user'
         }
 
         res.render('AuthDocs', { baseUrl });
@@ -43,10 +43,10 @@ TutorialRouter.get('/notification-docs', (req, res) => {
     try {
         const protocol = req.protocol;
         const host = req.get('host');
-        let baseUrl = `${protocol}://${host}/`;
+        let baseUrl = `${protocol}://${host}`;
 
         if(process.env.ON_RENDER === "true"){
-            baseUrl = 'https://myanmarexchangerateapi.onrender.com/'
+            baseUrl = 'https://myanmarexchangerateapi.onrender.com'
         }
 
         res.render('NotificationDocs', { baseUrl });
