@@ -71,8 +71,8 @@ const MetalRateSchema = new Schema({
     }
 }, {
     timestamps: true,
-    toJSON: { getters: true },
-    toObject: { getters: true }
+    toJSON: { getters: true, virtuals: true },
+    toObject: { getters: true, virtuals: true }
 });
 
 

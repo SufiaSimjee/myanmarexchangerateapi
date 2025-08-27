@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
-const {raw} = require("express");
+const yangonDate = require("../Helpers/YangonDate");
+const AccountRoles = require("../Helpers/AccountRoles");
 const { Schema, model } = mongoose;
 
 const UserSchema = new Schema({
@@ -23,14 +24,20 @@ const UserSchema = new Schema({
     },
     role: {
         type: String,
-        enum: ['admin', 'user'],
+        enum: AccountRoles,
         default: 'user'
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        get: (value) => yangonDate(value)
     }
-}, { timestamps: true });
+}, {
+    timestamps: true,
+    toJSON: { getters: true, virtuals: true },
+    toObject: { getters: true, virtuals: true }
+
+});
 
 // password hashing
 UserSchema.pre('save', function (next) {
@@ -48,16 +55,10 @@ UserSchema.pre('save', function (next) {
 UserSchema.methods.isValidPassword = async function(password) {
     try{
         const user = this;
-
-        if (!user.password) {
-            throw new Error("Password hash not set for this user");
-        }
-
         const isMatch = await bcrypt.compare(password, user.password);
-
         return isMatch;
     } catch (error){
-        console.error("Error while validating user password:", error.message);
+        console.error("Error while validating user password:", error);
         return false;
     }
 };
