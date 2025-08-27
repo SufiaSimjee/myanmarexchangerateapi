@@ -7,10 +7,10 @@ html(lang="en")
         h1 Currency API Documentation
         p Base URL:
             strong #{baseUrl}
-        p This API allows managing currency exchange rates including adding, retrieving, and deleting rates.
+        p This API allows managing currency exchange rates, including adding, retrieving, and deleting rates. It supports filtering by uploader, source, currency code, and date, as well as returning percentage changes between rates.
 
         h2 Authentication
-        p Some endpoints (Post, Delete) require JWT authentication. Include token in
+        p Some endpoints (POST, DELETE) require JWT authentication. Include your token in the
             strong Authorization
             |  header:
         pre Authorization: Bearer &lt;your_jwt_token&gt;
@@ -22,36 +22,42 @@ html(lang="en")
             strong GET /uploaderList
         p Example URL:
             strong #{baseUrl}uploaderList
+        p Returns a list of all users who have uploaded currency rates.
 
         h3 2. Get sources by uploader
         p
             strong GET /sourceList?uploader=&lt;uploader&gt;
         p Example URL:
             strong #{baseUrl}sourceList?uploader=testuser
+        p Returns all sources associated with a specific uploader.
 
         h3 3. Get currency list by source & uploader
         p
             strong GET /currencyList?source=&lt;source&gt;&uploader=&lt;uploader&gt;
         p Example URL:
             strong #{baseUrl}currencyList?source=Myanmar%20Market%20Price%20App&uploader=testuser
+        p Returns all currencies for a given source and uploader.
 
         h3 4. Add a new currency rate (JWT required)
         p
             strong POST /add
         p Example URL:
             strong #{baseUrl}add
+        p Adds a new currency rate to the database. Requires authentication.
 
         h3 5. Delete a currency rate (JWT required)
         p
             strong DELETE /delete/:id
         p Example URL:
             strong #{baseUrl}delete/64e8d3f2a2b7b2a5c1f12345
+        p Deletes a specific currency rate by its ID. Requires authentication.
 
-        h3 6. Get a currency rate by ID (Return Percentage Change)
+        h3 6. Get a currency rate by ID (Returns Percentage Change)
         p
             strong GET /:id
         p Example URL:
             strong #{baseUrl}64e8d3f2a2b7b2a5c1f12345
+        p Returns a single currency rate along with its percentage change compared to the previous rate.
 
         h3 7. Get latest currency rate
         p
@@ -60,6 +66,7 @@ html(lang="en")
             strong #{baseUrl}USD/latest?source=Myanmar%20Market%20Price%20App&uploader=testuser
         p All currencies example:
             strong #{baseUrl}ALL/latest?source=Myanmar%20Market%20Price%20App&uploader=testuser
+        p Returns the most recent currency rates. Use `ALL` for all currencies.
 
         h3 8. Get currency rate by date
         p
@@ -68,12 +75,14 @@ html(lang="en")
             strong #{baseUrl}USD/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
         p All currencies example:
             strong #{baseUrl}ALL/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+        p Returns currency rates for a specific date. Supports pagination via `skip` and `limit`.
 
         h3 9. Get currency rate count by date
         p
             strong GET /count/:currencyCode/:date
         p Example URL:
             strong #{baseUrl}count/USD/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser
+        p Returns the total number of rates available for the specified currency and date.
 
         h3 10. Get currency rates between two dates
         p
@@ -82,22 +91,25 @@ html(lang="en")
             strong #{baseUrl}USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
         p All currencies example:
             strong #{baseUrl}ALL/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+        p Returns currency rates between two dates. Use `skip` and `limit` for pagination.
 
         h3 11. Get currency rate count between two dates
         p
             strong GET /count/:currencyCode/:fromDate/:toDate
         p Example URL:
             strong #{baseUrl}count/USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser
+        p Returns the total number of currency rates available in the given date range.
 
         h2 Notes
         ul
-            li All dates are handled in Asia/Yangon timezone.
+            li All dates are handled in the Asia/Yangon timezone.
             li
                 strong uploadedDate
                 |  cannot be in the future.
-            li Use
+            li Parameters
                 strong skip
                 |  and
                 strong limit
-                |  for endpoints returning multiple results.
-            li Many GET endpoints are cached for 60 seconds and auto-refresh when data changes.
+                |  are used for pagination in endpoints returning multiple results. `skip` specifies the number of records to skip, while `limit` defines the maximum number of records returned.
+            li Many GET endpoints are cached for 60 seconds. Cached responses automatically refresh when the underlying data changes to ensure clients receive up-to-date information.
+            li Percentage change values are calculated compared to the most recent previous rate for the same currency, unit, source, and uploader.
