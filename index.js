@@ -130,100 +130,105 @@ try{
 
     let liveNotificationEnable = process.env.LIVE_NOTIFICATION === "true";
     if(liveNotificationEnable){
-        cron.schedule("* * * * * *", async () => {
-            let previousHashes = {};
-            const uploader = await CurrencyRate.aggregate([
-                {
-                    $group: {
-                        _id: "$uploadedBy"
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        uploadedBy: "$_id"
-                    }
-                }
-            ]);
-            for (let i = 0; i < uploader?.length; i++){
-                const uniqueSources = await CurrencyRate.aggregate([
-                    {
-                        $match: {
-                            uploadedBy: uploader[i].uploadedBy
-                        }
-                    },
+
+        io.on('connection', (socket) => {
+
+            cron.schedule("0 */1 * * * *", async () => {
+                let previousHashes = {};
+                const uploader = await CurrencyRate.aggregate([
                     {
                         $group: {
-                            _id: "$source"
+                            _id: "$uploadedBy"
                         }
                     },
                     {
                         $project: {
                             _id: 0,
-                            source: "$_id"
+                            uploadedBy: "$_id"
                         }
                     }
                 ]);
-
-                for (let j = 0; j < uniqueSources?.length; j++){
-                    const uniqueCurrencies = await CurrencyRate.aggregate([
+                for (let i = 0; i < uploader?.length; i++){
+                    const uniqueSources = await CurrencyRate.aggregate([
                         {
                             $match: {
-                                uploadedBy: uploader[i].uploadedBy,
-                                source: uniqueSources[j].source
+                                uploadedBy: uploader[i].uploadedBy
                             }
                         },
                         {
                             $group: {
-                                _id: "$currencyCode",
-                                currencyName: { $first: "$currencyName" }
+                                _id: "$source"
                             }
                         },
                         {
                             $project: {
                                 _id: 0,
-                                currencyCode: "$_id",
-                                currencyName: 1
+                                source: "$_id"
                             }
                         }
                     ]);
-                    for (let k = 0; k < uniqueCurrencies?.length; k++){
-                        const currencyRate = await CurrencyRate.findOne({
-                            uploadedBy: uploader[i].uploadedBy,
-                            source: uniqueSources[j].source,
-                            currencyCode: uniqueCurrencies[k].currencyCode,
-                        }).sort({ uploadedDate: -1 }).lean();
 
-                        const currencyRateString = JSON.stringify(currencyRate);
-                        const currentHash = crypto.createHash('sha1').update(currencyRateString).digest('hex').toString();
-
-                        const eventName = `${uploader[i].uploadedBy}_${uniqueSources[j].source}_${uniqueCurrencies[k].currencyCode}`;
-                        io.emit(eventName, currencyRateString);
-
-                        if(!previousHashes[eventName]) {
-                            previousHashes = {
-                                ...previousHashes,
-                                [eventName]: currentHash
+                    for (let j = 0; j < uniqueSources?.length; j++){
+                        const uniqueCurrencies = await CurrencyRate.aggregate([
+                            {
+                                $match: {
+                                    uploadedBy: uploader[i].uploadedBy,
+                                    source: uniqueSources[j].source
+                                }
+                            },
+                            {
+                                $group: {
+                                    _id: "$currencyCode",
+                                    currencyName: { $first: "$currencyName" }
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    currencyCode: "$_id",
+                                    currencyName: 1
+                                }
                             }
-                            io.emit(eventName, currencyRateString);
-                            console.log("Previous hash", previousHashes);
-                        }
+                        ]);
+                        for (let k = 0; k < uniqueCurrencies?.length; k++){
+                            const currencyRate = await CurrencyRate.findOne({
+                                uploadedBy: uploader[i].uploadedBy,
+                                source: uniqueSources[j].source,
+                                currencyCode: uniqueCurrencies[k].currencyCode,
+                            }).sort({ uploadedDate: -1 }).lean();
 
-                        if(previousHashes[eventName]) {
-                            if(previousHashes[eventName] !== currentHash){
+                            const currencyRateString = JSON.stringify(currencyRate);
+                            const currentHash = crypto.createHash('sha1').update(currencyRateString).digest('hex').toString();
+
+                            const eventName = `${uploader[i].uploadedBy}_${uniqueSources[j].source}_${uniqueCurrencies[k].currencyCode}`;
+                            if(!previousHashes[eventName]) {
+                                console.log(`First time event '${eventName}' detected. Storing hash: ${currentHash}`);
                                 previousHashes = {
                                     ...previousHashes,
                                     [eventName]: currentHash
-                                }
+                                };
+                                console.log(`Emitting '${eventName}' for the first time.`);
                                 io.emit(eventName, currencyRateString);
                             }
-                            console.log("Previous hash", previousHashes);
-                        }
 
+                            if(previousHashes[eventName]) {
+                                if(previousHashes[eventName] !== currentHash){
+                                    console.log(`Hash changed for '${eventName}'. Old: ${previousHashes[eventName]}, New: ${currentHash}`);
+                                    previousHashes[eventName] = currentHash;
+                                    console.log(`Emitting '${eventName}' with updated data.`)
+                                    io.emit(eventName, currencyRateString);
+                                }
+                                console.log(`No change detected for '${eventName}'. Skipping emit.`);
+
+                            }
+
+                        }
                     }
                 }
-            }
-        })
+            })
+        });
+
+
     }
 
 
