@@ -217,6 +217,8 @@ try{
                                     previousHashes[eventName] = currentHash;
                                     console.log(`Emitting '${eventName}' with updated data.`)
                                     io.emit(eventName, currencyRateString);
+                                } else{
+                                    console.log('Hash has not change. Skipping emitting.')
                                 }
                             }
 
