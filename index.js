@@ -132,9 +132,9 @@ try{
     if(liveExchangeRate){
 
         io.on('connection', (socket) => {
+            let previousHashes = {};
 
             cron.schedule("0 */1 * * * *", async () => {
-                let previousHashes = {};
                 const uploader = await CurrencyRate.aggregate([
                     {
                         $group: {
@@ -201,7 +201,8 @@ try{
                             const currentHash = crypto.createHash('sha1').update(currencyRateString).digest('hex').toString();
 
                             const eventName = `${uploader[i].uploadedBy}_${uniqueSources[j].source}_${uniqueCurrencies[k].currencyCode}`;
-                            if(!previousHashes[eventName]) {
+
+                            if (previousHashes[eventName] === undefined) {
                                 previousHashes = {
                                     ...previousHashes,
                                     [eventName]: currentHash
@@ -209,15 +210,15 @@ try{
                                 console.log(`Emitting '${eventName}' for the first time.`);
                                 io.emit(eventName, currencyRateString);
                             }
-
-                            if(previousHashes[eventName]) {
-                                if(previousHashes[eventName] !== currentHash){
-                                    previousHashes[eventName] = currentHash;
-                                    console.log(`Emitting '${eventName}' with updated data.`)
-                                    io.emit(eventName, currencyRateString);
-                                }
+                            else if (previousHashes[eventName] !== currentHash) {
+                                console.log(`Hash changed for '${eventName}'. Old: ${previousHashes[eventName]}, New: ${currentHash}`);
+                                previousHashes[eventName] = currentHash;
+                                console.log(`Emitting '${eventName}' with updated data.`);
+                                io.emit(eventName, currencyRateString);
                             }
-
+                            else {
+                                console.log(`xNo change for '${eventName}', skipping emit.`);
+                            }
                         }
                     }
                 }
