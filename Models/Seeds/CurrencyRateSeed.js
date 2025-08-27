@@ -5,9 +5,7 @@ const moment = require("moment-timezone");
 const CurrencyRates = [
     // Default system entries
     new CurrencyRate({
-        currencyName: "US Dollar",
         currencyCode: "USD",
-        currencyIcon: "💵",
         unit: 1,
         buyRate: 2100,
         sellRate: 2150,
@@ -16,9 +14,7 @@ const CurrencyRates = [
         uploadedBy: "System"
     }),
     new CurrencyRate({
-        currencyName: "Euro",
         currencyCode: "EUR",
-        currencyIcon: "💶",
         unit: 1,
         buyRate: 2300,
         sellRate: 2350,
@@ -27,9 +23,7 @@ const CurrencyRates = [
         uploadedBy: "System"
     }),
     new CurrencyRate({
-        currencyName: "British Pound",
         currencyCode: "GBP",
-        currencyIcon: "💷",
         unit: 1,
         buyRate: 2700,
         sellRate: 2750,
@@ -38,9 +32,7 @@ const CurrencyRates = [
         uploadedBy: "System"
     }),
     new CurrencyRate({
-        currencyName: "Japanese Yen",
         currencyCode: "JPY",
-        currencyIcon: "💴",
         unit: 1,
         buyRate: 15,
         sellRate: 16,
@@ -51,9 +43,7 @@ const CurrencyRates = [
 
     // Default admin entries
     new CurrencyRate({
-        currencyName: "US Dollar",
         currencyCode: "USD",
-        currencyIcon: "💵",
         unit: 1,
         buyRate: 4800,
         sellRate: 5000,
@@ -62,9 +52,7 @@ const CurrencyRates = [
         uploadedBy: "defaultadmin"
     }),
     new CurrencyRate({
-        currencyName: "Euro",
         currencyCode: "EUR",
-        currencyIcon: "💶",
         unit: 1,
         buyRate: 4900,
         sellRate: 5100,
@@ -73,9 +61,7 @@ const CurrencyRates = [
         uploadedBy: "defaultadmin"
     }),
     new CurrencyRate({
-        currencyName: "British Pound",
         currencyCode: "GBP",
-        currencyIcon: "💷",
         unit: 1,
         buyRate: 5000,
         sellRate: 5200,
@@ -84,9 +70,7 @@ const CurrencyRates = [
         uploadedBy: "defaultadmin"
     }),
     new CurrencyRate({
-        currencyName: "Japanese Yen",
         currencyCode: "JPY",
-        currencyIcon: "💴",
         unit: 1,
         buyRate: 50,
         sellRate: 60,
@@ -97,9 +81,7 @@ const CurrencyRates = [
 
     // Additional variations for testing
     new CurrencyRate({
-        currencyName: "US Dollar",
         currencyCode: "USD",
-        currencyIcon: "💵",
         unit: 1,
         buyRate: 5000,
         sellRate: 5200,
@@ -108,9 +90,7 @@ const CurrencyRates = [
         uploadedBy: "testuser"
     }),
     new CurrencyRate({
-        currencyName: "Euro",
         currencyCode: "EUR",
-        currencyIcon: "💶",
         unit: 1,
         buyRate: 5200,
         sellRate: 5400,
