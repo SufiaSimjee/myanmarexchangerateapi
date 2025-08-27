@@ -218,8 +218,6 @@ try{
                                     console.log(`Emitting '${eventName}' with updated data.`)
                                     io.emit(eventName, currencyRateString);
                                 }
-                                console.log(`No change detected for '${eventName}'. Skipping emit.`);
-
                             }
 
                         }
