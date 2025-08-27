@@ -81,7 +81,7 @@ CurrencyRateSchema.path("createdAt").get(yangonDate);
 CurrencyRateSchema.path("updatedAt").get(yangonDate);
 
 
-CurrencyRateSchema.pre('save', async function (next) {
+CurrencyRateSchema.pre('save',function (next) {
     try{
 
         let currencyName = CurrencyList[this.currencyCode].name;
@@ -94,22 +94,7 @@ CurrencyRateSchema.pre('save', async function (next) {
         if (currencyIcon) {
             this.currencyIcon = currencyIcon;
         }
-        const prevRates = await this.constructor.findOne({
-            currencyCode: this.currencyCode,
-            unit: this.unit,
-            source: { $regex: `^${this.source}$`, $options: 'i' },
-            uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' }
-        }).sort({ uploadedDate: -1 });
 
-        if(prevRates) {
-            const buyRateChange = ((this.buyRate - prevRates.buyRate) / prevRates.buyRate) * 100;
-            const sellRateChange = ((this.sellRate - prevRates.sellRate) / prevRates.sellRate) * 100;
-
-            this.$locals.percentageChange = {
-                buyRateChange: buyRateChange.toFixed(2) + "%",
-                sellRateChange: sellRateChange.toFixed(2) + "%"
-            };
-        }
         next();
     } catch (error){
         console.error("Error while setting currency name and currency icon before saving:", error.message);
@@ -117,17 +102,61 @@ CurrencyRateSchema.pre('save', async function (next) {
     }
 })
 
-CurrencyRateSchema.virtual("percentageChange").get(function () {
-    try{
-        return this.$locals.percentageChange || {
+
+// Define a method to calculate percentage change from previous entry from same source and uploader for same currency
+CurrencyRateSchema.methods.getPercentageChange = async function () {
+    try {
+        const prevRates = await this.constructor.aggregate([
+            {
+                $match: {
+                    $and: [
+                        { currencyCode: this.currencyCode },
+                        { unit: this.unit },
+                        { source: { $regex: `^${this.source}$`, $options: 'i' } },
+                        { uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' } }
+                    ]
+                }
+            },
+            { $sort: { uploadedDate: -1 } },
+            {
+                $project: {
+                    _id: 1,
+                    buyRate: 1,
+                    sellRate: 1,
+                    uploadedDate: 1
+                }
+            },
+            { $limit: 1 }
+        ]);
+
+        const prevRate = prevRates[0];
+
+        if (!prevRate || !prevRate.buyRate || !prevRate.sellRate) {
+            return {
+                buyRateChange: null,
+                sellRateChange: null
+            };
+        }
+
+        const buyRateChange = ((this.buyRate - prevRate.buyRate) / prevRate.buyRate) * 100;
+        const sellRateChange = ((this.sellRate - prevRate.sellRate) / prevRate.sellRate) * 100;
+
+        const result = this.toObject();
+        result.percentageChange = {
+            buyRateChange: buyRateChange !== null ? buyRateChange.toFixed(2) + "%" : null,
+            sellRateChange: sellRateChange !== null ? sellRateChange.toFixed(2) + "%" : null
+        };
+
+        return result;
+    } catch (err) {
+        const result = this.toObject();
+        result.percentageChange = {
             buyRateChange: null,
             sellRateChange: null
         };
-    } catch(error){
-        return null;
+        return result;
     }
-});
-
+};
 
 
 const CurrencyRate = model('CurrencyRate', CurrencyRateSchema);

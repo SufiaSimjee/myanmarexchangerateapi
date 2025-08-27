@@ -320,12 +320,15 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
             });
         }
 
+        const rateWithChange = await exchangeRate.getPercentageChange();
+
+
         return res.status(200).json({ // 200 OK
             message: `Currency exchange rate with ID '${id}' has been retrieve successfully.`,
             count: 1,
             uploader: exchangeRate.uploadedBy,
             source: exchangeRate.source,
-            data: exchangeRate
+            data: rateWithChange
         });
 
     } catch (error) {
