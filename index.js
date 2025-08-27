@@ -20,6 +20,7 @@ const userRouter = require("./Routers/UserRouter");
 const strategy = require("./Auth/JwtStrategy");
 const currencyRouter = require("./Routers/CurrencyRouter");
 const CurrencyRate = require("./Models/CurrencyRateSchema");
+const TutorialRouter = require("./Routers/TutorialRouter");
 
 
 
@@ -31,6 +32,7 @@ try{
     // Set Pug as the view engine
     app.set('view engine', 'pug');
     app.set('views', path.join(__dirname, 'views'));
+    app.use(TutorialRouter)
 
 
 
@@ -76,20 +78,6 @@ try{
             });
         }
     });
-
-    app.get('/currency-docs', (req, res) => {
-        try {
-            const protocol = req.protocol;
-            const host = req.get('host');
-            const baseUrl = `${protocol}://${host}/currency/`;
-
-            res.render('currencyDocs', { baseUrl });
-        } catch (error) {
-            console.error("Error rendering currency docs:", error);
-            res.status(500).send("An error occurred while rendering the currency documentation.");
-        }
-    });
-
 
 
     //set-up server
