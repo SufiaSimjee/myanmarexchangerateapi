@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const moment = require("moment-timezone");
 const ISO4217Codes = require("../Helpers/ISO4217Codes");
 const {CurrencyList} = require("../Helpers/CommonCurrency");
+const yangonDate = require("../Helpers/YangonDate");
 const { Schema, model } = mongoose;
 
 
@@ -47,6 +48,7 @@ const CurrencyRateSchema = new Schema({
     uploadedDate:{
         type: Date,
         index: true,
+        get: (value) => yangonDate(value),
         required: true,
         validate: {
             validator: function (value) {
@@ -67,7 +69,15 @@ const CurrencyRateSchema = new Schema({
         default: ""
     }
 
-},{timestamps: true});
+},{
+    timestamps: true,
+    toJSON: { getters: true },
+    toObject: { getters: true }
+
+});
+
+CurrencyRateSchema.path("createdAt").get(yangonDate);
+CurrencyRateSchema.path("updatedAt").get(yangonDate);
 
 
 CurrencyRateSchema.pre('save', function (next) {

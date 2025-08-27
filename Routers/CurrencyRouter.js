@@ -184,7 +184,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
         }
 
         // Convert uploadedDate to a moment object (assuming it's in "YYYY-MM-DD HH:mm:ss" or ISO format)
-        const unformattedDate = moment.tz(uploadedDate, ["YYYY-MM-DD HH:mm:ss", moment.ISO_8601], "Asia/Yangon");
+        const unformattedDate = moment.tz(uploadedDate, "Asia/Yangon");
 
         // Get current time in Yangon
         const currentDate = moment.tz("Asia/Yangon");

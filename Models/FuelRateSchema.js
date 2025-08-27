@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const moment = require("moment-timezone");
+const yangonDate = require("../Helpers/YangonDate");
 const { Schema, model } = mongoose;
 
 const FuelRateSchema = new Schema({
@@ -40,10 +41,11 @@ const FuelRateSchema = new Schema({
         required: true,
         trim: true
     },
-    uploadedDate: {
+    uploadedDate:{
         type: Date,
         index: true,
-        default: Date.now,
+        get: (value) => yangonDate(value),
+        required: true,
         validate: {
             validator: function (value) {
                 const uploadedDate = moment.tz(value, "Asia/Yangon");
@@ -62,7 +64,14 @@ const FuelRateSchema = new Schema({
         required: true,
         default: ""
     }
-}, { timestamps: true });
+}, {
+    timestamps: true,
+    toJSON: { getters: true },
+    toObject: { getters: true }
+});
+
+FuelRateSchema.path("createdAt").get(yangonDate);
+FuelRateSchema.path("updatedAt").get(yangonDate);
 
 const FuelRate = model("FuelRate", FuelRateSchema);
 
