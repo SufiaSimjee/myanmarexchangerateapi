@@ -87,7 +87,7 @@ The main purpose of this API is to inform users about daily exchange rates from 
 1. **pm2 (^6.0.8)** – Process manager for Node.js to run applications in production (To restart the node process if crashes occur).
 2. **pug (^3.0.3)** – Template engine for server-side rendering (To render tutorial written in html format).
 3. **cors (^2.8.5)** – To enable Cross-Origin Resource Sharing for allowing requests from different origins.
-
+4. **marked (^5.x)** – Converts Markdown (`.md`) files into HTML for rendering with Pug.
 
 ## Getting Started (Self Hosting)
 
