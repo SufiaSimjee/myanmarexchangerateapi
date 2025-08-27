@@ -173,6 +173,58 @@ currencyRouter.get("/currencyList", async (req, res) => {
 });
 
 
+currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
+    try {
+        let {currencyCode} = req.params;
+
+        const uniqueUploaderAndSource = await CurrencyRate.aggregate([
+            {
+                $match: {
+                    currencyCode: { $regex: `^${currencyCode}$`, $options: 'i' } // case-insensitive match
+                }
+            },
+            {
+                $group: {
+                    _id: { uploadedBy: "$uploadedBy", source: "$source" },
+                    currencyCode: { $first: "$currencyCode" },
+                    currencyName: { $first: "$currencyName" }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    currencyCode: 1,
+                    currencyName: 1,
+                    uploadedBy: "$_id.uploadedBy",
+                    source: "$_id.source"
+                }
+            },
+            {
+                $sort: { uploadedBy: 1, source: 1 }
+            }
+        ]);
+
+        if (!uniqueUploaderAndSource || uniqueUploaderAndSource?.length === 0) {
+            return res.status(404).json({
+                message: "No currency uploader and source found in the database.",
+                count: 0,
+            });
+        }
+
+        return res.status(200).json({
+            message: "Currency uploader and source retrieved successfully.",
+            count: uniqueUploaderAndSource?.length,
+            data: uniqueUploaderAndSource,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "An unexpected error occurred while fetching the currency uploader and source.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
+    }
+});
+
 currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
         let { currencyCode, unit, buyRate, sellRate, uploadedDate, source } = req.body;

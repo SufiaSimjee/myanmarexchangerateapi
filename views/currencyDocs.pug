@@ -17,12 +17,34 @@ html(lang="en")
 
         h2 Endpoints
 
+        h3 0. Get unique uploaders and sources for a currency
+        p
+            strong GET /findUploader&Source/:currencyCode
+        p Example URL:
+            strong #{baseUrl}findUploader&Source/USD
+        p Returns a list of all unique combinations of uploader and source for the specified currency code. Each item includes:
+        ul
+            li strong currencyCode: | The currency code.
+            li strong currencyName: | The name of the currency.
+            li strong uploadedBy: | The uploader of the currency rate.
+            li strong source: | The source of the currency rate.
+        p Notes:
+            ul
+                li Performs a **case-insensitive match** on currency code.
+                li Groups results by uploader and source.
+                li Results are sorted alphabetically by `uploadedBy` and then `source`.
+                li Returns 404 if no matching combinations are found.
+
         h3 1. Get all uploaders
         p
             strong GET /uploaderList
         p Example URL:
             strong #{baseUrl}uploaderList
         p Returns a list of all users who have uploaded currency rates.
+        p Notes:
+            ul
+                li Sorted alphabetically.
+                li Returns 404 if no uploaders exist.
 
         h3 2. Get sources by uploader
         p
@@ -30,6 +52,11 @@ html(lang="en")
         p Example URL:
             strong #{baseUrl}sourceList?uploader=testuser
         p Returns all sources associated with a specific uploader.
+        p Notes:
+            ul
+                li Uses default uploader if query parameter is missing.
+                li Case-insensitive matching on uploader.
+                li Returns 404 if no sources found.
 
         h3 3. Get currency list by source & uploader
         p
@@ -37,20 +64,44 @@ html(lang="en")
         p Example URL:
             strong #{baseUrl}currencyList?source=Myanmar%20Market%20Price%20App&uploader=testuser
         p Returns all currencies for a given source and uploader.
+        p Notes:
+            ul
+                li Case-insensitive matching on source and uploader.
+                li Returns currencyCode and currencyName.
+                li Sorted alphabetically by currencyCode.
 
         h3 4. Add a new currency rate (JWT required)
         p
             strong POST /add
         p Example URL:
             strong #{baseUrl}add
-        p Adds a new currency rate to the database. Requires authentication.
+        p Adds a new currency rate to the database.
+        p Required fields in request body:
+        ul
+            li currencyCode (string)
+            li unit (number)
+            li buyRate (number)
+            li sellRate (number)
+            li uploadedDate (YYYY-MM-DD HH:mm:ss or ISO format)
+            li source (string)
+        p Notes:
+            ul
+                li uploadedDate cannot be in the future.
+                li Returns 400 if required fields are missing or date invalid.
+                li Returns 409 if identical rate already exists for same uploader, source, and currency.
+                li Emits an event via Socket.IO after adding.
 
         h3 5. Delete a currency rate (JWT required)
         p
             strong DELETE /delete/:id
         p Example URL:
             strong #{baseUrl}delete/64e8d3f2a2b7b2a5c1f12345
-        p Deletes a specific currency rate by its ID. Requires authentication.
+        p Deletes a specific currency rate by ID.
+        p Notes:
+            ul
+                li Only uploader or default admin can delete.
+                li Returns 403 if user tries to delete another uploader's rate.
+                li Returns 204 if deletion successful.
 
         h3 6. Get a currency rate by ID (Returns Percentage Change)
         p
@@ -58,6 +109,10 @@ html(lang="en")
         p Example URL:
             strong #{baseUrl}68aebc40a6e743a5b92498b6
         p Returns a single currency rate along with its percentage change compared to the previous rate.
+        p Notes:
+            ul
+                li Percentage change is calculated from most recent previous rate for same currency, unit, source, uploader.
+                li Returns 404 if ID not found.
 
         h3 7. Get latest currency rate
         p
@@ -66,7 +121,10 @@ html(lang="en")
             strong #{baseUrl}USD/latest?source=Myanmar%20Market%20Price%20App&uploader=testuser
         p All currencies example:
             strong #{baseUrl}ALL/latest?source=Myanmar%20Market%20Price%20App&uploader=testuser
-        p Returns the most recent currency rates. Use `ALL` for all currencies.
+        p Notes:
+            ul
+                li Use `ALL` to fetch latest rates for all currencies.
+                li Returns 404 if no latest rate found.
 
         h3 8. Get currency rate by date
         p
@@ -75,14 +133,18 @@ html(lang="en")
             strong #{baseUrl}USD/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
         p All currencies example:
             strong #{baseUrl}ALL/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
-        p Returns currency rates for a specific date. Supports pagination via `skip` and `limit`.
+        p Notes:
+            ul
+                li Supports pagination using skip and limit.
+                li Returns 404 if no rates found for date.
+                li Dates are handled in Asia/Yangon timezone.
 
         h3 9. Get currency rate count by date
         p
             strong GET /count/:currencyCode/:date
         p Example URL:
             strong #{baseUrl}count/USD/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser
-        p Returns the total number of rates available for the specified currency and date.
+        p Returns total number of rates for given currency and date.
 
         h3 10. Get currency rates between two dates
         p
@@ -91,25 +153,23 @@ html(lang="en")
             strong #{baseUrl}USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
         p All currencies example:
             strong #{baseUrl}ALL/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
-        p Returns currency rates between two dates. Use `skip` and `limit` for pagination.
+        p Notes:
+            ul
+                li Use skip and limit for pagination.
+                li Returns 404 if no rates found in range.
+                li Dates inclusive, Asia/Yangon timezone.
 
         h3 11. Get currency rate count between two dates
         p
             strong GET /count/:currencyCode/:fromDate/:toDate
         p Example URL:
             strong #{baseUrl}count/USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser
-        p Returns the total number of currency rates available in the given date range.
+        p Returns total number of rates in the date range.
 
         h2 Notes
         ul
             li All dates are handled in the Asia/Yangon timezone.
-            li
-                strong uploadedDate
-                |  cannot be in the future.
-            li Parameters
-                strong skip
-                |  and
-                strong limit
-                |  are used for pagination in endpoints returning multiple results. `skip` specifies the number of records to skip, while `limit` defines the maximum number of records returned.
-            li Many GET endpoints are cached for 60 seconds. Cached responses automatically refresh when the underlying data changes to ensure clients receive up-to-date information.
+            li uploadedDate cannot be in the future.
+            li Parameters skip and limit are used for pagination. skip specifies number of records to skip, limit specifies max records returned.
+            li Many GET endpoints are cached for 60 seconds. Cache refreshes automatically when data changes.
             li Percentage change values are calculated compared to the most recent previous rate for the same currency, unit, source, and uploader.

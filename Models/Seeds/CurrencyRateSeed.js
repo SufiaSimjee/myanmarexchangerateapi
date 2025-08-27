@@ -346,6 +346,246 @@ const currencyRateJson = [
         "sellRate": 2.90,
         "uploadedDate": "2025-08-27T09:58:00",
         "source": "Ngwe Zay"
+    },
+    {
+        "currencyCode": "USD",
+        "unit": 1,
+        "buyRate": 4255.00,
+        "sellRate": 4355.00,
+        "uploadedDate": "2025-08-27T10:30:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "EUR",
+        "unit": 1,
+        "buyRate": 4955.00,
+        "sellRate": 5060.00,
+        "uploadedDate": "2025-08-27T10:30:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "SGD",
+        "unit": 1,
+        "buyRate": 3310.00,
+        "sellRate": 3385.00,
+        "uploadedDate": "2025-08-27T10:30:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "MYR",
+        "unit": 1,
+        "buyRate": 1009.47,
+        "sellRate": 1029.50,
+        "uploadedDate": "2025-08-27T10:30:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "CNY",
+        "unit": 1,
+        "buyRate": 595.19,
+        "sellRate": 607.49,
+        "uploadedDate": "2025-08-27T10:30:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "THB",
+        "unit": 1,
+        "buyRate": 131.17,
+        "sellRate": 134.45,
+        "uploadedDate": "2025-08-27T10:30:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "JPY",
+        "unit": 1,
+        "buyRate": 28.84,
+        "sellRate": 29.43,
+        "uploadedDate": "2025-08-27T10:30:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "USD",
+        "unit": 1,
+        "buyRate": 4255.00,
+        "sellRate": 4355.00,
+        "uploadedDate": "2025-08-26T17:14:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "EUR",
+        "unit": 1,
+        "buyRate": 4960.00,
+        "sellRate": 5070.00,
+        "uploadedDate": "2025-08-26T17:14:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "SGD",
+        "unit": 1,
+        "buyRate": 3315.00,
+        "sellRate": 3395.00,
+        "uploadedDate": "2025-08-26T17:14:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "MYR",
+        "unit": 1,
+        "buyRate": 1011.39,
+        "sellRate": 1031.42,
+        "uploadedDate": "2025-08-26T17:14:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "CNY",
+        "unit": 1,
+        "buyRate": 596.33,
+        "sellRate": 608.62,
+        "uploadedDate": "2025-08-26T17:14:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "THB",
+        "unit": 1,
+        "buyRate": 131.27,
+        "sellRate": 134.62,
+        "uploadedDate": "2025-08-26T17:14:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "JPY",
+        "unit": 1,
+        "buyRate": 28.90,
+        "sellRate": 29.49,
+        "uploadedDate": "2025-08-26T17:14:00",
+        "source": "MM Exchange"
+    },
+    {
+        "currencyCode": "GBP",
+        "unit": 1,
+        "buyRate": 5710.00,
+        "sellRate": 5710.00,
+        "uploadedDate": "2025-08-26T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "USD",
+        "unit": 1,
+        "buyRate": 4450.00,
+        "sellRate": 4450.00,
+        "uploadedDate": "2025-08-26T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "EUR",
+        "unit": 1,
+        "buyRate": 5095.00,
+        "sellRate": 5095.00,
+        "uploadedDate": "2025-08-26T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "SGD",
+        "unit": 1,
+        "buyRate": 3420.00,
+        "sellRate": 3420.00,
+        "uploadedDate": "2025-08-26T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "JPY",
+        "unit": 1,
+        "buyRate": 31.00,
+        "sellRate": 31.00,
+        "uploadedDate": "2025-08-26T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "CNY",
+        "unit": 1,
+        "buyRate": 6.10,
+        "sellRate": 6.10,
+        "uploadedDate": "2025-08-26T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "MYR",
+        "unit": 1,
+        "buyRate": 1052.00,
+        "sellRate": 1052.00,
+        "uploadedDate": "2025-08-26T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "THB",
+        "unit": 1,
+        "buyRate": 7.45,
+        "sellRate": 7.45,
+        "uploadedDate": "2025-08-26T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "GBP",
+        "unit": 1,
+        "buyRate": 5710.00,
+        "sellRate": 5710.00,
+        "uploadedDate": "2025-08-24T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "USD",
+        "unit": 1,
+        "buyRate": 4410.00,
+        "sellRate": 4410.00,
+        "uploadedDate": "2025-08-24T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "EUR",
+        "unit": 1,
+        "buyRate": 5095.00,
+        "sellRate": 5095.00,
+        "uploadedDate": "2025-08-24T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "SGD",
+        "unit": 1,
+        "buyRate": 3390.00,
+        "sellRate": 3390.00,
+        "uploadedDate": "2025-08-24T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "JPY",
+        "unit": 1,
+        "buyRate": 31.00,
+        "sellRate": 31.00,
+        "uploadedDate": "2025-08-24T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "CNY",
+        "unit": 1,
+        "buyRate": 6.10,
+        "sellRate": 6.10,
+        "uploadedDate": "2025-08-24T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "MYR",
+        "unit": 1,
+        "buyRate": 1060.00,
+        "sellRate": 1060.00,
+        "uploadedDate": "2025-08-24T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
+    },
+    {
+        "currencyCode": "THB",
+        "unit": 1,
+        "buyRate": 7.40,
+        "sellRate": 7.40,
+        "uploadedDate": "2025-08-24T09:00:00",
+        "source": "Myanmar Sansan Money Exchange"
     }
 ]
 
