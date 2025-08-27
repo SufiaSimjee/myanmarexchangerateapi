@@ -103,7 +103,10 @@ CurrencyRateSchema.pre('save',function (next) {
 })
 
 
-// Define a method to calculate percentage change from previous entry from same source and uploader for same currency
+// Method to calculate the percentage change in buy and sell rates
+// compared to the most recent previous entry for the same currency,
+// unit, source, and uploader.
+
 CurrencyRateSchema.methods.getPercentageChange = async function () {
     try {
         const prevRates = await this.constructor.aggregate([
@@ -142,6 +145,7 @@ CurrencyRateSchema.methods.getPercentageChange = async function () {
         const sellRateChange = ((this.sellRate - prevRate.sellRate) / prevRate.sellRate) * 100;
 
         const result = this.toObject();
+        result.currencyInfo = CurrencyList[this.currencyCode];
         result.percentageChange = {
             buyRateChange: buyRateChange !== null ? buyRateChange.toFixed(2) + "%" : null,
             sellRateChange: sellRateChange !== null ? sellRateChange.toFixed(2) + "%" : null
