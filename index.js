@@ -202,20 +202,16 @@ try{
 
                             const eventName = `${uploader[i].uploadedBy}_${uniqueSources[j].source}_${uniqueCurrencies[k].currencyCode}`;
                             if(!previousHashes[eventName]) {
-                                console.log(`First time event '${eventName}' detected. Storing hash: ${currentHash}`);
                                 previousHashes = {
                                     ...previousHashes,
                                     [eventName]: currentHash
                                 };
-                                console.log(`Emitting '${eventName}' for the first time.`);
                                 io.emit(eventName, currencyRateString);
                             }
 
                             if(previousHashes[eventName]) {
                                 if(previousHashes[eventName] !== currentHash){
-                                    console.log(`Hash changed for '${eventName}'. Old: ${previousHashes[eventName]}, New: ${currentHash}`);
                                     previousHashes[eventName] = currentHash;
-                                    console.log(`Emitting '${eventName}' with updated data.`)
                                     io.emit(eventName, currencyRateString);
                                 }
                             }
