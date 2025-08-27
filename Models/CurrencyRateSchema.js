@@ -84,8 +84,8 @@ CurrencyRateSchema.path("updatedAt").get(yangonDate);
 CurrencyRateSchema.pre('save',function (next) {
     try{
 
-        let currencyName = CurrencyList[this.currencyCode].name;
-        let currencyIcon = CurrencyList[this.currencyCode].icon;
+        let currencyName = CurrencyList[this.currencyCode]?.name;
+        let currencyIcon = CurrencyList[this.currencyCode]?.icon;
 
         if (currencyName !== undefined || currencyName !== null || !currencyName) {
             this.currencyName = currencyName;

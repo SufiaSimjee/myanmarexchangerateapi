@@ -38,6 +38,16 @@ const CurrencyList = {
         "code": "AED",
         "name_plural": "UAE dirhams"
     },
+    "LAK": {
+        "symbol": "LAK",
+        "name": "Lao Kip",
+        "symbol_native": "₭",
+        "decimal_digits": 0,
+        "rounding": 0,
+        "icon": "🇱🇦",
+        "code": "LAK",
+        "name_plural": "Lao Kip"
+    },
     "AFN": {
         "symbol": "Af",
         "name": "Afghan Afghani",
