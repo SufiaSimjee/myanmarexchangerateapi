@@ -129,7 +129,7 @@ try{
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
-    if(liveExchangeRate){
+    if (liveExchangeRate){
 
         io.on('connection', (socket) => {
             let previousHashes = {};
