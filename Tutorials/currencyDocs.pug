@@ -18,16 +18,20 @@ html(lang="en")
         h2 Endpoints
 
         h3 0. Get unique uploaders and sources for a currency
+        p Description:
+            | This endpoint retrieves a list of unique uploaders and sources available for a given currency.
+            | It helps you see who has provided rates and from which sources for the specified currency code.
         p
             strong GET /findUploader&Source/:currencyCode
         p Example URL:
             strong #{baseUrl}findUploader&Source/USD
+
         p Returns a list of all unique combinations of uploader and source for the specified currency code. Each item includes:
         ul
-            li strong currencyCode: | The currency code.
-            li strong currencyName: | The name of the currency.
-            li strong uploadedBy: | The uploader of the currency rate.
-            li strong source: | The source of the currency rate.
+            li currencyCode: | The currency code.
+            li currencyName: | The name of the currency.
+            li uploadedBy: | The uploader of the currency rate.
+            li source: | The source of the currency rate.
         p Notes:
             ul
                 li Performs a **case-insensitive match** on currency code.
@@ -36,140 +40,203 @@ html(lang="en")
                 li Returns 404 if no matching combinations are found.
 
         h3 1. Get all uploaders
+        p Description:
+            | This endpoint retrieves a list of all users who have uploaded currency rates.
+            | It provides an overview of every uploader available in the system.
         p
             strong GET /uploaderList
         p Example URL:
             strong #{baseUrl}uploaderList
-        p Returns a list of all users who have uploaded currency rates.
+
+        p Returns a list of all uploaders. Each item includes:
+        ul
+            li uploadedBy: | The name of the uploader.
         p Notes:
             ul
-                li Sorted alphabetically.
+                li Results are sorted alphabetically by `uploadedBy`.
                 li Returns 404 if no uploaders exist.
 
         h3 2. Get sources by uploader
+        p Description:
+            | This endpoint retrieves all sources associated with a specific uploader.
+            | It allows you to see from which sources a particular uploader has submitted currency rates.
         p
             strong GET /sourceList?uploader=&lt;uploader&gt;
         p Example URL:
-            strong #{baseUrl}sourceList?uploader=testuser
-        p Returns all sources associated with a specific uploader.
+            strong #{baseUrl}sourceList?uploader=admin123
+
+        p Returns a list of sources for the specified uploader. Each item includes:
+        ul
+            li source: | The name of the source.
         p Notes:
             ul
-                li Uses default uploader if query parameter is missing.
-                li Case-insensitive matching on uploader.
-                li Returns 404 if no sources found.
+                li Uses a default uploader if the `uploader` query parameter is missing.
+                li Performs a case-insensitive match on the uploader name.
+                li Returns 404 if no sources are found for the uploader.
+
 
         h3 3. Get currency list by source & uploader
+        p Description:
+            | This endpoint retrieves all currencies associated with a specific source and uploader.
+            | It allows you to see which currencies a particular uploader has submitted from a given source.
         p
             strong GET /currencyList?source=&lt;source&gt;&uploader=&lt;uploader&gt;
         p Example URL:
-            strong #{baseUrl}currencyList?source=Myanmar%20Market%20Price%20App&uploader=testuser
-        p Returns all currencies for a given source and uploader.
+            strong #{baseUrl}currencyList?source=Myanmar%20Market%20Price&uploader=admin123
+
+        p Returns a list of currencies for the specified source and uploader. Each item includes:
+        ul
+            li currencyCode: | The currency code (e.g., USD, EUR).
+            li currencyName: | The name of the currency.
         p Notes:
             ul
-                li Case-insensitive matching on source and uploader.
-                li Returns currencyCode and currencyName.
-                li Sorted alphabetically by currencyCode.
+                li Performs case-insensitive matching on both `source` and `uploader`.
+                li Results are sorted alphabetically by `currencyCode`.
+
 
         h3 4. Add a new currency rate (JWT required)
+        p Description:
+            | This endpoint allows authenticated users to add a new currency rate to the database.
+            | After successfully adding a rate, an event is emitted via Socket.IO to notify subscribers.
         p
             strong POST /add
         p Example URL:
             strong #{baseUrl}add
-        p Adds a new currency rate to the database.
-        p Required fields in request body:
+
+        p Required fields in the request body:
         ul
-            li currencyCode (string)
-            li unit (number)
-            li buyRate (number)
-            li sellRate (number)
-            li uploadedDate (YYYY-MM-DD HH:mm:ss or ISO format)
-            li source (string)
+            li currencyCode (string): | The currency code (e.g., USD, EUR).
+            li unit (number): | The unit of the currency.
+            li buyRate (number): | The buying rate.
+            li sellRate (number): | The selling rate.
+            li uploadedDate (YYYY-MM-DD HH:mm:ss): | The date and time the rate was uploaded.
+            li source (string): | The source of the currency rate.
         p Notes:
             ul
-                li uploadedDate cannot be in the future.
-                li Returns 400 if required fields are missing or date invalid.
-                li Returns 409 if identical rate already exists for same uploader, source, and currency.
-                li Emits an event via Socket.IO after adding.
+                li `uploadedDate` cannot be in the future.
+                li Returns 400 if required fields are missing or the date is invalid.
+                li Returns 409 if an identical rate already exists for the same uploader, source, and currency.
+                li Emits an event via Socket.IO after successfully adding the rate.
+
 
         h3 5. Delete a currency rate (JWT required)
+        p Description:
+            | This endpoint allows authenticated users to delete a specific currency rate by its ID.
+            | Only the uploader who added the rate or a default admin can perform the deletion.
         p
             strong DELETE /delete/:id
         p Example URL:
             strong #{baseUrl}delete/64e8d3f2a2b7b2a5c1f12345
-        p Deletes a specific currency rate by ID.
+
         p Notes:
             ul
-                li Only uploader or default admin can delete.
-                li Returns 403 if user tries to delete another uploader's rate.
-                li Returns 204 if deletion successful.
+                li Only the uploader or the default admin can delete the rate.
+                li Returns 403 if a user attempts to delete another uploader's rate.
+                li Returns 204 if the deletion is successful.
+
 
         h3 6. Get a currency rate by ID (Returns Percentage Change)
+        p Description:
+            | This endpoint retrieves a single currency rate by its ID, along with the percentage change
+            | compared to the most recent previous rate for the same currency, unit, source, and uploader.
         p
             strong GET /:id
         p Example URL:
             strong #{baseUrl}68aebc40a6e743a5b92498b6
-        p Returns a single currency rate along with its percentage change compared to the previous rate.
+
         p Notes:
             ul
-                li Percentage change is calculated from most recent previous rate for same currency, unit, source, uploader.
-                li Returns 404 if ID not found.
+                li Percentage change is calculated based on the most recent previous rate for the same currency, unit, source, and uploader.
+                li Returns 404 if the specified ID is not found.
+
 
         h3 7. Get latest currency rate
+        p Description:
+            | This endpoint retrieves the latest currency rate for a specific currency or all currencies
+            | from a given source and uploader.
         p
             strong GET /:currencyCode/latest?source=&uploader=
         p Single currency example:
-            strong #{baseUrl}USD/latest?source=Myanmar%20Market%20Price%20App&uploader=testuser
+            strong #{baseUrl}USD/latest?source=Myanmar%20Market%20Price&uploader=admin123
         p All currencies example:
-            strong #{baseUrl}ALL/latest?source=Myanmar%20Market%20Price%20App&uploader=testuser
+            strong #{baseUrl}ALL/latest?source=Myanmar%20Market%20Price&uploader=admin123
+
         p Notes:
             ul
-                li Use `ALL` to fetch latest rates for all currencies.
-                li Returns 404 if no latest rate found.
+                li Use `ALL` as the `currencyCode` to fetch the latest rates for all currencies.
+                li Returns 404 if no latest rate is found for the specified currency/source/uploader.
+
 
         h3 8. Get currency rate by date
+        p Description:
+            | This endpoint retrieves currency rates for a specific date. You can fetch rates for a single currency or all currencies
+            | from a given source and uploader. Supports pagination through `skip` and `limit` parameters.
         p
             strong GET /:currencyCode/:date?skip=0&limit=10
         p Single currency example:
-            strong #{baseUrl}USD/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+            strong #{baseUrl}USD/2025-08-27?source=Myanmar%20Market%20Price&uploader=admin123&skip=0&limit=10
         p All currencies example:
-            strong #{baseUrl}ALL/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+            strong #{baseUrl}ALL/2025-08-27?source=Myanmar%20Market%20Price&uploader=admin123&skip=0&limit=10
+
         p Notes:
             ul
-                li Supports pagination using skip and limit.
-                li Returns 404 if no rates found for date.
-                li Dates are handled in Asia/Yangon timezone.
+                li Supports pagination using `skip` and `limit`.
+                li Returns 404 if no rates are found for the specified date.
+                li Dates are handled in the Asia/Yangon timezone.
+
 
         h3 9. Get currency rate count by date
+        p Description:
+            | This endpoint retrieves the total number of currency rates available for a specific currency on a given date,
+            | filtered by source and uploader if provided.
         p
             strong GET /count/:currencyCode/:date
         p Example URL:
-            strong #{baseUrl}count/USD/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser
-        p Returns total number of rates for given currency and date.
+            strong #{baseUrl}count/USD/2025-08-27?source=Myanmar%20Market%20Price&uploader=admin123
+
+        p Returns:
+            | The total count of currency rates for the specified currency and date.
+        p Notes:
+            ul
+                li Can be filtered by `source` and `uploader`.
+                li Returns 0 if no rates are found for the specified currency and date.
+
 
         h3 10. Get currency rates between two dates
+        p Description:
+            | This endpoint retrieves currency rates between two specified dates. You can fetch rates for a single currency or all currencies
+            | from a given source and uploader. Supports pagination using `skip` and `limit`.
         p
             strong GET /:currencyCode/:fromDate/:toDate?skip=0&limit=10
         p Single currency example:
-            strong #{baseUrl}USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+            strong #{baseUrl}USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price&uploader=admin123&skip=0&limit=10
         p All currencies example:
-            strong #{baseUrl}ALL/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+            strong #{baseUrl}ALL/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price&uploader=admin123&skip=0&limit=10
+
         p Notes:
             ul
-                li Use skip and limit for pagination.
-                li Returns 404 if no rates found in range.
-                li Dates inclusive, Asia/Yangon timezone.
+                li Use `skip` and `limit` for pagination.
+                li Returns 404 if no rates are found within the specified date range.
+                li Date range is inclusive and handled in the Asia/Yangon timezone.
+
 
         h3 11. Get currency rate count between two dates
+        p Description:
+            | This endpoint retrieves the total number of currency rates available between two specified dates
+            | for a given currency, optionally filtered by source and uploader.
         p
             strong GET /count/:currencyCode/:fromDate/:toDate
         p Example URL:
-            strong #{baseUrl}count/USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser
-        p Returns total number of rates in the date range.
+            strong #{baseUrl}count/USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price&uploader=admin123
+
+        p Returns:
+            | The total count of currency rates within the specified date range.
 
         h2 Notes
         ul
             li All dates are handled in the Asia/Yangon timezone.
-            li uploadedDate cannot be in the future.
-            li Parameters skip and limit are used for pagination. skip specifies number of records to skip, limit specifies max records returned.
+            li `uploadedDate` cannot be in the future.
+            li Parameters `skip` and `limit` are used for pagination. `skip` specifies the number of records to skip, `limit` specifies the maximum number of records returned.
             li Many GET endpoints are cached for 60 seconds. Cache refreshes automatically when data changes.
             li Percentage change values are calculated compared to the most recent previous rate for the same currency, unit, source, and uploader.
+
