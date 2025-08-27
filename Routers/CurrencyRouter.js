@@ -149,8 +149,8 @@ currencyRouter.get("/currencyList", async (req, res) => {
         if (!uniqueCurrencies) {
             return res.status(404).json({
                 message: "No currencies found in the database.",
-                uploader: uploader,
-                source: source,
+                uploader: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' },
                 count: 0,
             });
         }
@@ -214,7 +214,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
                 { unit: unit },
                 { buyRate: buyRate },
                 { sellRate: sellRate },
-                { source: source},
+                { source: { $regex: `^${source}$`, $options: 'i' }},
                 { uploadedDate: formattedDate },
                 { uploadedBy: username}
             ]
@@ -354,8 +354,8 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
         if(normalizedCode !== "ALL") {
             const currencyRate = await CurrencyRate.findOne({
                 currencyCode: normalizedCode,
-                uploadedBy: uploader,
-                source: source
+                uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' }
             }).sort({ uploadedDate: -1 }).lean();
 
             if (!currencyRate) {
@@ -488,8 +488,8 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
         let count;
         if (normalizedCode === "ALL") {
             count = await CurrencyRate.countDocuments({
-                uploadedBy: uploader,
-                source: source,
+                uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' },
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
             });
         }
@@ -497,8 +497,8 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
         if(normalizedCode !== "ALL") {
             count = await CurrencyRate.countDocuments({
                 currencyCode: normalizedCode,
-                uploadedBy: uploader,
-                source: source,
+                uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' },
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
             });
         }
@@ -519,8 +519,8 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 
         if(normalizedCode === "ALL") {
             currencyRates = await CurrencyRate.find({
-                uploadedBy: uploader,
-                source: source,
+                uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' },
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
             }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
 
@@ -528,8 +528,8 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 
         if(normalizedCode !== "ALL") {
             currencyRates = await CurrencyRate.find({
-                uploadedBy: uploader,
-                source: source,
+                uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' },
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay },
                 currencyCode: normalizedCode
             }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
@@ -599,8 +599,8 @@ currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, d
 
             if(normalizedCode === "ALL") {
                 count = await CurrencyRate.countDocuments({
-                    uploadedBy: uploader,
-                    source: source,
+                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                    source: { $regex: `^${source}$`, $options: 'i' },
                     uploadedDate: { $gte: startOfDay, $lte: endOfDay }
                 });
             }
@@ -608,8 +608,8 @@ currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, d
             if(normalizedCode !== "ALL") {
                 count = await CurrencyRate.countDocuments({
                     currencyCode: normalizedCode,
-                    uploadedBy: uploader,
-                    source: source,
+                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                    source: { $regex: `^${source}$`, $options: 'i' },
                     uploadedDate: { $gte: startOfDay, $lte: endOfDay }
                 });
             }
@@ -695,8 +695,8 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
 
         if(normalizedCode === "ALL") {
             count = await CurrencyRate.countDocuments({
-                uploadedBy: uploader,
-                source: source,
+                uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' },
                 uploadedDate: { $gte: startDate, $lte: endDate }
             });
         }
@@ -704,8 +704,8 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
         if(normalizedCode !== "ALL") {
             count = await CurrencyRate.countDocuments({
                 currencyCode: normalizedCode,
-                uploadedBy: uploader,
-                source: source,
+                uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' },
                 uploadedDate: { $gte: startDate, $lte: endDate }
             });
         }
@@ -810,8 +810,8 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
             let count;
             if(normalizedCode === "ALL") {
                 count = await CurrencyRate.countDocuments({
-                    uploadedBy: uploader,
-                    source: source,
+                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                    source: { $regex: `^${source}$`, $options: 'i' },
                     uploadedDate: { $gte: startDate, $lte: endDate }
                 });
 
@@ -820,8 +820,8 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
             if(normalizedCode !== "ALL") {
                 count = await CurrencyRate.countDocuments({
                     currencyCode: normalizedCode,
-                    uploadedBy: uploader,
-                    source: source,
+                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                    source: { $regex: `^${source}$`, $options: 'i' },
                     uploadedDate: { $gte: startDate, $lte: endDate }
                 });
             }

@@ -108,8 +108,8 @@ CurrencyRateSchema.pre('save', async function (next) {
         const prevRates = await this.constructor.findOne({
             currencyCode: this.currencyCode,
             unit: this.unit,
-            source: this.source,
-            uploadedBy: this.uploadedBy
+            source: { $regex: `^${this.source}$`, $options: 'i' },
+            uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' }
         }).sort({ uploadedDate: -1 });
 
         if(prevRates) {
