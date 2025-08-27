@@ -221,7 +221,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
         currencyRateUpdateTracker++;
 
 
-        req.io.emit(result.currencyCode, JSON.stringify(result));
+        req.io.emit(`${result.uploadedBy}_${result.source}_${result.currencyCode}`, JSON.stringify(result));
 
         return res.status(201).json({ // 201 Created
             message: `Exchange rate for ${currencyName} added successfully.`,
