@@ -5,6 +5,7 @@ const expressCache = require("cache-express")
 const moment = require("moment-timezone");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
+const yangonDate = require("../Helpers/YangonDate");
 
 
 
@@ -375,7 +376,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 data: currencyRate
             });
         } else {
-            const currencyRates = await CurrencyRate.aggregate([
+            let currencyRates = await CurrencyRate.aggregate([
                 // Only include records uploaded by default source
                 {  $match: {
                         source: { $regex: `^${source}$`, $options: 'i' },      // case-insensitive match
@@ -422,6 +423,15 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                     count: 0
                 });
             }
+
+            // Apply Yangon timezone formatting
+            currencyRates = currencyRates.map(rate => ({
+                ...rate,
+                uploadedDate: yangonDate(rate.uploadedDate),
+                createdAt: yangonDate(rate.createdAt),
+                updatedAt: yangonDate(rate.updatedAt)
+
+            }));
 
             return res.status(200).json({
                 message: "Exchange rate retrieved successfully.",
@@ -546,6 +556,14 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
                 limit: limit
             });
         }
+
+        // Apply Yangon timezone formatting
+        currencyRates = currencyRates.map(rate => ({
+            ...rate,
+            uploadedDate: yangonDate(rate.uploadedDate),
+            createdAt: yangonDate(rate.createdAt),
+            updatedAt: yangonDate(rate.updatedAt)
+        }));
 
         return res.status(200).json({
             message: `Exchange rate for '${currencyCode}' on ${date} retrieved successfully.`,
@@ -752,6 +770,14 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 limit: limit
             });
         }
+
+        // Apply Yangon timezone formatting
+        currencyRates = currencyRates.map(rate => ({
+            ...rate,
+            uploadedDate: yangonDate(rate.uploadedDate),
+            createdAt: yangonDate(rate.createdAt),
+            updatedAt: yangonDate(rate.updatedAt)
+        }));
 
         return res.status(200).json({
             message: "Exchange rate retrieved successfully.",
