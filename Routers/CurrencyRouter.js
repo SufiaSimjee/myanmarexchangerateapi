@@ -11,6 +11,90 @@ let currencyRateUpdateTracker = 0;
 let defaultSource = process.env.DEFAULT_SOURCE|| "Private Bank"
 let defaultUploader = process.env.DEFAULT_UPLOADER || "testuser";
 
+currencyRouter.get("/uploaderList", async (req, res) => {
+    try {
+
+        const uniqueUploader = await CurrencyRate.aggregate([
+            {
+                $group: {
+                    _id: "$uploadedBy"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    uploadedBy: "$_id"
+                }
+            }
+        ]);
+
+
+        if (!uniqueUploader) {
+            return res.status(404).json({
+                message: "No uploader found in the database."
+            });
+        }
+
+        return res.status(200).json({
+            message: "Uploader List retrieved successfully.",
+            data: uniqueUploader,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "An unexpected error occurred while fetching the uploader list.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
+    }
+});
+
+
+currencyRouter.get("/sourceList", async (req, res) => {
+    try {
+        let {uploader} = req.query;
+
+        if (!uploader) {
+            uploader = defaultUploader;
+        }
+
+
+        const uniqueSources = await CurrencyRate.aggregate([
+            {
+                $match: {
+                    uploadedBy: uploader
+                }
+            },
+            {
+                $group: {
+                    _id: "$source"
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    source: "$_id"
+                }
+            }
+        ]);
+
+        if (!uniqueSources) {
+            return res.status(404).json({
+                message: "No sources found in the database."
+            });
+        }
+
+        return res.status(200).json({
+            message: "Sources retrieved successfully.",
+            data: uniqueSources,
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "An unexpected error occurred while fetching the source list.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
+    }
+});
 
 currencyRouter.get("/currencyList", async (req, res) => {
     try {
@@ -65,53 +149,6 @@ currencyRouter.get("/currencyList", async (req, res) => {
     }
 });
 
-
-currencyRouter.get("/sourceList", async (req, res) => {
-    try {
-        let {uploader} = req.query;
-
-        if (!uploader) {
-            uploader = defaultUploader;
-        }
-
-
-        const uniqueSources = await CurrencyRate.aggregate([
-            {
-                $match: {
-                    uploadedBy: uploader
-                }
-            },
-            {
-                $group: {
-                    _id: "$uploadedBy"
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    source: "$_id"
-                }
-            }
-        ]);
-
-        if (!uniqueSources) {
-            return res.status(404).json({
-                message: "No sources found in the database."
-            });
-        }
-
-        return res.status(200).json({
-            message: "Sources retrieved successfully.",
-            data: uniqueSources,
-        });
-
-    } catch (error) {
-        return res.status(500).json({
-            message: "An unexpected error occurred while fetching the source list.",
-            details: process.env.NODE_ENV === "development" ? error.message : undefined
-        });
-    }
-});
 
 currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
@@ -287,11 +324,11 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
             uploader = defaultUploader;
         }
 
-        if(currencyCode !== "all") {
+        if(currencyCode !== "all" || currencyCode !== "All" || currencyCode !== "ALL") {
             const currencyRate = await CurrencyRate.findOne({
                 currencyCode: currencyCode.toUpperCase(),
-                uploadedBy: source,
-                source: uploader
+                uploadedBy: uploader,
+                source: source
             }).sort({ uploadedDate: -1 }).lean();
 
             if (!currencyRate) {
