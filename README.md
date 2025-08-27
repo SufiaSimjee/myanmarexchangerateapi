@@ -43,11 +43,50 @@ The main purpose of this API is to inform users about daily exchange rates from 
 2.  Myanmar Market Price App
 3.  Other Online Sources
 
+## Recommended Usage
+1. Use the API for quick reference of Myanmar currency rates.
+2. Monitor API updates and check the notification feature once it’s re-enabled.
+
 ## Technology Stack
 
 1.  **Backend:** Node.js (Express.js)
 2.  **Database:** MongoDB (MongoDB Atlas)
-3.  **Protocols:** HTTPS and WebSocket (Socket Io)
+3.  **Protocols:** HTTPS and WebSocket (Socket IO)
+
+## Project Dependencies
+
+### Core Libraries
+1. **express (^5.1.0)** – Web framework for building the API and handling HTTP requests.
+2. **dotenv (^17.2.1)** – Loads environment variables from a `.env` file.
+3. **mongoose (^8.18.0)** – MongoDB object modeling tool for Node.js.
+4. **moment (^2.30.1)** & **moment-timezone (^0.6.0)** – Utilities for parsing, formatting, and handling dates and timezones.
+
+### Security & Authentication
+1. **bcrypt (^6.0.0)** – Hashing library for securely storing passwords.
+2. **helmet (^8.1.0)** – Adds security-related HTTP headers to protect the API.
+3. **passport (^0.7.0)** – Authentication middleware for Node.js.
+4. **passport-jwt (^4.0.1)** – JWT authentication strategy for Passport.
+5. **jsonwebtoken (^9.0.2)** – For creating and verifying JSON Web Tokens.
+
+### Performance & Utilities
+1. **compression (^1.8.1)** – Gzip compression to reduce response size and improve performance.
+2. **cache-express (^1.0.2)** – Caching middleware for Express responses.
+3. **node-cache (^5.1.2)** – In-memory caching solution for Node.js.
+4. **express-rate-limit (^8.0.1)** – Rate limiting to prevent brute-force attacks.
+
+### Logging & Monitoring
+1. **morgan (^1.10.1)** – HTTP request logger middleware for Express.
+2. **rotating-file-stream (^3.2.7)** – Manage log file.
+
+### Real-Time & Scheduling
+1. **socket.io (^4.8.1)** – Enables real-time bidirectional communication (To send live notification to clients).
+2. **node-cron (^4.2.1)** – Task scheduler for running jobs at specific intervals (To check for new exchange rates uploaded to the database).
+
+### Process Management & Templating
+1. **pm2 (^6.0.8)** – Process manager for Node.js to run applications in production (To restart the node process if crashes occur).
+2. **pug (^3.0.3)** – Template engine for server-side rendering (To render tutorial written in html format).
+3. **cors (^2.8.5)** – To enable Cross-Origin Resource Sharing for allowing requests from different origins.
+
 
 ## Getting Started (Self Hosting)
 
