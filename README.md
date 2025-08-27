@@ -52,7 +52,7 @@ The main purpose of this API is to inform users about daily exchange rates from 
 
 1.  **Backend:** Node.js (Express.js)
 2.  **Database:** MongoDB (MongoDB Atlas)
-3.  **Protocols:** HTTPS and WebSocket (Socket IO)
+3.  **Protocols:** Https and WebSocket (Socket IO)
 
 ## Project Dependencies
 
