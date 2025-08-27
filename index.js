@@ -147,7 +147,7 @@ try{
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
-    let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 1;
+    let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 10;
     if (liveExchangeRate){
 
         io.on('connection', (_) => {

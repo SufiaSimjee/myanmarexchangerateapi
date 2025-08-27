@@ -16,8 +16,10 @@ Api Url: https://myanmarexchangerateapi.onrender.com
 
 
 ## How To Use Api
-Authentication Tutorial: https://myanmarexchangerateapi.onrender.com/auth-docs
-Currency Rate Api Tutorial: https://myanmarexchangerateapi.onrender.com/currency-docs
+1. Authentication Tutorial: https://myanmarexchangerateapi.onrender.com/auth-docs
+2. Currency Rate Api Tutorial: https://myanmarexchangerateapi.onrender.com/currency-docs
+3. Live Notification Tutorial:  https://myanmarexchangerateapi.onrender.com/notification-docs
+
 
 ## Disclaimer
 

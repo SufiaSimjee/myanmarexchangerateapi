@@ -1,0 +1,62 @@
+h1 Live Exchange Rate Notifications
+p This system allows clients to receive **real-time notifications** whenever currency exchange rates are updated.
+p Notifications are emitted via **Socket.IO** and can be filtered by uploader, source, and currency code.
+
+h2 Configuration
+p You can enable live notifications using environment variables:
+
+pre
+    code.
+        LIVE_EXCHANGE_RATE=true
+        NOTIFICATION_INTERVAL=1   // Interval in minutes for checking updates
+
+p Notes:
+ul
+    li `LIVE_EXCHANGE_RATE` should be set to `"true"` to enable real-time notifications.
+    li `NOTIFICATION_INTERVAL` defines how often the system checks for updated rates (default is 10 minute).
+
+h2 How It Works
+p The server performs the following steps at the configured interval:
+ol
+    li Retrieves all unique uploaders from the currency rate database.
+    li For each uploader, fetches all unique sources of rates submitted by that uploader.
+    li For each source, fetches all unique currencies.
+    li Retrieves the latest rate for each currency and generates a **SHA1 hash** of the data.
+    li Compares the current hash with the previous hash stored in memory.
+    li Emits a **Socket.IO event** only if:
+        ul
+            li This is the first time the event is emitted.
+            li The hash of the rate data has changed (indicating an update).
+    li Skips emission if the data hasn’t changed.
+
+h2 Event Naming Convention
+p Each event is named using the pattern:
+
+pre
+    code.
+        <uploadedBy>_<source>_<currencyCode>
+
+p Example:
+pre
+    code.
+        admin123_Myanmar Market Price_USD
+
+h2 Client Usage Example (JavaScript)
+p Connect to the server and listen for updates:
+
+pre
+    code.
+        const socket = io("https://your-server.com");
+
+        const eventName = "admin123_Myanmar Market Price_USD";
+
+        socket.on(eventName, (data) => {
+            const currencyRate = JSON.parse(data);
+            console.log("Updated currency rate:", currencyRate);
+        });
+
+h2 Notes
+ul
+    li The server compares hashes of the latest rate data to avoid emitting duplicate events.
+    li All date fields in currency rates are handled in the **Asia/Yangon timezone**.
+    li Events are emitted only if there is a **new or updated rate** for the specific uploader, source, and currency.
