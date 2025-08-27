@@ -198,6 +198,7 @@ try{
                         const currentHash = crypto.createHash('sha1').update(currencyRateString).digest('hex').toString();
 
                         const eventName = `${uploader[i].uploadedBy}_${uniqueSources[j].source}_${uniqueCurrencies[k].currencyCode}`;
+                        io.emit(eventName, currencyRateString);
 
                         if(!previousHashes[eventName]) {
                             previousHashes = {
@@ -205,6 +206,7 @@ try{
                                 [eventName]: currentHash
                             }
                             io.emit(eventName, currencyRateString);
+                            console.log("Previous hash", previousHashes);
                         }
 
                         if(previousHashes[eventName]) {
@@ -215,6 +217,7 @@ try{
                                 }
                                 io.emit(eventName, currencyRateString);
                             }
+                            console.log("Previous hash", previousHashes);
                         }
 
                     }
