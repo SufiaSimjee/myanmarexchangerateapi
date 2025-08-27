@@ -81,7 +81,7 @@ CurrencyRateSchema.path("createdAt").get(yangonDate);
 CurrencyRateSchema.path("updatedAt").get(yangonDate);
 
 
-CurrencyRateSchema.pre('save',  function (next) {
+CurrencyRateSchema.pre('save', async function (next) {
     try{
 
         let currencyName = CurrencyList[this.currencyCode].name;
@@ -94,15 +94,12 @@ CurrencyRateSchema.pre('save',  function (next) {
         if (currencyIcon) {
             this.currencyIcon = currencyIcon;
         }
-        let prevRates;
-        this.constructor.findOne({
+        const prevRates = await this.constructor.findOne({
             currencyCode: this.currencyCode,
             unit: this.unit,
             source: { $regex: `^${this.source}$`, $options: 'i' },
             uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' }
-        }).sort({ uploadedDate: -1 }).then(rate => {
-            prevRates = rate;
-        });
+        }).sort({ uploadedDate: -1 });
 
         if(prevRates) {
             const buyRateChange = ((this.buyRate - prevRates.buyRate) / prevRates.buyRate) * 100;

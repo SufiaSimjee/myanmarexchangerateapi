@@ -747,7 +747,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
-            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean({virtuals: true});
         }
 
         if(normalizedCode !== "ALL") {
@@ -756,7 +756,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
-            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean({virtuals: true});
         }
 
 
