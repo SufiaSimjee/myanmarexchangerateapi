@@ -217,7 +217,7 @@ try{
                                 io.emit(eventName, currencyRateString);
                             }
                             else {
-                                console.log(`xNo change for '${eventName}', skipping emit.`);
+                                console.log(`No change for '${eventName}', skipping emit.`);
                             }
                         }
                     }
