@@ -1,0 +1,103 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        title Currency API Documentation (Version 0 - Under Development)
+    body
+        h1 Currency API Documentation
+        p Base URL:
+            strong #{baseUrl}
+        p This API allows managing currency exchange rates including adding, retrieving, and deleting rates.
+
+        h2 Authentication
+        p Some endpoints (Post, Delete) require JWT authentication. Include token in
+            strong Authorization
+            |  header:
+        pre Authorization: Bearer &lt;your_jwt_token&gt;
+
+        h2 Endpoints
+
+        h3 1. Get all uploaders
+        p
+            strong GET /uploaderList
+        p Example URL:
+            strong #{baseUrl}uploaderList
+
+        h3 2. Get sources by uploader
+        p
+            strong GET /sourceList?uploader=&lt;uploader&gt;
+        p Example URL:
+            strong #{baseUrl}sourceList?uploader=testuser
+
+        h3 3. Get currency list by source & uploader
+        p
+            strong GET /currencyList?source=&lt;source&gt;&uploader=&lt;uploader&gt;
+        p Example URL:
+            strong #{baseUrl}currencyList?source=Myanmar%20Market%20Price%20App&uploader=testuser
+
+        h3 4. Add a new currency rate (JWT required)
+        p
+            strong POST /add
+        p Example URL:
+            strong #{baseUrl}add
+
+        h3 5. Delete a currency rate (JWT required)
+        p
+            strong DELETE /delete/:id
+        p Example URL:
+            strong #{baseUrl}delete/64e8d3f2a2b7b2a5c1f12345
+
+        h3 6. Get a currency rate by ID
+        p
+            strong GET /:id
+        p Example URL:
+            strong #{baseUrl}64e8d3f2a2b7b2a5c1f12345
+
+        h3 7. Get latest currency rate
+        p
+            strong GET /:currencyCode/latest?source=&uploader=
+        p Single currency example:
+            strong #{baseUrl}USD/latest?source=Myanmar%20Market%20Price%20App&uploader=testuser
+        p All currencies example:
+            strong #{baseUrl}ALL/latest?source=Myanmar%20Market%20Price%20App&uploader=testuser
+
+        h3 8. Get currency rate by date
+        p
+            strong GET /:currencyCode/:date?skip=0&limit=10
+        p Single currency example:
+            strong #{baseUrl}USD/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+        p All currencies example:
+            strong #{baseUrl}ALL/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+
+        h3 9. Get currency rate count by date
+        p
+            strong GET /count/:currencyCode/:date
+        p Example URL:
+            strong #{baseUrl}count/USD/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser
+
+        h3 10. Get currency rates between two dates
+        p
+            strong GET /:currencyCode/:fromDate/:toDate?skip=0&limit=10
+        p Single currency example:
+            strong #{baseUrl}USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+        p All currencies example:
+            strong #{baseUrl}ALL/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser&skip=0&limit=10
+
+        h3 11. Get currency rate count between two dates
+        p
+            strong GET /count/:currencyCode/:fromDate/:toDate
+        p Example URL:
+            strong #{baseUrl}count/USD/2025-08-01/2025-08-27?source=Myanmar%20Market%20Price%20App&uploader=testuser
+
+        h2 Notes
+        ul
+            li All dates are handled in Asia/Yangon timezone.
+            li
+                strong uploadedDate
+                |  cannot be in the future.
+            li Use
+                strong skip
+                |  and
+                strong limit
+                |  for endpoints returning multiple results.
+            li Many GET endpoints are cached for 60 seconds and auto-refresh when data changes.

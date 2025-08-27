@@ -74,7 +74,7 @@ const CurrencyRates = [
         unit: 1,
         buyRate: 50,
         sellRate: 60,
-        source: "Myanmar Market Price",
+        source: "Private Bank",
         uploadedDate: moment.tz("Asia/Yangon").subtract(12, "hours").toDate(),
         uploadedBy: "defaultadmin"
     }),
@@ -94,7 +94,7 @@ const CurrencyRates = [
         unit: 1,
         buyRate: 5200,
         sellRate: 5400,
-        source: "Private Bank",
+        source: "Myanmar Market Price",
         uploadedDate: moment.tz("Asia/Yangon").subtract(1, "hours").toDate(),
         uploadedBy: "testuser"
     }),

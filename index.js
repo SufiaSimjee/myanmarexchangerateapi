@@ -28,6 +28,11 @@ try{
 
     const app = express();
 
+    // Set Pug as the view engine
+    app.set('view engine', 'pug');
+    app.set('views', path.join(__dirname, 'views'));
+
+
 
     //certificate
     let cert;
@@ -71,6 +76,20 @@ try{
             });
         }
     });
+
+    app.get('/currency-docs', (req, res) => {
+        try {
+            const protocol = req.protocol;
+            const host = req.get('host');
+            const baseUrl = `${protocol}://${host}/currency/`;
+
+            res.render('currencyDocs', { baseUrl });
+        } catch (error) {
+            console.error("Error rendering currency docs:", error);
+            res.status(500).send("An error occurred while rendering the currency documentation.");
+        }
+    });
+
 
 
     //set-up server
