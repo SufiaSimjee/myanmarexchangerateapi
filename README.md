@@ -14,6 +14,9 @@ Note: All requests and responses use JSON format for simplicity and compatibilit
 
 Api Url: https://myanmarexchangerateapi.onrender.com
 
+
+## How To Use Api
+Authentication Tutorial: https://myanmarexchangerateapi.onrender.com/auth-docs
 Currency Rate Api Tutorial: https://myanmarexchangerateapi.onrender.com/currency-docs
 
 ## Disclaimer

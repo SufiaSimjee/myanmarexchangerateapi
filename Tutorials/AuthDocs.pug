@@ -1,0 +1,121 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        title User API Documentation
+    body
+        h1 User API Documentation
+        p Base URL:
+            strong #{baseUrl}
+        p
+            | This API provides endpoints to manage user accounts, including signing up, logging in, validating JWT tokens, and deleting accounts.
+            | Certain actions require authentication via JSON Web Token (JWT).
+
+        h2 Authentication
+        p
+            | Some endpoints, specifically token validation and account deletion, require JWT authentication.
+            | Include your token in the
+            strong Authorization
+            |  header:
+        pre Authorization: Bearer &lt;your_jwt_token&gt;
+
+        h2 Endpoints
+
+        h3 1. Test JWT Token Validity
+        p
+            | Validates the JWT token provided in the Authorization header. Useful for confirming whether a token is still valid and retrieving user information.
+        p
+            strong GET /user/test-token
+        p Example Request:
+            strong curl -H "Authorization: Bearer &lt;your_jwt_token&gt;" #{baseUrl}user/test-token
+        p Response:
+            | Returns HTTP 200 if the token is valid.
+        pre
+
+
+p Notes:
+ul
+    li Returns HTTP 401 if the token is invalid or missing.
+    li Returns HTTP 500 if there is an internal server error.
+
+h3 2. User Sign Up
+p
+    | Allows a new user to create an account. Requires email or username and password.
+p
+    strong POST /user/signup
+p Request Body (JSON):
+pre
+    code.
+        {
+          "username": "admin999",
+          "email": "admin999@example.com",
+          "password": "admin999",
+          "role": "admin"
+        }
+
+
+p Example Response:
+pre
+    code.
+        {
+          "message": "Sign up successful",
+          "accountId": "68aef7cda84a59d1f373119d",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YWVmN2NkYTg0YTU5ZDFmMzczMTE5ZCIsInVzZXJuYW1lIjoiYWRtaW45OTkiLCJlbWFpbCI6ImFkbWluOTk5QGV4YW1wbGUuY29tIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzU2Mjk3MTY2LCJleHAiOjE3NTYyOTg5NjYsInN1YiI6ImFkbWluOTk5QGV4YW1wbGUuY29tIiwiaXNzIjoibmFpbmdrYXVuZ215YXR0QGljbG91ZC5jb20ifQ.qiyiO2gdM2xZ-sJNMvGdf3GQEh8gFW5Ua0pVaScLaSw"
+        }
+
+p Notes:
+ul
+    li Returns HTTP 400 if required fields are missing.
+    li Returns HTTP 409 if the username or email already exists.
+    li Returns HTTP 500 on server error.
+
+h3 3. User Login
+p
+    | Authenticates an existing user using email or username and password. Returns a JWT token if successful.
+p
+    strong POST /user/login
+p Request Body (JSON):
+pre
+    code.
+        {
+          "username": "admin123",
+          "password": "admin123"
+        }
+pre
+
+p Example Response:
+pre
+    code.
+        {
+          "message": "Login successful",
+          "accountId": "68adc1d7f8d899baab44d774",
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4YWRjMWQ3ZjhkODk5YmFhYjQ0ZDc3NCIsInVzZXJuYW1lIjoiYWRtaW4xMjMiLCJlbWFpbCI6ImRlZmF1bHRhZG1pbkBleGFtcGxlLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1NjI5Njk5OCwiZXhwIjoxNzU2Mjk4Nzk4LCJzdWIiOiJkZWZhdWx0YWRtaW5AZXhhbXBsZS5jb20iLCJpc3MiOiJuYWluZ2thdW5nbXlhdHRAaWNsb3VkLmNvbSJ9.UA-FKEXWUPEbu5jFKpVCEiQrxNweC2SCnqQ62FSpcrc"
+        }
+
+
+p Notes:
+ul
+    li Returns HTTP 400 if required fields are missing.
+    li Returns HTTP 404 if the account does not exist.
+    li Returns HTTP 401 if the password is incorrect.
+    li Returns HTTP 500 on server error.
+
+h3 4. Delete User Account
+p
+    | Deletes a user account by ID. Requires JWT authentication. Only the account owner or the default admin can delete an account.
+p
+    strong DELETE /user/delete/:id
+p Example Request:
+    strong curl -X DELETE -H "Authorization: Bearer &lt;your_jwt_token&gt;" #{baseUrl}user/delete/64e8d3f2a2b7b2a5c1f12345
+p Notes:
+ul
+    li Returns HTTP 204 if deletion is successful.
+    li Returns HTTP 403 if the user attempts to delete another account without admin privileges.
+    li Returns HTTP 404 if the account ID does not exist.
+    li Returns HTTP 500 on server error.
+
+h2 General Notes
+ul
+    li JWT tokens are required for testing token validity and deleting accounts.
+    li Passwords are securely hashed and are never returned in responses.
+    li All responses include informative HTTP status codes and messages.
