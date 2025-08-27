@@ -36,7 +36,7 @@ try{
 
     // Set Pug as the view engine
     app.set('view engine', 'pug');
-    app.set('views', path.join(__dirname, 'views'));
+    app.set('views', path.join(__dirname, 'Tutorials'));
     app.use(TutorialRouter);
 
 
