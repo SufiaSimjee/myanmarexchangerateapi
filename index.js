@@ -7,8 +7,10 @@ const compression = require("compression");
 const dotenv = require('dotenv').config();
 const fs  = require('fs');
 const cors = require("cors");
+const helmet = require("helmet")
+
 const morgan = require('morgan');
-var rfs = require('rotating-file-stream')
+const rfs = require('rotating-file-stream');
 const passport = require('passport');
 const { join } = require('node:path');
 const cron = require("node-cron");
@@ -30,10 +32,12 @@ try{
 
     const app = express();
 
+    app.use(helmet());
+
     // Set Pug as the view engine
     app.set('view engine', 'pug');
     app.set('views', path.join(__dirname, 'views'));
-    app.use(TutorialRouter)
+    app.use(TutorialRouter);
 
 
 
