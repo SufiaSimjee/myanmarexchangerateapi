@@ -5,6 +5,7 @@ const expressCache = require("cache-express")
 const moment = require("moment-timezone");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
+const {CurrencyList} = require("../Helpers/CommonCurrency");
 
 
 let currencyRateUpdateTracker = 0;
@@ -152,14 +153,20 @@ currencyRouter.get("/currencyList", async (req, res) => {
 
 currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
-        let { currencyName, currencyCode, currencyIcon, unit, buyRate, sellRate, uploadedDate, source } = req.body;
+        let { currencyCode, currencyIcon, unit, buyRate, sellRate, uploadedDate, source } = req.body;
         let {username} = req.user
 
 
-        if (!currencyName || !currencyCode || !currencyIcon || !unit || !buyRate || !sellRate || !uploadedDate || !source) {
+        if (!currencyCode || !currencyIcon || !unit || !buyRate || !sellRate || !uploadedDate || !source) {
             return res.status(400).json({
-                message: "All fields are required: currencyName, currencyCode, currencyIcon, unit, buyRate, sellRate, uploadedDate, source.",
+                message: "These fields are required: currencyCode, currencyIcon, unit, buyRate, sellRate, uploadedDate, source.",
             });
+        }
+
+        let currencyName = CurrencyList[currencyCode].name;
+
+        if (!currencyName) {
+            currencyName = "";
         }
 
         // Validate uploadedDate format with time included
