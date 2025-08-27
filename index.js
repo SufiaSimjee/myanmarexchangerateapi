@@ -8,6 +8,7 @@ const dotenv = require('dotenv').config();
 const fs  = require('fs');
 const cors = require("cors");
 const morgan = require('morgan');
+var rfs = require('rotating-file-stream')
 const passport = require('passport');
 const { join } = require('node:path');
 const cron = require("node-cron");
@@ -56,7 +57,13 @@ try{
     app.use(compression());
     app.use(cors());
     app.use(rateLimiter);
-    app.use(morgan('dev'));
+
+    const accessLogStream = rfs.createStream('access.log', {
+        interval: '1d',
+        path: path.join(__dirname, 'log')
+    });
+
+    app.use(morgan('combined',  { stream: accessLogStream }));
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
