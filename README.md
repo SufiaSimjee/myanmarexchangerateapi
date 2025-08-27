@@ -62,7 +62,7 @@ Create a `.env` file in the project root with the following variables:
 -   **DEFAULT_ADMIN_USERNAME** (Username of default admin account)
 -   **DEFAULT_ADMIN_PASSWORD** (Password of default admin account)
 -   **ON_RENDER** (Boolean flag (true / false) to check if app is running on Render hosting)
--   **LIVE_NOTIFICATION** (Enables/disables websocket (Socket Io) notifications for real-time updates)
+-   **LIVE_EXCHANGE_RATE** (Enables/disables websocket (Socket Io) notifications for real-time updates of exchange rate)
 
 Note: The default admin account (configured via DEFAULT_ADMIN_USERNAME and DEFAULT_ADMIN_PASSWORD) has full privileges to perform any action in the system.
 

@@ -128,8 +128,8 @@ try{
         });
     });
 
-    let liveNotificationEnable = process.env.LIVE_NOTIFICATION === "true";
-    if(liveNotificationEnable){
+    let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
+    if(liveExchangeRate){
 
         io.on('connection', (socket) => {
 
