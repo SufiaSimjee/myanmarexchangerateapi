@@ -206,12 +206,14 @@ try{
                                     ...previousHashes,
                                     [eventName]: currentHash
                                 };
+                                console.log(`Emitting '${eventName}' for the first time.`);
                                 io.emit(eventName, currencyRateString);
                             }
 
                             if(previousHashes[eventName]) {
                                 if(previousHashes[eventName] !== currentHash){
                                     previousHashes[eventName] = currentHash;
+                                    console.log(`Emitting '${eventName}' with updated data.`)
                                     io.emit(eventName, currencyRateString);
                                 }
                             }
