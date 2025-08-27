@@ -5,7 +5,7 @@ const expressCache = require("cache-express")
 const moment = require("moment-timezone");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
-const {CurrencyList} = require("../Helpers/CommonCurrency");
+
 
 
 let currencyRateUpdateTracker = 0;
@@ -32,7 +32,8 @@ currencyRouter.get("/uploaderList", async (req, res) => {
 
         if (!uniqueUploader) {
             return res.status(404).json({
-                message: "No uploader found in the database."
+                message: "No uploader found in the database.",
+                count: 0
             });
         }
 
@@ -82,6 +83,7 @@ currencyRouter.get("/sourceList", async (req, res) => {
         if (!uniqueSources) {
             return res.status(404).json({
                 message: "No sources found in the database.",
+                count: 0,
                 uploader: uploader
             });
         }
@@ -139,7 +141,8 @@ currencyRouter.get("/currencyList", async (req, res) => {
             return res.status(404).json({
                 message: "No currencies found in the database.",
                 uploader: uploader,
-                source: source
+                source: source,
+                count: 0,
             });
         }
 
@@ -258,7 +261,8 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
 
         if (!exchangeRate) {
             return res.status(404).json({
-                message: `No currency exchange rate found with ID '${id}'.`
+                message: `No currency exchange rate found with ID '${id}'.`,
+                count: 0
             });
         }
 
@@ -301,14 +305,17 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
 
         if (!exchangeRate) {
             return res.status(404).json({
-                message: `No currency exchange rate found with ID '${id}'.`
+                message: `No currency exchange rate found with ID '${id}'.`,
+                count: 0
             });
         }
 
         return res.status(200).json({ // 200 OK
             message: `Currency exchange rate with ID '${id}' has been retrieve successfully.`,
             count: 1,
-            data: exchangeRate,
+            uploader: exchangeRate.uploadedBy,
+            source: exchangeRate.source,
+            data: exchangeRate
         });
 
     } catch (error) {
@@ -346,7 +353,8 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 return res.status(404).json({
                     message: `No latest exchange rate found for currency '${normalizedCode}' from the default source.`,
                     uploader: uploader,
-                    source: source
+                    source: source,
+                    count: 0
                 });
             }
 
@@ -397,7 +405,8 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 return res.status(404).json({
                     message: `No latest exchange rate found.`,
                     uploader: uploader,
-                    source: source
+                    source: source,
+                    count: 0
                 });
             }
 
@@ -514,7 +523,6 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
 
         }
 
-        console.log(currencyRates);
         if (!currencyRates ) {
             return res.status(404).json({
                 message: `No exchange rate record found for '${currencyCode}' on ${date} from the default source.`,
@@ -598,7 +606,8 @@ currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, d
                 return res.status(404).json({
                     message: `No exchange rate records found for currency '${currencyCode}' on ${date}.`,
                     uploader: uploader,
-                    source: source
+                    source: source,
+                    count: 0
                 });
             }
 
@@ -808,7 +817,8 @@ currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeO
                 return res.status(404).json({
                     message: `No currency rate records found for ${normalizedCode} between ${fromDate} and ${toDate}.`,
                     uploader: uploader,
-                    source: source
+                    source: source,
+                    count: 0
                 });
             }
 
