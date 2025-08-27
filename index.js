@@ -13,6 +13,8 @@ const morgan = require('morgan');
 const rfs = require('rotating-file-stream');
 const passport = require('passport');
 const { join } = require('node:path');
+const marked = require('marked').marked;
+const { readFileSync } = require('fs');
 const cron = require("node-cron");
 const crypto = require('crypto');
 
@@ -79,16 +81,21 @@ try{
 
 
     app.get('/', (req, res) => {
-        try{
-            res.sendFile(join(__dirname, 'README.md'));
-        } catch(error){
-            console.log(error);
+        try {
+            const markdownPath = join(__dirname, 'README.md');
+            const markdown = readFileSync(markdownPath, 'utf-8');
+            const htmlContent = marked(markdown);
+
+            res.render('readme', { content: htmlContent });
+        } catch (error) {
+            console.error(error);
             res.status(500).json({
                 message: "An error occurred while processing the request.",
                 details: process.env.NODE_ENV === "development" ? error.message : undefined
             });
         }
     });
+
 
 
     //set-up server
