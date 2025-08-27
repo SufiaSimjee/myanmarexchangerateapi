@@ -76,11 +76,23 @@ const CurrencyRateSchema = new Schema({
 
 });
 
+CurrencyRateSchema.virtual("percentageChange").get(function () {
+    try{
+        return this.$locals.percentageChange || {
+            buyRateChange: null,
+            sellRateChange: null
+        };
+    } catch(error){
+        return null;
+    }
+});
+
+
 CurrencyRateSchema.path("createdAt").get(yangonDate);
 CurrencyRateSchema.path("updatedAt").get(yangonDate);
 
 
-CurrencyRateSchema.pre('save', function (next) {
+CurrencyRateSchema.pre('save', async function (next) {
     try{
 
         let currencyName = CurrencyList[this.currencyCode].name;
@@ -92,6 +104,22 @@ CurrencyRateSchema.pre('save', function (next) {
 
         if (currencyIcon) {
             this.currencyIcon = currencyIcon;
+        }
+        const prevRates = await this.constructor.findOne({
+            currencyCode: this.currencyCode,
+            unit: this.unit,
+            source: this.source,
+            uploadedBy: this.uploadedBy
+        }).sort({ uploadedDate: -1 });
+
+        if(prevRates) {
+            const buyRateChange = ((this.buyRate - prevRates.buyRate) / prevRates.buyRate) * 100;
+            const sellRateChange = ((this.sellRate - prevRates.sellRate) / prevRates.sellRate) * 100;
+
+            this.$locals.percentageChange = {
+                buyRateChange: buyRateChange.toFixed(2) + "%",
+                sellRateChange: sellRateChange.toFixed(2) + "%"
+            };
         }
         next();
     } catch (error){
