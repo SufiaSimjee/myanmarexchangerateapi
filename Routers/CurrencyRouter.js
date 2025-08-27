@@ -185,6 +185,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
         }
 
         const formattedDate = unformattedDate.toDate();
+        console.log("formattedDate", formattedDate);
 
         const existingRate = await CurrencyRate.findOne({
             $and: [
