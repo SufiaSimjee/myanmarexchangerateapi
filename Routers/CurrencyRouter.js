@@ -192,7 +192,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
                 { unit: unit },
                 { buyRate: buyRate },
                 { sellRate: sellRate },
-                {source: source},
+                { source: source},
                 { uploadedDate: formattedDate },
                 { uploadedBy: username}
             ]
@@ -260,7 +260,6 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
                 });
             }
         }
-
 
         // Delete the currency rate
         await CurrencyRate.findByIdAndDelete(id);
