@@ -87,17 +87,21 @@ CurrencyRateSchema.pre('save',function (next) {
         let currencyName = CurrencyList[this.currencyCode].name;
         let currencyIcon = CurrencyList[this.currencyCode].icon;
 
-        if (currencyName) {
+        if (currencyName !== undefined || currencyName !== null || !currencyName) {
             this.currencyName = currencyName;
+        } else{
+            this.currencyName = "";
         }
 
-        if (currencyIcon) {
+        if (currencyIcon !== undefined || currencyIcon !== null || !currencyIcon) {
             this.currencyIcon = currencyIcon;
+        } else {
+            this.currencyIcon = "";
         }
 
         next();
     } catch (error){
-        console.error("Error while setting currency name and currency icon before saving:", error.message);
+        console.error(`Error while setting currency name and currency icon before saving (${this.currencyCode}):`, error.message);
         next();
     }
 })
