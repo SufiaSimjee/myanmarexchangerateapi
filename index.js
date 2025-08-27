@@ -136,12 +136,13 @@ try{
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
+    let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 1;
     if (liveExchangeRate){
 
         io.on('connection', (socket) => {
             let previousHashes = {};
 
-            cron.schedule("0 */1 * * * *", async () => {
+            cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
                 const uploader = await CurrencyRate.aggregate([
                     {
                         $group: {
