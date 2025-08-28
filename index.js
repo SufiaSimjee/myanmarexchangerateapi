@@ -38,6 +38,7 @@ try{
 
     const app = express();
 
+    app.use(cors())
     app.use(helmet());
 
     // Set Pug as the view engine
@@ -65,7 +66,6 @@ try{
 
     //middleware
     app.use(compression());
-    app.use(cors());
     app.use(rateLimiter);
 
     const accessLogStream = rfs.createStream('access.log', {

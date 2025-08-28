@@ -1,6 +1,17 @@
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        title Notification API Documentation
+        style.
+            body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; }
+            h1, h2, h3 { color: #2c3e50; }
+            pre { background: #ecf0f1; padding: 10px; border-radius: 5px; }
+            code { background: #ecf0f1; padding: 2px 4px; border-radius: 3px; }
+
+
 h1 Live Exchange Rate Notifications
-p This system allows clients to receive **real-time notifications** whenever currency exchange rates are updated.
-p Notifications are emitted via **Socket.IO** and can be filtered by uploader, source, and currency code.
+p This system allows clients to receive real-time notifications whenever currency exchange rates are updated.
+p Notifications are emitted via Socket.IO and can be filtered by uploader, source, and currency code.
 
 h2 Configuration
 p You can enable live notifications using environment variables:
@@ -13,7 +24,7 @@ pre
 p Notes:
 ul
     li `LIVE_EXCHANGE_RATE` should be set to `"true"` to enable real-time notifications.
-    li `NOTIFICATION_INTERVAL` defines how often the system checks for updated rates (default is 80 minute).
+    li `NOTIFICATION_INTERVAL` defines how often the system checks for updated rates (default is 60 minute).
 
 h2 How It Works
 p The server performs the following steps at the configured interval:
@@ -34,19 +45,21 @@ p Each event is named using the pattern:
 
 pre
     code.
-        <uploadedBy>_<source>_<currencyCode>
+        uploadedBy_source_currencyCode
 
 p Example:
 pre
     code.
         admin123_Myanmar Market Price_USD
+        admin123_Myanmar Market Price_USD
+        admin123_Ngwe Zay_USD
 
 h2 Client Usage Example (JavaScript)
 p Connect to the server and listen for updates:
 
 pre
     code.
-        const socket = io("https://your-server.com");
+        const socket = io("#{baseUrl}");
 
         const eventName = "admin123_Myanmar Market Price_USD";
 

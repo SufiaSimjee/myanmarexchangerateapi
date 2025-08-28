@@ -25,7 +25,7 @@ async function connectDb() {
 async function closeDb(connection) {
     try {
         await connection.close();
-        console.log("Disconnected from database");
+        console.log("Disconnected From Database");
         return true;
     } catch (error) {
         console.error(error);
