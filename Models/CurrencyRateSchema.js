@@ -127,7 +127,7 @@ CurrencyRateSchema.pre('save',function (next) {
 
 CurrencyRateSchema.methods.getPercentageChange = async function () {
     try {
-        const prevRates = await this.constructor.aggregate([
+        const prevRates = await this.aggregate([
             {
                 $match: {
                     currencyCode: this.currencyCode,
