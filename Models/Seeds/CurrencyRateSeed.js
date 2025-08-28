@@ -857,7 +857,7 @@ async function seedCurrencyRates() {
         if(documentCount < 1){
             for (const currency of CurrencyRates) {
                 await currency.save();
-                console.log(`Saved currency rate: ${currency.id}`);
+                console.log(`Saved currency rate: ${currency._id}`);
             }
         } else {
             console.log("Currency rate seeds already exist, skipping seeding.");

@@ -53,7 +53,7 @@ async function seedFuelRates() {
         if(documentCount.countDocuments < 1){
             for (const fuel of FuelRates) {
                 await fuel.save();
-                console.log(`Saved fuel rate: ${fuel.id}`);
+                console.log(`Saved fuel rate: ${fuel._id}`);
             }
         } else {
             console.log("Fuel rate seeds already exist, skipping seeding.");
