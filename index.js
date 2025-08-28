@@ -34,6 +34,8 @@ const seedUsers = require("./Models/Seeds/UserSeed");
 
 
 try{
+    process.env.TZ = "Asia/Yangon";
+
     const useHttp = process.env.ON_RENDER === "true";
 
     const app = express();
