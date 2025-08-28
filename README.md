@@ -1,6 +1,6 @@
 # Myanmar Foreign Currency Exchange Rate API (Version: 0 – Under Development)
 
-## a. Description
+## a. Description (Api Url: https://myanmarexchangerateapi.onrender.com)
 
 This API provides information about foreign currency exchange rates in Myanmar. The data is collected personally by the developer from various publicly available online resources, including Facebook pages/groups/posts, the Myanmar Market Price app, and other applications/websites reporting currency rates.
 
@@ -10,12 +10,7 @@ This API is intended to offer a general overview of currency rates in Myanmar an
 
 Users should treat the data as indicative rather than authoritative, and the developer cannot be held responsible for any inaccuracies, misinterpretations, or outcomes resulting from its use.
 
-#### Github Repo: https://github.com/kmnaing123/myanmarexchangerateapi
-
-#### i. Api Url: https://myanmarexchangerateapi.onrender.com
-This API is hosted on **Render** for the backend and uses **MongoDB Atlas** as its database.
-
-##### Example API Endpoints
+##### Example API Endpoints (Note: All requests and responses use JSON format for simplicity and compatibility across different platforms)
 
 - **Get the latest USD rate:**  
   `https://myanmarexchangerateapi.onrender.com/currency/USD/latest`  
@@ -47,11 +42,7 @@ This API is hosted on **Render** for the backend and uses **MongoDB Atlas** as i
 
   It allows you to retrieve filtered historical data with pagination support.
 
-
-#### ii. Note
-1. All requests and responses use JSON format for simplicity and compatibility across different platforms and programming environments.
-2. The notification feature is currently disabled due to a known bug and will be re-enabled once fixed.
-
+#### i. Github Repo: https://github.com/kmnaing123/myanmarexchangerateapi
 
 ## b. How To Use Api 
 1. Authentication Tutorial: https://myanmarexchangerateapi.onrender.com/auth-docs
