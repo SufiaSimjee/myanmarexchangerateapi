@@ -1,10 +1,6 @@
 const express = require("express");
 const TutorialRouter = express.Router();
 
-
-
-
-
 TutorialRouter.get('/currency-docs', (req, res) => {
     try {
         const protocol = req.protocol;

@@ -29,7 +29,7 @@ const CurrencyRateSchema = new Schema({
     },
     unit: {
         type: Number,
-        required: true,
+        required: false,
         default: 1
     },
     buyRate: {
