@@ -29,12 +29,11 @@ userRouter.get("/test-token", passport.authenticate("jwt", { session: false }), 
 
 
 userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }), async (req, res) => {
-    let dbConnection;
     try{
         const { id } = req.params;
         const {username} = req.user;
 
-        dbConnection = await connectDb();
+        await connectDb();
 
         // Find the user
         const userAccount = await User.findById(id).lean();
@@ -70,13 +69,10 @@ userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }
             message: "An unexpected error occurred while deleting the account.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
-    } finally {
-        await closeDb(dbConnection);
     }
 })
 
 userRouter.post("/signup", async (req, res) => {
-    let dbConnection;
     try {
         let { email, username, password, role } = req.body;
 
@@ -86,7 +82,7 @@ userRouter.post("/signup", async (req, res) => {
             });
         }
 
-        dbConnection = await connectDb();
+        await connectDb();
 
         //  Check if user already exists
         const existingUser = await User.findOne({
@@ -134,14 +130,11 @@ userRouter.post("/signup", async (req, res) => {
             message: "An unexpected error occurred. Please try again later.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
-    } finally {
-        await closeDb(dbConnection);
     }
 });
 
 
 userRouter.post("/login", async (req, res) => {
-    let dbConnection;
     try {
         let { email, username, password } = req.body;
 
@@ -151,7 +144,7 @@ userRouter.post("/login", async (req, res) => {
             });
         }
 
-        dbConnection = await connectDb();
+        await connectDb();
 
         const userAccount = await User.findOne({
             $or: [
@@ -187,8 +180,6 @@ userRouter.post("/login", async (req, res) => {
             message: "An unexpected error occurred. Please try again later.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
-    } finally {
-        await closeDb(dbConnection);
     }
 });
 

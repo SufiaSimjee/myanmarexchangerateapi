@@ -164,7 +164,7 @@ try{
         await seedMetalRates();
         await seedCurrencyRates();
         await seedUsers();
-        await closeDb(dbConnection);
+
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
@@ -276,8 +276,6 @@ try{
                     }
                     uploader = await uploaders.next();
                 }
-
-                await closeDb(dbConnection);
             })
         }
     } catch(error){
@@ -287,6 +285,7 @@ try{
 
 } catch (error) {
     console.log("Failed to start api: ", error);
+    await closeDb()
     process.exit(1);
 }
 

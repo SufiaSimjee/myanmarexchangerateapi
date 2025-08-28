@@ -9,7 +9,7 @@ async function connectDb() {
             minPoolSize: 1,
             serverSelectionTimeoutMS: 10000,
         });
-
+        await conn.connection.asPromise();
         console.log("Connected To Database");
         return conn.connection;
     } catch (error) {
@@ -18,9 +18,9 @@ async function connectDb() {
     }
 }
 
-async function closeDb(connection) {
+async function closeDb() {
     try {
-        await connection.close();
+        await mongoose.connection.close();
         console.log("Disconnected From Database");
         return true;
     } catch (error) {
