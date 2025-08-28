@@ -13,6 +13,39 @@ Users should treat the data as indicative rather than authoritative, and the dev
 #### i. Api Url: https://myanmarexchangerateapi.onrender.com
 This API is hosted on **Render** for the backend and uses **MongoDB Atlas** as its database.
 
+##### Example API Endpoints
+
+- **Get the latest USD rate:**  
+  `https://myanmarexchangerateapi.onrender.com/currency/USD/latest`  
+  This endpoint returns the most recent exchange rate for the US Dollar (USD) in Myanmar.
+
+- **Get the latest rates for all currencies:**  
+  `https://myanmarexchangerateapi.onrender.com/currency/all/latest`  
+  This endpoint returns the latest exchange rates for all supported foreign currencies in Myanmar.
+
+
+- **Get all currency rates for a specific date with filters and pagination:**  
+  `https://myanmarexchangerateapi.onrender.com/currency/all/2025-08-28?uploader=admin123&source=Myanmar%20Market%20Price&skip=0&limit=10`  
+  This endpoint returns exchange rate data for **all supported currencies** on the date **2025-08-27**, filtered by:
+    - **uploader:** `admin123`
+    - **source:** `Myanmar Market Price`
+    - **skip:** `0` (number of records to skip, useful for pagination)
+    - **limit:** `10` (maximum number of records to return)
+
+  It allows you to retrieve filtered historical data for multiple currencies with pagination support.
+
+
+- **Get USD rates for a specific date with filters and pagination:**  
+  `https://myanmarexchangerateapi.onrender.com/currency/USD/2025-08-27?uploader=admin123&source=Exchange%20Myanmar&skip=0&limit=10`  
+  This endpoint returns USD exchange rate data for the date **2025-08-27**, filtered by:
+    - **uploader:** `admin123`
+    - **source:** `Exchange Myanmar`
+    - **skip:** `0` (number of records to skip, useful for pagination)
+    - **limit:** `10` (maximum number of records to return)
+
+  It allows you to retrieve filtered historical data with pagination support.
+
+
 #### ii. Note
 1. All requests and responses use JSON format for simplicity and compatibility across different platforms and programming environments.
 2. The notification feature is currently disabled due to a known bug and will be re-enabled once fixed.

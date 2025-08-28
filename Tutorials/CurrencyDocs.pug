@@ -49,11 +49,11 @@ html(lang="en")
         p Query Parameters:
         ul
             li uploader (optional, default: admin123)
-            li source (optional, default: MM Exchange)
+            li source (optional, default: Myanmar Market Price)
             li skip, limit (pagination)
         p Example URL:
         pre
-            code #{baseUrl}/currencyList?uploader=admin123&source=MM%20Exchange&skip=0&limit=10
+            code #{baseUrl}/currencyList?uploader=admin123&source=Myanmar%20Market%20Price&skip=0&limit=10
 
         // --- Currency Uploader & Source ---
         h3 GET /findUploader&Source/:currencyCode
@@ -108,10 +108,10 @@ html(lang="en")
         p Retrieves the latest currency rate for a currency code. Use "ALL" to get all latest rates.
         p Query Parameters:
         ul
-            li source, uploader (optional, default: MM Exchange, admin123)
+            li source, uploader (optional, default: Myanmar Market Price, admin123)
         p Example URL:
         pre
-            code #{baseUrl}/USD/latest?uploader=admin123&source=MM%20Exchange
+            code #{baseUrl}/USD/latest?uploader=admin123&source=Myanmar%20Market%20Price
 
         // --- Currency Rate by Date ---
         h3 GET /:currencyCode/:date
@@ -119,7 +119,7 @@ html(lang="en")
         p Query Parameters:
         ul
             li skip, limit
-            li source, uploader (optional, default: MM Exchange, admin123)
+            li source, uploader (optional, default: Myanmar Market Price, admin123)
         p URL Parameters:
             ul
                 li currencyCode
@@ -134,7 +134,7 @@ html(lang="en")
         p Query Parameters:
         ul
             li skip, limit
-            li source, uploader (optional, default: MM Exchange, admin123)
+            li source, uploader (optional, default: Myanmar Market Price, admin123)
         p URL Parameters:
             ul
                 li currencyCode
@@ -142,4 +142,4 @@ html(lang="en")
                 li toDate (YYYY-MM-DD)
         p Example URL:
         pre
-            code #{baseUrl}/USD/2025-08-01/2025-08-27?uploader=admin123&source=MM%20Exchange&skip=0&limit=10
+            code #{baseUrl}/USD/2025-08-01/2025-08-27?uploader=admin123&source=Myanmar%20Market%20Price&skip=0&limit=10
