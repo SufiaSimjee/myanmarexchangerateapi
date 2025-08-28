@@ -14,7 +14,7 @@ async function connectDb() {
             serverSelectionTimeoutMS: 10000, // 10 sec timeout
         });
 
-        console.log("Main DB connected");
+        console.log("Connected To Database");
         return conn.connection; // return the active connection
     } catch (error) {
         console.error("MongoDB connection error:", error);
@@ -25,7 +25,7 @@ async function connectDb() {
 async function closeDb(connection) {
     try {
         await connection.close();
-        console.log("Main DB disconnected");
+        console.log("Disconnected from database");
         return true;
     } catch (error) {
         console.error(error);
