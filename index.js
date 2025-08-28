@@ -112,6 +112,18 @@ try{
         console.log("Server running over HTTPS");
     }
 
+    server.requestTimeout = 6000;
+    server.headersTimeout = 3000;
+    server.keepAliveTimeout = 4000;
+    server.timeout = 15000;
+
+    server.on('timeout', (socket) => {
+        console.log('timeout');
+        socket.destroy();
+    });
+
+
+
 
     const io = new Server(server, {
         cors: { origin: "*" },
