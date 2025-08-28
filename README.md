@@ -10,7 +10,7 @@ This API is intended to offer a general overview of currency rates in Myanmar an
 
 Users should treat the data as indicative rather than authoritative, and the developer cannot be held responsible for any inaccuracies, misinterpretations, or outcomes resulting from its use.
 
-##### Example API Endpoints (Note: All requests and responses use JSON format for simplicity and compatibility across different platforms)
+#### Example API Endpoints (Note: All requests and responses use JSON format for simplicity and compatibility across different platforms)
 
 - **Get the latest USD rate:**  
   `https://myanmarexchangerateapi.onrender.com/currency/USD/latest`  
