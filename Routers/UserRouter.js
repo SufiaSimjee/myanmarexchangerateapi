@@ -142,7 +142,7 @@ userRouter.post("/login", async (req, res) => {
             });
         }
 
-        await connectDb();
+
 
         const userAccount = await User.findOne({
             $or: [
