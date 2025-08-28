@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
-const seedFuelRates = require('../Models/Seeds/FuelRateSeed');
-const seedMetalRates = require("../Models/Seeds/MetalRateSeed");
-const seedCurrencyRates = require("../Models/Seeds/CurrencyRateSeed");
-const seedUsers = require("../Models/Seeds/UserSeed");
-
 const mongoDbUrl = process.env.MONGODB_URL;
+
 
 
 
@@ -12,46 +8,22 @@ const mongoDbUrl = process.env.MONGODB_URL;
 
 async function connectDb() {
     try {
-        mongoose.connection.on('error', (dbError) => {
-            throw new Error(dbError);
-        });
-
-        mongoose.connection.on('connected', async () => {
-            await seedFuelRates();
-            await seedMetalRates();
-            await seedCurrencyRates();
-            await seedUsers();
-        })
-
-        await mongoose.connect(mongoDbUrl);
-        return true;
-
+        const mainConnection = await mongoose.createConnection(mongoDbUrl);
+        console.log("Main DB connected");
+        return mainConnection; // Return the connection for models
     } catch (error) {
-        console.log(error);
-        return false
+        console.error(error);
+        return null;
     }
 }
 
-async function closeDb() {
-    try{
-        mongoose.connection.on('error', (dbError) => {
-            throw new Error(dbError);
-        });
-
-        mongoose.connection.on('disconnecting', () => {
-            console.log('disconnecting')
-        });
-
-        mongoose.connection.on('disconnected', () => {
-            console.log('disconnected')
-        });
-
-        await mongoose.disconnect();
+async function closeDb(connection) {
+    try {
+        await connection.close();
+        console.log("Main DB disconnected");
         return true;
-
     } catch (error) {
-
-        console.log(error);
+        console.error(error);
         return false;
     }
 }

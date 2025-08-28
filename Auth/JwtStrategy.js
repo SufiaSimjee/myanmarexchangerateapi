@@ -3,11 +3,14 @@ const JwtStrategy = passportJWT.Strategy;
 
 const User = require('../Models/UserSchema');
 const jwtOptions = require("./JwtOptions");
+const {connectDb, closeDb} = require("../Services/DbService");
 
 
 
 const jwtVerify = async (payload, done) => {
+    let dbConnection;
     try {
+        dbConnection = await connectDb();
         const user = await User.findOne({
             $or: [
                 { email: payload.email },
@@ -26,6 +29,8 @@ const jwtVerify = async (payload, done) => {
         console.error(err);
         done(null, false);
 
+    } finally {
+        await closeDb(dbConnection);
     }
 };
 

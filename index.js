@@ -26,6 +26,10 @@ const strategy = require("./Auth/JwtStrategy");
 const currencyRouter = require("./Routers/CurrencyRouter");
 const CurrencyRate = require("./Models/CurrencyRateSchema");
 const TutorialRouter = require("./Routers/TutorialRouter");
+const seedFuelRates = require("./Models/Seeds/FuelRateSeed");
+const seedMetalRates = require("./Models/Seeds/MetalRateSeed");
+const seedCurrencyRates = require("./Models/Seeds/CurrencyRateSeed");
+const seedUsers = require("./Models/Seeds/UserSeed");
 
 
 
@@ -97,7 +101,6 @@ try{
     });
 
 
-
     //set-up server
     let server;
 
@@ -141,16 +144,12 @@ try{
 
     server.listen(process.env.PORT, process.env.HOST,async ()=> {
         console.log(`listening on ${process.env.HOST}:${process.env.PORT}`);
-
-        connectDb().then(result => {
-            if (result) {
-                console.log("Connected to Database");
-            } else {
-                console.log("Failed to connect to Database");
-            }
-        }).catch(err => {
-            console.error("Database connection error:", err);
-        });
+        let dbConnection = await connectDb();
+        await seedFuelRates();
+        await seedMetalRates();
+        await seedCurrencyRates();
+        await seedUsers();
+        await closeDb(dbConnection);
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
@@ -160,8 +159,9 @@ try{
     try{
         if(liveExchangeRate){
             let previousHashes = {};
+            let dbConnection;
             cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
-                await connectDb();
+                dbConnection = await connectDb();
                 const uploaders = await CurrencyRate.aggregate([
                     {
                         $group: {
@@ -261,7 +261,7 @@ try{
                     uploader = await uploaders.next();
                 }
 
-                await closeDb();
+                await closeDb(dbConnection);
             })
         }
     } catch(error){

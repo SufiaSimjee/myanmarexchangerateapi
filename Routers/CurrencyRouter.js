@@ -15,6 +15,7 @@ let defaultSource = process.env.DEFAULT_SOURCE;
 let defaultUploader = process.env.DEFAULT_UPLOADER;
 
 currencyRouter.get("/uploaderList", async (req, res) => {
+    let dbConnection;
     try {
         let { skip, limit } = req.query;
 
@@ -27,7 +28,7 @@ currencyRouter.get("/uploaderList", async (req, res) => {
             });
         }
 
-        await connectDb();
+        dbConnection = await connectDb();
         const totalCount = await CurrencyRate.distinct("uploadedBy").then(arr => arr.length);
 
         if (totalCount === 0) {
@@ -84,12 +85,14 @@ currencyRouter.get("/uploaderList", async (req, res) => {
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 });
 
 
 currencyRouter.get("/sourceList", async (req, res) => {
+    let dbConnection;
+
     try {
         let {uploader, skip, limit} = req.query;
 
@@ -107,7 +110,7 @@ currencyRouter.get("/sourceList", async (req, res) => {
             });
         }
 
-        await connectDb();
+        dbConnection = await connectDb();
         const totalCount = await CurrencyRate.distinct("source", { uploadedBy: { $regex: `^${uploader}$`, $options: 'i' } }).then(arr => arr.length);
 
         if (totalCount === 0) {
@@ -171,11 +174,12 @@ currencyRouter.get("/sourceList", async (req, res) => {
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 });
 
 currencyRouter.get("/currencyList", async (req, res) => {
+    let dbConnection;
     try {
         let {source, uploader, skip, limit} = req.query;
 
@@ -197,7 +201,7 @@ currencyRouter.get("/currencyList", async (req, res) => {
             });
         }
 
-        await connectDb();
+        dbConnection = await connectDb();
 
         const totalCount = await CurrencyRate.distinct("currencyCode", {
             source: { $regex: `^${source}$`, $options: 'i' },
@@ -274,12 +278,13 @@ currencyRouter.get("/currencyList", async (req, res) => {
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 });
 
 
 currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
+    let dbConnection;
     try {
         let {currencyCode} = req.params;
 
@@ -294,7 +299,7 @@ currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
             });
         }
 
-        await connectDb();
+        dbConnection = await connectDb();
 
         const totalCount = await CurrencyRate.distinct("uploadedBy", { currencyCode: { $regex: `^${currencyCode}$`, $options: 'i' } })
             .then(uploaderArr => {
@@ -365,11 +370,12 @@ currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 });
 
 currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), async (req, res) => {
+    let dbConnection;
     try{
         let { currencyCode, unit, buyRate, sellRate, uploadedDate, source } = req.body;
         let {username} = req.user
@@ -404,7 +410,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
 
         const formattedDate = unformattedDate.toDate();
 
-        await connectDb();
+        dbConnection = await connectDb();
 
         const existingRate = await CurrencyRate.findOne({
             $and: [
@@ -455,17 +461,18 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 })
 
 
 currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }), async (req, res) => {
+    let dbConnection;
     try {
         const { id } = req.params;
         let {username} = req.user
 
-        await connectDb();
+        dbConnection = await connectDb();
 
         // Find the currency rate by ID
         const exchangeRate = await CurrencyRate.findById(id).lean();
@@ -504,16 +511,17 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 });
 
 
 currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
+    let dbConnection;
     try {
         const { id } = req.params;
 
-        await connectDb();
+        dbConnection = await connectDb();
 
         // Find the currency rate by ID
         const exchangeRate = await CurrencyRate.findById(id).select('-__v');
@@ -543,11 +551,12 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 });
 
 currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
+    let dbConnection;
     try {
         const { currencyCode } = req.params;
         let {source, uploader} = req.query;
@@ -562,7 +571,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
             uploader = defaultUploader;
         }
 
-        await connectDb();
+        dbConnection = await connectDb();
 
         if(normalizedCode !== "ALL") {
             let currencyRate = await CurrencyRate.findOne({
@@ -665,12 +674,13 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb()
+        await closeDb(dbConnection);
     }
 });
 
 
 currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}) ,async (req, res) => {
+    let dbConnection;
     try {
         const { currencyCode, date } = req.params;
         let {skip, limit} = req.query;
@@ -687,7 +697,6 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
         if (!uploader) {
             uploader = defaultUploader;
         }
-
 
         skip = parseInt(skip) || 0;
         limit = parseInt(limit) || 10;
@@ -709,7 +718,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
         const endOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
 
 
-        await connectDb();
+        dbConnection = await connectDb();
 
         // Query DB
         let count;
@@ -791,11 +800,12 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 });
 
 currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
+    let dbConnection;
     try {
         const { currencyCode, fromDate, toDate } = req.params;
         let {source, uploader, skip, limit} = req.query;
@@ -837,7 +847,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
         const startDate = moment.tz(fromDate, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
         const endDate = moment.tz(toDate, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
 
-        await connectDb();
+        dbConnection = await connectDb();
 
         // Query database
         let count;
@@ -920,7 +930,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
     } finally {
-        await closeDb();
+        await closeDb(dbConnection);
     }
 });
 
