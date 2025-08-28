@@ -5,7 +5,7 @@
   "main": "index.js",
   "module": "export",
   "scripts": {
-    "start": "pm2-runtime index.js",
+    "start": "TZ='Asia/Yangon' pm2-runtime index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
