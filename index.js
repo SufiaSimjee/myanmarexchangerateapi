@@ -285,12 +285,9 @@ try{
     }
 
 
-
-
-
 } catch (error) {
     console.log("Failed to start api: ", error);
-    process.exit();
+    process.exit(1);
 }
 
 
