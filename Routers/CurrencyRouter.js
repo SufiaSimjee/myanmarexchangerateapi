@@ -493,7 +493,7 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
         const { id } = req.params;
 
         // Find the currency rate by ID
-        const exchangeRate = await CurrencyRate.findById(id);
+        const exchangeRate = await CurrencyRate.findById(id).select('-__v');
 
         if (!exchangeRate) {
             return res.status(404).json({
@@ -542,7 +542,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 currencyCode: normalizedCode,
                 uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
                 source: { $regex: `^${source}$`, $options: 'i' }
-            }).sort({ uploadedDate: -1 }).lean();
+            }).sort({ uploadedDate: -1 }).select('-__v').lean();
 
             if (!currencyRate) {
                 return res.status(404).json({
@@ -552,6 +552,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                     totalCount: 0
                 });
             }
+
 
             return res.status(200).json({
                 message: "Latest exchange rate retrieved successfully.",
@@ -585,7 +586,9 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                         sellRate: { $first: "$sellRate" },
                         source: { $first: "$source" },
                         uploadedDate: { $first: "$uploadedDate" },
-                        uploadedBy: { $first: "$uploadedBy" }
+                        uploadedBy: { $first: "$uploadedBy" },
+                        createdAt: { $first: "$createdAt" },
+                        updatedAt: { $first: "$updatedAt" }
                     }
                 },
 
@@ -715,8 +718,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
                 uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
                 source: { $regex: `^${source}$`, $options: 'i' },
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay }
-            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
-
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).select('-__v');
         }
 
         if(normalizedCode !== "ALL") {
@@ -725,8 +727,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
                 source: { $regex: `^${source}$`, $options: 'i' },
                 uploadedDate: { $gte: startOfDay, $lte: endOfDay },
                 currencyCode: normalizedCode
-            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
-
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).select('-__v');
         }
 
         if (!currencyRates ) {
@@ -740,13 +741,6 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
             });
         }
 
-        // Apply Yangon timezone formatting
-        currencyRates = currencyRates.map(rate => ({
-            ...rate,
-            uploadedDate: yangonDate(rate.uploadedDate),
-            createdAt: yangonDate(rate.createdAt),
-            updatedAt: yangonDate(rate.updatedAt)
-        }));
 
         return res.status(200).json({
             message: `Exchange rate for '${currencyCode}' on ${date} retrieved successfully.`,
@@ -850,7 +844,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
-            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).select('-__v');
         }
 
         if(normalizedCode !== "ALL") {
@@ -859,7 +853,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 uploadedBy: uploader,
                 source: source,
                 uploadedDate: { $gte: startDate, $lte: endDate }
-            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).lean();
+            }).sort({ uploadedDate: -1 }).skip(skip).limit(limit).select('-__v');
         }
 
 
@@ -873,14 +867,6 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
                 limit: limit
             });
         }
-
-        // Apply Yangon timezone formatting
-        currencyRates = currencyRates.map(rate => ({
-            ...rate,
-            uploadedDate: yangonDate(rate.uploadedDate),
-            createdAt: yangonDate(rate.createdAt),
-            updatedAt: yangonDate(rate.updatedAt)
-        }));
 
         return res.status(200).json({
             message: "Exchange rate retrieved successfully.",
@@ -901,164 +887,5 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
         });
     }
 });
-
-/*currencyRouter.get("/count/:currencyCode/:fromDate/:toDate", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
-    async (req, res) => {
-        try {
-            const { currencyCode, fromDate, toDate } = req.params;
-            let {source, uploader} = req.query;
-
-            const normalizedCode = currencyCode.trim().toUpperCase();
-
-            if (!source) {
-                source = defaultSource;
-            }
-
-            if (!uploader) {
-                uploader = defaultUploader;
-            }
-
-            // Validate both dates
-            if (!moment(fromDate, "YYYY-MM-DD", true).isValid()) {
-                return res.status(400).json({
-                    message: "Invalid date format for 'fromDate'. Please use 'YYYY-MM-DD'."
-                });
-            }
-
-            if (!moment(toDate, "YYYY-MM-DD", true).isValid()) {
-                return res.status(400).json({
-                    message: "Invalid date format for 'toDate'. Please use 'YYYY-MM-DD'."
-                });
-            }
-
-            // Convert to Date objects with startOf/endOf for inclusive range in Yangon timezone
-            const startDate = moment.tz(fromDate, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
-            const endDate = moment.tz(toDate, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
-
-            // Query database
-            let count;
-            if(normalizedCode === "ALL") {
-                count = await CurrencyRate.countDocuments({
-                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
-                    source: { $regex: `^${source}$`, $options: 'i' },
-                    uploadedDate: { $gte: startDate, $lte: endDate }
-                });
-
-            }
-
-            if(normalizedCode !== "ALL") {
-                count = await CurrencyRate.countDocuments({
-                    currencyCode: normalizedCode,
-                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
-                    source: { $regex: `^${source}$`, $options: 'i' },
-                    uploadedDate: { $gte: startDate, $lte: endDate }
-                });
-            }
-
-            if (!count || count < 1) {
-                return res.status(404).json({
-                    message: `No currency rate records found for ${normalizedCode} between ${fromDate} and ${toDate}.`,
-                    uploader: uploader,
-                    source: source,
-                    totalCount: 0
-                });
-            }
-
-            return res.status(200).json({
-                message: `Found ${count} record(s) for ${normalizedCode} between ${fromDate} and ${toDate}.`,
-                uploader: uploader,
-                source: source,
-                totalCount: count
-            });
-
-        } catch (error) {
-            console.error("Error fetching currency rate total count:", error.message);
-
-            return res.status(500).json({
-                message: "Unexpected error occurred while fetching currency rate count.",
-                details: process.env.NODE_ENV === "development" ? error.message : undefined
-            });
-        }
-    }
-);*/
-
-
-
-/*currencyRouter.get("/count/:currencyCode/:date", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
-    async (req, res) => {
-        try {
-            const { currencyCode, date } = req.params;
-            let {source, uploader} = req.query;
-
-            const normalizedCode = currencyCode.trim().toUpperCase();
-
-            if (!source) {
-                source = defaultSource;
-            }
-
-            if (!uploader) {
-                uploader = defaultUploader;
-            }
-
-            // Validate date format (YYYY-MM-DD)
-            if (!moment(date, "YYYY-MM-DD", true).isValid()) {
-                return res.status(400).json({
-                    message: "The date must be in 'YYYY-MM-DD' format. Example: 2025-08-25."
-                });
-            }
-
-            const startOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
-            const endOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
-
-            // Query DB
-            let count;
-
-            if(normalizedCode === "ALL") {
-                count = await CurrencyRate.countDocuments({
-                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
-                    source: { $regex: `^${source}$`, $options: 'i' },
-                    uploadedDate: { $gte: startOfDay, $lte: endOfDay }
-                });
-            }
-
-            if(normalizedCode !== "ALL") {
-                count = await CurrencyRate.countDocuments({
-                    currencyCode: normalizedCode,
-                    uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
-                    source: { $regex: `^${source}$`, $options: 'i' },
-                    uploadedDate: { $gte: startOfDay, $lte: endOfDay }
-                });
-            }
-
-
-            if (!count) {
-                return res.status(404).json({
-                    message: `No exchange rate records found for currency '${currencyCode}' on ${date}.`,
-                    uploader: uploader,
-                    source: source,
-                    totalCount: 0
-                });
-            }
-
-            return res.status(200).json({
-                message: `Exchange rate record total count fetched successfully for '${currencyCode}' on ${date}.`,
-                uploader: uploader,
-                source: source,
-                totalCount: count
-            });
-
-        } catch (error) {
-            console.error("Error fetching currency rate total count:", error);
-
-            return res.status(500).json({
-                message: "Something went wrong while fetching the exchange rate count. Please try again later.",
-                details: process.env.NODE_ENV === "development" ? error.message : undefined
-            });
-        }
-    }
-);*/
-
-
-
 
 module.exports = currencyRouter;

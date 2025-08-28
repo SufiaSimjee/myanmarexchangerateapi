@@ -48,7 +48,10 @@ const CurrencyRateSchema = new Schema({
     uploadedDate:{
         type: Date,
         index: true,
-        get: (value) => yangonDate(value),
+        get: (value) => {
+            console.log("converting to yangon time")
+            yangonDate(value)
+        },
         required: true,
         validate: {
             validator: function (value) {
@@ -71,8 +74,9 @@ const CurrencyRateSchema = new Schema({
 
 },{
     timestamps: true,
-    toJSON: { getters: true, virtuals: true },
-    toObject: { getters: true, virtuals: true },
+    id: false,
+    toJSON: { getters: true },
+    toObject: { getters: true },
 
 });
 
