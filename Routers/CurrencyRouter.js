@@ -6,6 +6,7 @@ const moment = require("moment-timezone");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
 const yangonDate = require("../Helpers/YangonDate");
+const {connectDb, closeDb} = require("../Services/DbService");
 
 
 
@@ -26,7 +27,7 @@ currencyRouter.get("/uploaderList", async (req, res) => {
             });
         }
 
-
+        await connectDb();
         const totalCount = await CurrencyRate.distinct("uploadedBy").then(arr => arr.length);
 
         if (totalCount === 0) {
@@ -82,6 +83,8 @@ currencyRouter.get("/uploaderList", async (req, res) => {
             message: "An unexpected error occurred while fetching the uploader list.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 
@@ -104,6 +107,7 @@ currencyRouter.get("/sourceList", async (req, res) => {
             });
         }
 
+        await connectDb();
         const totalCount = await CurrencyRate.distinct("source", { uploadedBy: { $regex: `^${uploader}$`, $options: 'i' } }).then(arr => arr.length);
 
         if (totalCount === 0) {
@@ -166,6 +170,8 @@ currencyRouter.get("/sourceList", async (req, res) => {
             message: "An unexpected error occurred while fetching the source list.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 
@@ -190,6 +196,8 @@ currencyRouter.get("/currencyList", async (req, res) => {
                 message: "'skip' must be 0 or greater and 'limit' must be at least 1."
             });
         }
+
+        await connectDb();
 
         const totalCount = await CurrencyRate.distinct("currencyCode", {
             source: { $regex: `^${source}$`, $options: 'i' },
@@ -265,6 +273,8 @@ currencyRouter.get("/currencyList", async (req, res) => {
             message: "An unexpected error occurred while fetching the currency list.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 
@@ -283,6 +293,8 @@ currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
                 message: "'skip' must be 0 or greater and 'limit' must be at least 1."
             });
         }
+
+        await connectDb();
 
         const totalCount = await CurrencyRate.distinct("uploadedBy", { currencyCode: { $regex: `^${currencyCode}$`, $options: 'i' } })
             .then(uploaderArr => {
@@ -352,6 +364,8 @@ currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
             message: "An unexpected error occurred while fetching the currency uploader and source.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 
@@ -389,7 +403,8 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
         }
 
         const formattedDate = unformattedDate.toDate();
-        console.log("formattedDate", formattedDate);
+
+        await connectDb();
 
         const existingRate = await CurrencyRate.findOne({
             $and: [
@@ -439,6 +454,8 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
             message: "An unexpected error occurred while adding the exchange rate.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 })
 
@@ -447,6 +464,8 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
     try {
         const { id } = req.params;
         let {username} = req.user
+
+        await connectDb();
 
         // Find the currency rate by ID
         const exchangeRate = await CurrencyRate.findById(id).lean();
@@ -484,6 +503,8 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
             message: "An unexpected error occurred while deleting the currency rate.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 
@@ -491,6 +512,8 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
 currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
     try {
         const { id } = req.params;
+
+        await connectDb();
 
         // Find the currency rate by ID
         const exchangeRate = await CurrencyRate.findById(id).select('-__v');
@@ -519,6 +542,8 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
             message: "An unexpected error occurred while retrieving the currency rate.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 
@@ -537,12 +562,15 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
             uploader = defaultUploader;
         }
 
+        await connectDb();
+
         if(normalizedCode !== "ALL") {
-            const currencyRate = await CurrencyRate.findOne({
+            let currencyRate = await CurrencyRate.findOne({
                 currencyCode: normalizedCode,
                 uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
                 source: { $regex: `^${source}$`, $options: 'i' }
-            }).sort({ uploadedDate: -1 }).select('-__v').lean();
+            }).sort({ uploadedDate: -1 }).select('-__v');
+
 
             if (!currencyRate) {
                 return res.status(404).json({
@@ -552,7 +580,6 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                     totalCount: 0
                 });
             }
-
 
             return res.status(200).json({
                 message: "Latest exchange rate retrieved successfully.",
@@ -637,6 +664,8 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
             message: "An unexpected error occurred while fetching the latest currency rate.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb()
     }
 });
 
@@ -679,6 +708,8 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
         const startOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
         const endOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
 
+
+        await connectDb();
 
         // Query DB
         let count;
@@ -759,6 +790,8 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
             message: "Something went wrong while fetching the exchange rate. Please try again later.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 
@@ -804,6 +837,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
         const startDate = moment.tz(fromDate, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
         const endDate = moment.tz(toDate, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
 
+        await connectDb();
 
         // Query database
         let count;
@@ -885,6 +919,8 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
             message: "Unexpected error occurred while fetching currency rate.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 

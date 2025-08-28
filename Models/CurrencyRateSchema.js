@@ -49,8 +49,7 @@ const CurrencyRateSchema = new Schema({
         type: Date,
         index: true,
         get: (value) => {
-            console.log("converting to yangon time")
-            yangonDate(value)
+            return yangonDate(value)
         },
         required: true,
         validate: {
@@ -79,6 +78,8 @@ const CurrencyRateSchema = new Schema({
     toObject: { getters: true },
 
 });
+
+
 
 
 CurrencyRateSchema.path("createdAt").get(yangonDate);
@@ -120,12 +121,10 @@ CurrencyRateSchema.methods.getPercentageChange = async function () {
         const prevRates = await this.constructor.aggregate([
             {
                 $match: {
-                    $and: [
-                        { currencyCode: this.currencyCode },
-                        { unit: this.unit },
-                        { source: { $regex: `^${this.source}$`, $options: 'i' } },
-                        { uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' } }
-                    ]
+                    currencyCode: this.currencyCode,
+                    unit: this.unit,
+                    source: { $regex: `^${this.source}$`, $options: 'i' },
+                    uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' }
                 }
             },
             { $sort: { uploadedDate: -1 } },

@@ -4,6 +4,7 @@ const express = require("express");
 const userRouter = express.Router();
 const User = require("../Models/UserSchema");
 const generateJWTToken = require("../Auth/JwtTokenGenerator");
+const {connectDb, closeDb} = require("../Services/DbService");
 
 
 
@@ -79,6 +80,8 @@ userRouter.post("/signup", async (req, res) => {
             });
         }
 
+        await connectDb();
+
         //  Check if user already exists
         const existingUser = await User.findOne({
             $or: [
@@ -125,6 +128,8 @@ userRouter.post("/signup", async (req, res) => {
             message: "An unexpected error occurred. Please try again later.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 
@@ -138,6 +143,8 @@ userRouter.post("/login", async (req, res) => {
                 message: "Invalid request. Please provide a username/email and password."
             });
         }
+
+        await connectDb();
 
         const userAccount = await User.findOne({
             $or: [
@@ -173,6 +180,8 @@ userRouter.post("/login", async (req, res) => {
             message: "An unexpected error occurred. Please try again later.",
             details: process.env.NODE_ENV === "development" ? error.message : undefined
         });
+    } finally {
+        await closeDb();
     }
 });
 

@@ -20,7 +20,7 @@ const crypto = require('crypto');
 
 const { Server } = require("socket.io");
 
-const {connectDb} = require('./Services/DbService');
+const {connectDb, closeDb} = require('./Services/DbService');
 const userRouter = require("./Routers/UserRouter");
 const strategy = require("./Auth/JwtStrategy");
 const currencyRouter = require("./Routers/CurrencyRouter");
@@ -156,117 +156,124 @@ try{
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
     let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 1;
 
-    if(liveExchangeRate){
-        let previousHashes = {};
-        cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
-            await connectDb();
-            const uploaders = await CurrencyRate.aggregate([
-                {
-                    $group: {
-                        _id: "$uploadedBy"
-                    }
-                },
-                {
-                    $project: {
-                        _id: 0,
-                        uploadedBy: "$_id"
-                    }
-                }
-            ]).cursor();
 
-            let uploader = await uploaders.next();
-            while (uploader) {
-                const uniqueSources = await CurrencyRate.aggregate([
-                    {
-                        $match: {
-                            uploadedBy: uploader.uploadedBy
-                        }
-                    },
+    try{
+        if(liveExchangeRate){
+            let previousHashes = {};
+            cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
+                await connectDb();
+                const uploaders = await CurrencyRate.aggregate([
                     {
                         $group: {
-                            _id: "$source"
+                            _id: "$uploadedBy"
                         }
                     },
                     {
                         $project: {
                             _id: 0,
-                            source: "$_id"
+                            uploadedBy: "$_id"
                         }
                     }
                 ]).cursor();
 
-                let uniqueSource = await uniqueSources.next();
-                while (uniqueSource) {
-                    const uniqueCurrencies = await CurrencyRate.aggregate([
+                let uploader = await uploaders.next();
+                while (uploader) {
+                    const uniqueSources = await CurrencyRate.aggregate([
                         {
                             $match: {
-                                uploadedBy: uploader.uploadedBy,
-                                source: uniqueSource.source
+                                uploadedBy: uploader.uploadedBy
                             }
                         },
                         {
                             $group: {
-                                _id: "$currencyCode",
-                                currencyName: { $first: "$currencyName" }
+                                _id: "$source"
                             }
                         },
                         {
                             $project: {
                                 _id: 0,
-                                currencyCode: "$_id",
-                                currencyName: 1
+                                source: "$_id"
                             }
                         }
                     ]).cursor();
 
-                    let uniqueCurrency = await uniqueCurrencies.next();
-                    while (uniqueCurrency){
-                        const currencyRate = await CurrencyRate.findOne({
-                            uploadedBy: uploader.uploadedBy,
-                            source: uniqueSource.source,
-                            currencyCode: uniqueCurrency.currencyCode,
-                        }).sort({ uploadedDate: -1 }).select('-__v');
+                    let uniqueSource = await uniqueSources.next();
+                    while (uniqueSource) {
+                        const uniqueCurrencies = await CurrencyRate.aggregate([
+                            {
+                                $match: {
+                                    uploadedBy: uploader.uploadedBy,
+                                    source: uniqueSource.source
+                                }
+                            },
+                            {
+                                $group: {
+                                    _id: "$currencyCode",
+                                    currencyName: { $first: "$currencyName" }
+                                }
+                            },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    currencyCode: "$_id",
+                                    currencyName: 1
+                                }
+                            }
+                        ]).cursor();
+
+                        let uniqueCurrency = await uniqueCurrencies.next();
+                        while (uniqueCurrency){
+                            let currencyRate = await CurrencyRate.findOne({
+                                uploadedBy: uploader.uploadedBy,
+                                source: uniqueSource.source,
+                                currencyCode: uniqueCurrency.currencyCode,
+                            }).sort({ uploadedDate: -1 }).select('-__v').lean();
 
 
-                        const currencyRateString = JSON.stringify(currencyRate);
-                        const currentHash = crypto.createHash('sha1').update(currencyRateString).digest('hex').toString();
+                            const currencyRateString = JSON.stringify(currencyRate);
+                            const currentHash = crypto.createHash('sha1').update(currencyRateString).digest('hex').toString();
 
-                        const eventName = `${uploader.uploadedBy}_${uniqueSource.source}_${uniqueCurrency.currencyCode}`;
+                            const eventName = `${uploader.uploadedBy}_${uniqueSource.source}_${uniqueCurrency.currencyCode}`;
 
-                        if (previousHashes[eventName] === undefined) {
-                            previousHashes = {
-                                ...previousHashes,
-                                [eventName]: currentHash
-                            };
-                            console.log(`Emitting '${eventName}' for the first time.`);
-                            io.emit(eventName, currencyRateString);
+                            if (previousHashes[eventName] === undefined) {
+                                previousHashes = {
+                                    ...previousHashes,
+                                    [eventName]: currentHash
+                                };
+                                console.log(`Emitting '${eventName}' for the first time.`);
+                                io.emit(eventName, currencyRateString);
+                            }
+                            else if (previousHashes[eventName] !== currentHash) {
+                                console.log(`Hash changed for '${eventName}'. Old: ${previousHashes[eventName]}, New: ${currentHash}`);
+                                previousHashes[eventName] = currentHash;
+                                console.log(`Emitting '${eventName}' with updated data.`);
+                                io.emit(eventName, currencyRateString);
+                            }
+                            else {
+                                console.log(`No change for '${eventName}', skipping emit.`);
+                            }
+
+                            uniqueCurrency = await uniqueCurrencies.next();
                         }
-                        else if (previousHashes[eventName] !== currentHash) {
-                            console.log(`Hash changed for '${eventName}'. Old: ${previousHashes[eventName]}, New: ${currentHash}`);
-                            previousHashes[eventName] = currentHash;
-                            console.log(`Emitting '${eventName}' with updated data.`);
-                            io.emit(eventName, currencyRateString);
-                        }
-                        else {
-                            console.log(`No change for '${eventName}', skipping emit.`);
-                        }
 
-                        uniqueCurrency = await uniqueCurrencies.next();
+                        uniqueSource = await uniqueSources.next();
                     }
-
-                    uniqueSource = await uniqueSources.next();
+                    uploader = await uploaders.next();
                 }
-                uploader = await uploaders.next();
 
-            }
-        })
+                await closeDb();
+            })
+        }
+    } catch(error){
+        console.log("Cannot start live notification feature:", error);
     }
 
 
 
 
+
 } catch (error) {
-    console.log(error);
+    console.log("Failed to start api: ", error);
     process.exit();
 }
 

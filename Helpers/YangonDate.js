@@ -7,7 +7,7 @@ function yangonDate(value) {
         }
         return moment.utc(value).tz("Asia/Yangon").format("YYYY-MM-DD HH:mm:ss");
     } catch (error) {
-        console.log(error);
+        console.log("Date Conversion Error: ",error);
         return value;
     }
 }

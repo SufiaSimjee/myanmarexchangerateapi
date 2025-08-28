@@ -44,7 +44,9 @@ const FuelRateSchema = new Schema({
     uploadedDate:{
         type: Date,
         index: true,
-        get: (value) => yangonDate(value),
+        get: (value) => {
+            return yangonDate(value)
+        },
         required: true,
         validate: {
             validator: function (value) {
@@ -66,8 +68,8 @@ const FuelRateSchema = new Schema({
     }
 }, {
     timestamps: true,
-    toJSON: { getters: true, virtuals: true },
-    toObject: { getters: true, virtuals: true }
+    toJSON: { getters: true},
+    toObject: { getters: true}
 });
 
 FuelRateSchema.path("createdAt").get(yangonDate);

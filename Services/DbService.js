@@ -57,4 +57,4 @@ async function closeDb() {
 }
 
 
-module.exports = { connectDb };
+module.exports = { connectDb, closeDb };
