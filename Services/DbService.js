@@ -8,11 +8,16 @@ const mongoDbUrl = process.env.MONGODB_URL;
 
 async function connectDb() {
     try {
-        const mainConnection = await mongoose.createConnection(mongoDbUrl);
+        const conn = await mongoose.connect(mongoDbUrl, {
+            maxPoolSize: 10, // pool size for concurrent connections
+            minPoolSize: 1,  // keep at least one alive
+            serverSelectionTimeoutMS: 10000, // 10 sec timeout
+        });
+
         console.log("Main DB connected");
-        return mainConnection; // Return the connection for models
+        return conn.connection; // return the active connection
     } catch (error) {
-        console.error(error);
+        console.error("MongoDB connection error:", error);
         return null;
     }
 }
@@ -29,4 +34,6 @@ async function closeDb(connection) {
 }
 
 
-module.exports = { connectDb, closeDb };
+
+
+module.exports = { connectDb, closeDb};

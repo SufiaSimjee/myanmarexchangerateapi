@@ -112,10 +112,12 @@ try{
         console.log("Server running over HTTPS");
     }
 
-    server.requestTimeout = 6000;
-    server.headersTimeout = 3000;
-    server.keepAliveTimeout = 4000;
-    server.timeout = 15000;
+
+    server.requestTimeout = 60000;
+    server.headersTimeout = 65000;
+    server.keepAliveTimeout = 60000;
+    server.timeout = 120000;
+
 
     server.on('timeout', (socket) => {
         console.log('timeout');
@@ -157,6 +159,7 @@ try{
     server.listen(process.env.PORT, process.env.HOST,async ()=> {
         console.log(`listening on ${process.env.HOST}:${process.env.PORT}`);
         let dbConnection = await connectDb();
+        await dbConnection.asPromise();
         await seedFuelRates();
         await seedMetalRates();
         await seedCurrencyRates();
@@ -174,6 +177,7 @@ try{
             let dbConnection;
             cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
                 dbConnection = await connectDb();
+                await dbConnection.asPromise();
                 const uploaders = await CurrencyRate.aggregate([
                     {
                         $group: {
