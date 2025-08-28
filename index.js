@@ -20,7 +20,7 @@ const crypto = require('crypto');
 
 const { Server } = require("socket.io");
 
-const {connectDb, closeDb} = require('./Services/DbService');
+const {connectDb} = require('./Services/DbService');
 const userRouter = require("./Routers/UserRouter");
 const strategy = require("./Auth/JwtStrategy");
 const currencyRouter = require("./Routers/CurrencyRouter");
