@@ -4,7 +4,7 @@ const express = require("express");
 const userRouter = express.Router();
 const User = require("../Models/UserSchema");
 const generateJWTToken = require("../Auth/JwtTokenGenerator");
-const {connectDb, closeDb} = require("../Services/DbService");
+
 
 
 
@@ -33,7 +33,6 @@ userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }
         const { id } = req.params;
         const {username} = req.user;
 
-        await connectDb();
 
         // Find the user
         const userAccount = await User.findById(id).lean();
@@ -82,7 +81,6 @@ userRouter.post("/signup", async (req, res) => {
             });
         }
 
-        await connectDb();
 
         //  Check if user already exists
         const existingUser = await User.findOne({

@@ -285,7 +285,6 @@ try{
 
 } catch (error) {
     console.log("Failed to start api: ", error);
-    closeDb()
     process.exit(1);
 }
 

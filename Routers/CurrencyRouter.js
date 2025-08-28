@@ -6,7 +6,7 @@ const moment = require("moment-timezone");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
 const yangonDate = require("../Helpers/YangonDate");
-const {connectDb, closeDb} = require("../Services/DbService");
+
 
 
 
@@ -27,7 +27,7 @@ currencyRouter.get("/uploaderList", async (req, res) => {
             });
         }
 
-        await connectDb();
+
         const totalCount = await CurrencyRate.distinct("uploadedBy").then(arr => arr.length);
 
         if (totalCount === 0) {
@@ -105,7 +105,7 @@ currencyRouter.get("/sourceList", async (req, res) => {
             });
         }
 
-        await connectDb();
+
         const totalCount = await CurrencyRate.distinct("source", { uploadedBy: { $regex: `^${uploader}$`, $options: 'i' } }).then(arr => arr.length);
 
         if (totalCount === 0) {
@@ -193,7 +193,7 @@ currencyRouter.get("/currencyList", async (req, res) => {
             });
         }
 
-        await connectDb();
+
 
         const totalCount = await CurrencyRate.distinct("currencyCode", {
             source: { $regex: `^${source}$`, $options: 'i' },
@@ -288,7 +288,6 @@ currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
             });
         }
 
-        await connectDb();
 
         const totalCount = await CurrencyRate.distinct("uploadedBy", { currencyCode: { $regex: `^${currencyCode}$`, $options: 'i' } })
             .then(uploaderArr => {
@@ -396,7 +395,6 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
 
         const formattedDate = unformattedDate.toDate();
 
-        await connectDb();
 
         const existingRate = await CurrencyRate.findOne({
             $and: [
@@ -455,7 +453,6 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
         const { id } = req.params;
         let {username} = req.user
 
-        await connectDb();
 
         // Find the currency rate by ID
         const exchangeRate = await CurrencyRate.findById(id).lean();
@@ -500,7 +497,6 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
 currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
     try {
         const { id } = req.params;
-        await connectDb();
 
         // Find the currency rate by ID
         const exchangeRate = await CurrencyRate.findById(id).select('-__v');
@@ -547,7 +543,6 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
             uploader = defaultUploader;
         }
 
-        await connectDb();
 
         if(normalizedCode !== "ALL") {
             let currencyRate = await CurrencyRate.findOne({
@@ -690,9 +685,6 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
         const startOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
         const endOfDay = moment.tz(date, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
 
-
-        await connectDb();
-
         // Query DB
         let count;
         if (normalizedCode === "ALL") {
@@ -817,7 +809,7 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 6
         const startDate = moment.tz(fromDate, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
         const endDate = moment.tz(toDate, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
 
-        await connectDb();
+
 
         // Query database
         let count;
