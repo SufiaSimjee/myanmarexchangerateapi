@@ -4,21 +4,16 @@ const mongoDbUrl = process.env.MONGODB_URL;
 
 async function connectDb() {
     try {
-        const conn = await mongoose.connect(mongoDbUrl, {
-            maxPoolSize: 10,
-            minPoolSize: 1,
-            serverSelectionTimeoutMS: 10000,
-        });
-        await conn.connection.asPromise();
+        const conn = await mongoose.connect(mongoDbUrl);
         console.log("Connected To Database");
-        return conn.connection;
+        return true;
     } catch (error) {
         console.error("MongoDB connection error:", error);
-        return null;
+        return false;
     }
 }
 
-async function closeDb() {
+/*async function closeDb() {
     try {
         await mongoose.connection.close();
         console.log("Disconnected From Database");
@@ -27,7 +22,7 @@ async function closeDb() {
         console.error(error);
         return false;
     }
-}
+}*/
 
 
-module.exports = { connectDb, closeDb};
+module.exports = { connectDb};

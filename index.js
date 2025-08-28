@@ -158,8 +158,7 @@ try{
 
     server.listen(process.env.PORT, process.env.HOST,async ()=> {
         console.log(`listening on ${process.env.HOST}:${process.env.PORT}`);
-        let dbConnection = await connectDb();
-        await dbConnection.asPromise();
+        await connectDb();
         await seedFuelRates();
         await seedMetalRates();
         await seedCurrencyRates();
