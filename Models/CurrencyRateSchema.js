@@ -127,28 +127,14 @@ CurrencyRateSchema.pre('save',function (next) {
 
 CurrencyRateSchema.methods.getPercentageChange = async function () {
     try {
-        const prevRates = await this.aggregate([
-            {
-                $match: {
-                    currencyCode: this.currencyCode,
-                    unit: this.unit,
-                    source: { $regex: `^${this.source}$`, $options: 'i' },
-                    uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' }
-                }
-            },
-            { $sort: { uploadedDate: -1 } },
-            {
-                $project: {
-                    _id: 1,
-                    buyRate: 1,
-                    sellRate: 1,
-                    uploadedDate: 1
-                }
-            },
-            { $limit: 1 }
-        ]);
-
-        const prevRate = prevRates[0];
+        const prevRate = await this.findOne({
+            currencyCode: this.currencyCode,
+            unit: this.unit,
+            source: { $regex: `^${this.source}$`, $options: 'i' },
+            uploadedBy: { $regex: `^${this.uploadedBy}$`, $options: 'i' }
+        })
+            .sort({ uploadedDate: -1 })
+            .select('_id buyRate sellRate uploadedDate')
 
         if (!prevRate || !prevRate.buyRate || !prevRate.sellRate) {
             return {
