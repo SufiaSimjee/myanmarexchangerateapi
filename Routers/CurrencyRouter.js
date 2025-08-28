@@ -726,7 +726,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
             count = await CurrencyRate.countDocuments({
                 uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
                 source: { $regex: `^${source}$`, $options: 'i' },
-                uploadedDate: { $gt: startOfDay, $lte: endOfDay }
+                uploadedDate: { $gte: startOfDay, $lte: endOfDay }
             });
         }
 
