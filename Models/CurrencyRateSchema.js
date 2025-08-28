@@ -12,6 +12,7 @@ const CurrencyRateSchema = new Schema({
         type: String,
         index: true,
         required: false,
+        unique: false,
         default: ""
     },
     currencyCode: {
@@ -19,34 +20,41 @@ const CurrencyRateSchema = new Schema({
         index: true,
         required: true,
         uppercase: true,
+        unique: false,
         enum: ISO4217Codes,
         trim: true
     },
     currencyIcon:{
         type: String,
         required: false,
+        unique: false,
         default:''
     },
     unit: {
         type: Number,
         required: false,
+        unique: false,
         default: 1
     },
     buyRate: {
         type: Number,
-        required: true
+        required: true,
+        unique: false,
     },
     sellRate:{
         type: Number,
-        required: true
+        required: true,
+        unique: false
     },
     source:{
         type: String,
         index: true,
         required: true,
+        unique: false
     },
     uploadedDate:{
         type: Date,
+        unique: false,
         index: true,
         get: (value) => {
             return yangonDate(value)
@@ -67,6 +75,7 @@ const CurrencyRateSchema = new Schema({
     uploadedBy:{
         type: String,
         index: true,
+        unique: false,
         required: true,
         default: ""
     }
