@@ -480,7 +480,9 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
             currencyRateUpdateTracker--;
         }
 
-        return res.status(204);
+        return res.status(204).json({ // 204 deleted
+            message: `Currency exchange rate with ID '${id}' has been deleted successfully.`
+        });
 
     } catch (error) {
         console.error("Error deleting currency rate:", error);

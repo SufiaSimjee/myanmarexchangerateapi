@@ -58,7 +58,9 @@ userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }
             userUpdateTracker--;
         }
 
-        return res.status(204);
+        return res.status(204).json({ // 204 Deleted
+            message: "Account Delete successful",
+        });
 
     } catch (error) {
         console.error("Delete User Error:", error);
