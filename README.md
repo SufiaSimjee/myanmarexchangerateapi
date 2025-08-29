@@ -31,16 +31,24 @@ Users should treat the data as indicative rather than authoritative, and the dev
 
   It allows you to retrieve filtered historical data for multiple currencies with pagination support.
 
+- **Get the highest exchange rate for a specific currency on a specific date:**  
+  `https://myanmarexchangerateapi.onrender.com/currency/USD/2025-08-28/highest?uploader=admin123&source=Myanmar%20Market%20Price`  
+  This endpoint returns the **highest exchange rate** (based on `sellRate`) for the currency **USD** on the date **2025-08-28**, filtered by:
+  - **uploader:** `admin123`
+  - **source:** `Myanmar Market Price`
 
-- **Get USD rates for a specific date with filters and pagination:**  
-  `https://myanmarexchangerateapi.onrender.com/currency/USD/2025-08-27?uploader=admin123&source=Exchange%20Myanmar&skip=0&limit=10`  
-  This endpoint returns USD exchange rate data for the date **2025-08-27**, filtered by:
-    - **uploader:** `admin123`
-    - **source:** `Exchange Myanmar`
-    - **skip:** `0` (number of records to skip, useful for pagination)
-    - **limit:** `10` (maximum number of records to return)
+  If no data is available for that currency and date, a `404 Not Found` response is returned.
 
-  It allows you to retrieve filtered historical data with pagination support.
+- **Get the lowest exchange rate for a specific currency on a specific date:**  
+  `https://myanmarexchangerateapi.onrender.com/currency/USD/2025-08-28/lowest?uploader=admin123&source=Myanmar%20Market%20Price`  
+  This endpoint returns the **lowest exchange rate** (based on `sellRate`) for the currency **USD** on the date **2025-08-28**, filtered by:
+  - **uploader:** `admin123`
+  - **source:** `Myanmar Market Price`
+
+  If no data is available for that currency and date, a `404 Not Found` response is returned.
+
+
+
 
 #### i. Github Repo: https://github.com/kmnaing123/myanmarexchangerateapi
 
