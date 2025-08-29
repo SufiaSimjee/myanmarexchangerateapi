@@ -47,8 +47,6 @@ try{
     // Set Pug as the view engine
     app.set('view engine', 'pug');
     app.set('views', path.join(__dirname, 'Tutorials'));
-    app.use(TutorialRouter);
-
 
 
     //certificate
@@ -141,7 +139,6 @@ try{
     });
 
 
-
     io.on('connection', async (socket) => {
       try{
           console.log('a user connected');
@@ -155,6 +152,7 @@ try{
     });
 
     //route
+    app.use(TutorialRouter);
     app.use("/user",userRouter);
     app.use("/currency", currencyRouter)
 
@@ -170,7 +168,7 @@ try{
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
-    let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 1;
+    let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 60;
 
 
     try{
