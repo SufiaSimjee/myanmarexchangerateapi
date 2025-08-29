@@ -36,7 +36,7 @@ userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }
 
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({
-                message: "Invalid ID format. Please provide a valid account id."
+                message: `Invalid ID format: '${id}'. Please provide a valid MongoDB ObjectId in the request URL.`
             });
         }
 

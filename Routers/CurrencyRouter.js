@@ -457,7 +457,7 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
 
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({
-                message: "Invalid ID format. Please provide a valid id."
+                message: `Invalid ID format: '${id}'. Please provide a valid MongoDB ObjectId in the request URL.`
             });
         }
 
@@ -507,7 +507,7 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
 
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({
-                message: "Invalid ID format. Please provide a valid id."
+                message: `Invalid ID format: '${id}'. Please provide a valid MongoDB ObjectId in the request URL.`
             });
         }
 
