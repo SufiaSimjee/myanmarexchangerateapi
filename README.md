@@ -47,7 +47,32 @@ Users should treat the data as indicative rather than authoritative, and the dev
 
   If no data is available for that currency and date, a `404 Not Found` response is returned.
 
+- **Get live updates for a specific currency using Socket.IO:**  
+  `https://myanmarexchangerateapi.onrender.com/`  
+  Users can receive **real-time currency rate updates** via Socket.IO by listening to a specific event. The event naming convention is:
 
+    ```
+    uploadedBy_source_currencyCode
+    ```
+
+  **Example event name:**
+    ```
+    admin123_Myanmar Market Price_USD
+    ```
+
+  This will provide JSON-formatted notifications **every 60 minutes**.
+
+  **Example notification payload:**
+  ```json
+  {
+      "currencyCode": "USD",
+      "unit": 1,
+      "buyRate": 4300,
+      "sellRate": 4350,
+      "uploadedDate": "2025-08-28 09:00:00",
+      "source": "Myanmar Market Price",
+      "uploadedBy": "admin123"
+  }
 
 
 #### i. Github Repo: https://github.com/kmnaing123/myanmarexchangerateapi
@@ -144,7 +169,7 @@ Create a `.env` file in the project root with the following variables:
 -   **DEFAULT_UPLOADER** (Username of the default data uploader)
 -   **DEFAULT_ADMIN_USERNAME** (Username of default admin account)
 -   **DEFAULT_ADMIN_PASSWORD** (Password of default admin account)
--   **ON_RENDER** (Boolean flag (true / false) to check if app is running on Render hosting)
+-   **ON_RENDER** (Boolean flag (true / false) to check if app is running on Render cloud service)
 -   **LIVE_EXCHANGE_RATE** (Enables/disables websocket (Socket IO) notifications for real-time updates of exchange rate)
 -   **NOTIFICATION_INTERVAL** (Interval rate (minute) for notification)
 
