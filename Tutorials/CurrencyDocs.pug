@@ -143,3 +143,35 @@ html(lang="en")
         p Example URL:
         pre
             code #{baseUrl}/USD/2025-08-01/2025-08-27?uploader=admin123&source=Myanmar%20Market%20Price&skip=0&limit=10
+
+
+
+        h3 GET /:currencyCode/:date/highest
+        p Retrieves the highest exchange rate (based on sellRate) for a currency on a specific date.
+        p If no data is found, returns a 404 response.
+        p URL Parameters:
+        ul
+            li currencyCode – e.g., USD
+            li date (YYYY-MM-DD)
+        p Query Parameters:
+        ul
+            li source, uploader (optional, defaults: Myanmar Market Price, admin123)
+        p Example URL:
+        pre
+            code #{baseUrl}/USD/2025-08-27/highest?uploader=admin123&source=Myanmar%20Market%20Price
+
+
+        h3 GET /:currencyCode/:date/lowest
+        p Retrieves the lowest exchange rate (based on sellRate) for a currency on a specific date.
+        p If no data is found, returns a 404 response.
+        p URL Parameters:
+        ul
+            li currencyCode – e.g., USD
+            li date (YYYY-MM-DD)
+        p Query Parameters:
+        ul
+            li source, uploader (optional, defaults: Myanmar Market Price, admin123)
+        p Example URL:
+        pre
+            code #{baseUrl}/USD/2025-08-27/lowest?uploader=admin123&source=Myanmar%20Market%20Price
+
