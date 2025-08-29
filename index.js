@@ -175,10 +175,8 @@ try{
     try{
         if(liveExchangeRate){
             let previousHashes = {};
-            let dbConnection;
             cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
-                dbConnection = await connectDb();
-                await dbConnection.asPromise();
+                await connectDb();
                 const uploaders = await CurrencyRate.aggregate([
                     {
                         $group: {
