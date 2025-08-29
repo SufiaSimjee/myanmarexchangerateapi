@@ -16,6 +16,20 @@ html(lang="en")
         p Base URL:
             strong #{baseUrl}/
 
+        p
+            | Note: Users can select
+            code source
+            | and
+            code uploader
+            | via query parameters to filter results.
+            | If not specified, the default values will be used:
+            strong source: Myanmar Market Price
+            | and
+            strong uploader: admin123.
+            | Example:
+            code ?source=Myanmar%20Market%20Price&uploader=admin123
+
+
         h2 Authentication
         p Some endpoints (Update & Delete) require JWT authentication in header (Bearer).
 
