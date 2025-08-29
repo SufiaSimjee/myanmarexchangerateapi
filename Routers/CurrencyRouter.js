@@ -1,11 +1,13 @@
 const passport = require("passport");
 const express = require("express");
-const expressCache = require("cache-express")
+const expressCache = require("cache-express");
+const ObjectId = require('mongoose').Types.ObjectId;
 
 const moment = require("moment-timezone");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
 const yangonDate = require("../Helpers/YangonDate");
+
 
 
 
@@ -453,6 +455,11 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
         const { id } = req.params;
         let {username} = req.user
 
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                message: "Invalid ID format. Please provide a valid id."
+            });
+        }
 
         // Find the currency rate by ID
         const exchangeRate = await CurrencyRate.findById(id).lean();
@@ -497,6 +504,12 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
 currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
     try {
         const { id } = req.params;
+
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                message: "Invalid ID format. Please provide a valid id."
+            });
+        }
 
         // Find the currency rate by ID
         const exchangeRate = await CurrencyRate.findById(id).select('-__v');

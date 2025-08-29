@@ -1,6 +1,7 @@
 
 const passport = require("passport");
 const express = require("express");
+const ObjectId = require('mongoose').Types.ObjectId;
 const userRouter = express.Router();
 const User = require("../Models/UserSchema");
 const generateJWTToken = require("../Auth/JwtTokenGenerator");
@@ -33,6 +34,11 @@ userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }
         const { id } = req.params;
         const {username} = req.user;
 
+        if (!ObjectId.isValid(id)) {
+            return res.status(400).json({
+                message: "Invalid ID format. Please provide a valid account id."
+            });
+        }
 
         // Find the user
         const userAccount = await User.findById(id).lean();
