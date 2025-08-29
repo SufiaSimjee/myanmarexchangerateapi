@@ -528,12 +528,157 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
     }
 });
 
+
+currencyRouter.get("/:currencyCode/:date/highest", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res)=>{
+    try{
+        const { currencyCode, date } = req.params;
+        let {source, uploader} = req.query;
+
+        const normalizedCode = currencyCode.trim().toUpperCase();
+
+        if (normalizedCode === "ALL") {
+            return res.status(400).json({
+                message: "Please select a specific currency to get the highest exchange rate for the given date.",
+                uploader,
+                source,
+                totalCount: 0
+            });
+        }
+
+        if (!source) {
+            source = defaultSource;
+        }
+
+        if (!uploader) {
+            uploader = defaultUploader;
+        }
+
+        const dateString = date || moment().tz("Asia/Yangon").format("YYYY-MM-DD");
+
+
+        // Validate date format (YYYY-MM-DD)
+        if (!moment(dateString, "YYYY-MM-DD", true).isValid()) {
+            return res.status(400).json({
+                message: "The date must be in 'YYYY-MM-DD' format. Example: 2025-08-25."
+            });
+        }
+
+        const startOfDay = moment.tz(dateString, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
+        const endOfDay = moment.tz(dateString, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
+
+
+        let currencyRate = await CurrencyRate.findOne({
+            currencyCode: normalizedCode,
+            uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+            source: { $regex: `^${source}$`, $options: 'i' },
+            uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+        }).sort({ sellRate: -1 }).select('-__v');
+
+
+        if (!currencyRate) {
+            return res.status(404).json({
+                message: `No highest exchange rate found for ${normalizedCode} on ${date}.`,
+                uploader: uploader,
+                source: source,
+                totalCount: 0,
+            });
+        }
+
+        return res.status(200).json({
+            message: `Highest exchange rate for ${normalizedCode} on ${dateString} retrieved successfully.`,
+            uploader: uploader,
+            source: source,
+            totalCount: 1,
+            data: currencyRate
+        });
+
+
+    } catch (error) {
+        return res.status(500).json({
+            message: "An unexpected error occurred while fetching the highest exchange rate for the selected date.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
+    }
+});
+
+
+currencyRouter.get("/:currencyCode/:date/lowest", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
+    async (req, res) => {
+        try {
+            const { currencyCode, date } = req.params;
+            let { source, uploader } = req.query;
+
+            const normalizedCode = currencyCode.trim().toUpperCase();
+
+            if (normalizedCode === "ALL") {
+                return res.status(400).json({
+                    message: "Please select a specific currency to get the lowest exchange rate for the given date.",
+                    uploader,
+                    source,
+                    totalCount: 0
+                });
+            }
+
+            if (!source) {
+                source = defaultSource;
+            }
+
+            if (!uploader) {
+                uploader = defaultUploader;
+            }
+
+            const dateString = date || moment().tz("Asia/Yangon").format("YYYY-MM-DD");
+
+            if (!moment(dateString, "YYYY-MM-DD", true).isValid()) {
+                return res.status(400).json({
+                    message: "The date must be in 'YYYY-MM-DD' format. Example: 2025-08-25."
+                });
+            }
+
+            const startOfDay = moment.tz(dateString, "YYYY-MM-DD", "Asia/Yangon").startOf("day").toDate();
+            const endOfDay = moment.tz(dateString, "YYYY-MM-DD", "Asia/Yangon").endOf("day").toDate();
+
+            let currencyRate = await CurrencyRate.findOne({
+                currencyCode: normalizedCode,
+                uploadedBy: { $regex: `^${uploader}$`, $options: 'i' },
+                source: { $regex: `^${source}$`, $options: 'i' },
+                uploadedDate: { $gte: startOfDay, $lte: endOfDay }
+            }).sort({ sellRate: 1 }).select('-__v');
+
+            if (!currencyRate) {
+                return res.status(404).json({
+                    message: `No lowest exchange rate found for ${normalizedCode} on ${date}.`,
+                    uploader,
+                    source,
+                    totalCount: 0,
+                });
+            }
+
+            return res.status(200).json({
+                message: `Lowest exchange rate for ${normalizedCode} on ${dateString} retrieved successfully.`,
+                uploader: uploader,
+                source: source,
+                totalCount: 1,
+                data: currencyRate
+            });
+
+        } catch (error) {
+            return res.status(500).json({
+                message: "An unexpected error occurred while fetching the lowest exchange rate for the selected date.",
+                details: process.env.NODE_ENV === "development" ? error.message : undefined
+            });
+        }
+    }
+);
+
+
 currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode } = req.params;
         let {source, uploader} = req.query;
 
         const normalizedCode = currencyCode.trim().toUpperCase();
+
 
         if (!source) {
             source = defaultSource;
