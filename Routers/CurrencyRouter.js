@@ -10,7 +10,7 @@ const yangonDate = require("../Helpers/YangonDate");
 
 
 
-let currencyRateUpdateTracker = 0;
+var currencyRateUpdateTracker = 0;
 let defaultSource = process.env.DEFAULT_SOURCE;
 let defaultUploader = process.env.DEFAULT_UPLOADER;
 
@@ -476,7 +476,7 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
         await CurrencyRate.findByIdAndDelete(id);
 
         // Update tracker
-        if (currencyRateUpdateTracker > 0) {
+        if (currencyRateUpdateTracker > -1) {
             currencyRateUpdateTracker--;
         }
 
