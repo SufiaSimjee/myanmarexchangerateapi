@@ -9,10 +9,7 @@ const CurrencyRate = require("../Models/CurrencyRateSchema");
 const yangonDate = require("../Helpers/YangonDate");
 
 
-
-
-
-var currencyRateUpdateTracker = 0;
+let currencyRateUpdateTracker = 0;
 let defaultSource = process.env.DEFAULT_SOURCE;
 let defaultUploader = process.env.DEFAULT_UPLOADER;
 
