@@ -55,7 +55,6 @@ try{
     try{
         app.set('trust proxy', (ip) => {
             try{
-                console.log(ip);
                 return true;
             } catch (error){
                 console.log(error)
