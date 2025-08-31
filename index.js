@@ -45,8 +45,25 @@ try{
     app.use(helmet());
 
     // Set Pug as the view engine
-    app.set('view engine', 'pug');
-    app.set('views', path.join(__dirname, 'Tutorials'));
+    try{
+        app.set('view engine', 'pug');
+        app.set('views', path.join(__dirname, 'Tutorials'));
+    } catch (error){
+        console.log("Cannot Set Pug As View Engine:", error.message)
+    }
+
+    try{
+        app.set('trust proxy', (ip) => {
+            try{
+                console.log(ip);
+                return true;
+            } catch (error){
+                console.log(error)
+            }
+        })
+    } catch (error){
+        console.log("Cannot Set Trust Proxy To True:", error.message)
+    }
 
 
     //certificate
