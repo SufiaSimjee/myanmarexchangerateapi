@@ -45,11 +45,11 @@ currencyRouter.get("/uploaderList", async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    uploadedBy: "$_id"
+                    username: "$_id"
                 }
             },
             {
-                $sort: { uploadedBy: 1 }
+                $sort: { username: 1 }
             },
             {
                 $skip: skip
