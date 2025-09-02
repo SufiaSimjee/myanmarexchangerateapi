@@ -30,7 +30,7 @@ const CurrencyList = {
     },
     "AED": {
         "symbol": "AED",
-        "name": "United Arab Emirates Dirham",
+        "name": "UAE Dirham",
         "symbol_native": "د.إ.‏",
         "decimal_digits": 2,
         "rounding": 0,
