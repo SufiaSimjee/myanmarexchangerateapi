@@ -1643,6 +1643,175 @@ const currencyRateJson = [
         "sellRate": 75.65,
         "uploadedDate": "2025-09-01T09:18:00",
         "source": "Myanmar Market Price"
+    },
+
+    {
+        "currencyCode": "USD",
+        "unit": 1,
+        "buyRate": 4245.00,
+        "sellRate": 4330.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "EUR",
+        "unit": 1,
+        "buyRate": 4965.00,
+        "sellRate": 5065.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "GBP",
+        "unit": 1,
+        "buyRate": 5745.00,
+        "sellRate": 5860.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "SGD",
+        "unit": 1,
+        "buyRate": 3310.00,
+        "sellRate": 3380.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "THB",
+        "unit": 1,
+        "buyRate": 131.58,
+        "sellRate": 134.23,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "CNY",
+        "unit": 1,
+        "buyRate": 594.00,
+        "sellRate": 606.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "MYR",
+        "unit": 1,
+        "buyRate": 1003.00,
+        "sellRate": 1023.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "JPY",
+        "unit": 1,
+        "buyRate": 28.75,
+        "sellRate": 29.33,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "KRW",
+        "unit": 1,
+        "buyRate": 3.05,
+        "sellRate": 3.11,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "AED",
+        "unit": 1,
+        "buyRate": 1156.00,
+        "sellRate": 1179.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "TWD",
+        "unit": 1,
+        "buyRate": 138.00,
+        "sellRate": 141.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "AUD",
+        "unit": 1,
+        "buyRate": 2780.00,
+        "sellRate": 2835.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "NZD",
+        "unit": 1,
+        "buyRate": 2500.00,
+        "sellRate": 2550.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "CAD",
+        "unit": 1,
+        "buyRate": 3085.00,
+        "sellRate": 3150.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "HKD",
+        "unit": 1,
+        "buyRate": 544.00,
+        "sellRate": 555.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "INR",
+        "unit": 1,
+        "buyRate": 48.21,
+        "sellRate": 49.18,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "MOP",
+        "unit": 1,
+        "buyRate": 527.00,
+        "sellRate": 538.00,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "VND",
+        "unit": 1,
+        "buyRate": 0.16,
+        "sellRate": 0.17,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "LAK",
+        "unit": 1,
+        "buyRate": 0.20,
+        "sellRate": 0.21,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "KHR",
+        "unit": 1,
+        "buyRate": 1.06,
+        "sellRate": 1.08,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
+    },
+    {
+        "currencyCode": "PHP",
+        "unit": 1,
+        "buyRate": 74.16,
+        "sellRate": 75.65,
+        "uploadedDate": "2025-09-02T09:07:00",
+        "source": "Myanmar Market Price"
     }
 ]
 
