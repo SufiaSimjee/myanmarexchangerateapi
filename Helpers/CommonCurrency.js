@@ -467,6 +467,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "IDR",
+        "icon": "🇮🇩",
         "name_plural": "Indonesian rupiahs"
     },
     "ILS": {
@@ -578,6 +579,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "KRW",
+        "icon": "🇰🇷",
         "name_plural": "South Korean won"
     },
     "KWD": {
@@ -614,6 +616,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "LKR",
+        "icon": "🇱🇰",
         "name_plural": "Sri Lankan rupees"
     },
     "LTL": {
@@ -788,6 +791,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "NZD",
+        "icon": "🇳🇿",
         "name_plural": "New Zealand dollars"
     },
     "OMR": {
