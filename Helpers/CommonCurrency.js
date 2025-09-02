@@ -16,6 +16,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "CAD",
+        "icon": "🇨🇦",
         "name_plural": "Canadian dollars"
     },
     "EUR": {
@@ -55,6 +56,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "AFN",
+        "icon": "🇦🇫",
         "name_plural": "Afghan Afghanis"
     },
     "ALL": {
@@ -64,6 +66,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "ALL",
+        "icon": "🇦🇱",
         "name_plural": "Albanian lekë"
     },
     "AMD": {
@@ -73,6 +76,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "AMD",
+        "icon": "🇦🇲",
         "name_plural": "Armenian drams"
     },
     "ARS": {
@@ -82,6 +86,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "ARS",
+        "icon": "🇦🇷",
         "name_plural": "Argentine pesos"
     },
     "AUD": {
@@ -91,6 +96,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "AUD",
+        "icon": "🇦🇺",
         "name_plural": "Australian dollars"
     },
     "AZN": {
@@ -100,6 +106,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "AZN",
+        "icon": "🇦🇿",
         "name_plural": "Azerbaijani manats"
     },
     "BAM": {
@@ -109,6 +116,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "BAM",
+        "icon": "🇧🇦",
         "name_plural": "Bosnia-Herzegovina convertible marks"
     },
     "BDT": {
@@ -118,6 +126,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "BDT",
+        "icon": "🇧🇩",
         "name_plural": "Bangladeshi takas"
     },
     "BGN": {
@@ -127,6 +136,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "BGN",
+        "icon": "🇧🇬",
         "name_plural": "Bulgarian leva"
     },
     "BHD": {
@@ -136,6 +146,7 @@ const CurrencyList = {
         "decimal_digits": 3,
         "rounding": 0,
         "code": "BHD",
+        "icon": "🇧🇭",
         "name_plural": "Bahraini dinars"
     },
     "BIF": {
@@ -145,6 +156,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "BIF",
+        "icon": "🇧🇮",
         "name_plural": "Burundian francs"
     },
     "BND": {
@@ -154,6 +166,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "BND",
+        "icon": "🇧🇳",
         "name_plural": "Brunei dollars"
     },
     "BOB": {
@@ -163,6 +176,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "BOB",
+        "icon": "🇧🇴",
         "name_plural": "Bolivian bolivianos"
     },
     "BRL": {
@@ -171,6 +185,7 @@ const CurrencyList = {
         "symbol_native": "R$",
         "decimal_digits": 2,
         "rounding": 0,
+        "icon": "🇧🇷",
         "code": "BRL",
         "name_plural": "Brazilian reals"
     },
@@ -181,6 +196,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "BWP",
+        "icon": "🇧🇼",
         "name_plural": "Botswanan pulas"
     },
     "BYN": {
@@ -190,6 +206,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "BYN",
+        "icon": "🇧🇾",
         "name_plural": "Belarusian rubles"
     },
     "BZD": {
@@ -199,6 +216,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "BZD",
+        "icon": "🇧🇿",
         "name_plural": "Belize dollars"
     },
     "CDF": {
@@ -208,6 +226,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "CDF",
+        "icon": "🇨🇩",
         "name_plural": "Congolese francs"
     },
     "CHF": {
@@ -217,6 +236,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0.05,
         "code": "CHF",
+        "icon": "🇨🇭",
         "name_plural": "Swiss francs"
     },
     "CLP": {
@@ -226,6 +246,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "CLP",
+        "icon": "🇨🇱",
         "name_plural": "Chilean pesos"
     },
     "CNY": {
@@ -245,6 +266,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "COP",
+        "icon": "🇨🇴",
         "name_plural": "Colombian pesos"
     },
     "CRC": {
@@ -254,6 +276,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "CRC",
+        "icon": "🇨🇷",
         "name_plural": "Costa Rican colóns"
     },
     "CVE": {
@@ -263,6 +286,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "CVE",
+        "icon": "🇨🇻",
         "name_plural": "Cape Verdean escudos"
     },
     "CZK": {
@@ -272,6 +296,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "CZK",
+        "icon": "🇨🇿",
         "name_plural": "Czech Republic korunas"
     },
     "DJF": {
@@ -281,6 +306,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "code": "DJF",
+        "icon": "🇩🇯",
         "name_plural": "Djiboutian francs"
     },
     "DKK": {
@@ -290,6 +316,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "DKK",
+        "icon": "🇩🇰",
         "name_plural": "Danish kroner"
     },
     "DOP": {
@@ -299,6 +326,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "DOP",
+        "icon": "🇩🇴",
         "name_plural": "Dominican pesos"
     },
     "DZD": {
@@ -308,6 +336,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "DZD",
+        "icon": "🇩🇿",
         "name_plural": "Algerian dinars"
     },
     "EEK": {
@@ -317,6 +346,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "EEK",
+        "icon": "🇪🇪",
         "name_plural": "Estonian kroons"
     },
     "EGP": {
@@ -326,6 +356,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "EGP",
+        "icon": "🇪🇬",
         "name_plural": "Egyptian pounds"
     },
     "ERN": {
@@ -399,6 +430,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "HKD",
+        "icon": "🇭🇰",
         "name_plural": "Hong Kong dollars"
     },
     "HNL": {
@@ -527,6 +559,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "KHR",
+        "icon": "🇰🇭",
         "name_plural": "Cambodian riels"
     },
     "KMF": {
@@ -663,6 +696,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "MOP",
+        "icon": "🇲🇴",
         "name_plural": "Macanese patacas"
     },
     "MUR": {
@@ -790,6 +824,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "PHP",
+        "icon": "🇵🇭",
         "name_plural": "Philippine pesos"
     },
     "PKR": {
@@ -972,6 +1007,7 @@ const CurrencyList = {
         "decimal_digits": 2,
         "rounding": 0,
         "code": "TWD",
+        "icon": "🇹🇼",
         "name_plural": "New Taiwan dollars"
     },
     "TZS": {
