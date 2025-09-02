@@ -139,26 +139,37 @@ CurrencyRateSchema.methods.getPercentageChange = async function () {
 
         if (!prevRate || !prevRate.buyRate || !prevRate.sellRate) {
             return {
+                buyRateChangeInPercentage: null,
                 buyRateChange: null,
+                sellRateChangeInPercentage: null,
                 sellRateChange: null
             };
         }
 
-        const buyRateChange = ((this.buyRate - prevRate.buyRate) / prevRate.buyRate) * 100;
-        const sellRateChange = ((this.sellRate - prevRate.sellRate) / prevRate.sellRate) * 100;
+        const buyRateChange = this.buyRate - prevRate.buyRate
+        const sellRateChange = this.sellRate - prevRate.sellRate;
+
+        const buyRateChangeInPercentage = ((buyRateChange) / prevRate.buyRate) * 100;
+        const sellRateChangeInPercentage = ((sellRateChange) / prevRate.sellRate) * 100;
 
         const result = this.toObject();
+
         result.currencyInfo = CurrencyList[this.currencyCode];
+        
         result.percentageChange = {
-            buyRateChange: buyRateChange !== null ? buyRateChange.toFixed(2) + "%" : null,
-            sellRateChange: sellRateChange !== null ? sellRateChange.toFixed(2) + "%" : null
+            buyRateChangeInPercentage: buyRateChangeInPercentage !== null ? buyRateChangeInPercentage.toFixed(2) + "%" : null,
+            buyRateChange: buyRateChange,
+            sellRateChangeInPercentage: sellRateChangeInPercentage !== null ? sellRateChangeInPercentage.toFixed(2) + "%" : null,
+            sellRateChange: sellRateChange
         };
 
         return result;
     } catch (err) {
         const result = this.toObject();
         result.percentageChange = {
+            buyRateChangeInPercentage: null,
             buyRateChange: null,
+            sellRateChangeInPercentage: null,
             sellRateChange: null
         };
         return result;

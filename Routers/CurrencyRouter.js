@@ -706,7 +706,6 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 source: { $regex: `^${source}$`, $options: 'i' }
             }).sort({ uploadedDate: -1 }).select('-__v');
 
-
             if (!currencyRate) {
                 return res.status(404).json({
                     message: `No latest exchange rate found for currency '${normalizedCode}' from the default source.`,
@@ -715,6 +714,13 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                     totalCount: 0
                 });
             }
+
+            try{
+                currencyRate = await currencyRate.getPercentageChange();
+            } catch (error) {
+                console.log("Failed to get percentage change: ", error);
+            }
+
 
             return res.status(200).json({
                 message: "Latest exchange rate retrieved successfully.",
@@ -774,14 +780,32 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
                 });
             }
 
-            // Apply Yangon timezone formatting
-            currencyRates = currencyRates.map(rate => ({
-                ...rate,
-                uploadedDate: yangonDate(rate.uploadedDate),
-                createdAt: yangonDate(rate.createdAt),
-                updatedAt: yangonDate(rate.updatedAt)
+            try{
+                const modelRates = currencyRates.map(r => new CurrencyRate(r));
 
-            }));
+                currencyRates = await Promise.all(
+                    modelRates.map(rate => rate.getPercentageChange())
+                );
+
+            } catch (error) {
+                console.log("Failed to get percentage change: ", error);
+            }
+
+
+
+            // Apply Yangon timezone formatting
+            try{
+                currencyRates = currencyRates.map(rate => ({
+                    ...rate,
+                    uploadedDate: yangonDate(rate.uploadedDate),
+                    createdAt: yangonDate(rate.createdAt),
+                    updatedAt: yangonDate(rate.updatedAt)
+
+                }));
+            } catch (error) {
+                console.log("Failed to convert time into yangon timezone: ", error);
+            }
+
 
             return res.status(200).json({
                 message: "Exchange rate retrieved successfully.",
