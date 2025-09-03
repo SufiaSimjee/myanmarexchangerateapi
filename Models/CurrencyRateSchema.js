@@ -101,13 +101,13 @@ CurrencyRateSchema.pre('save',function (next) {
         let currencyName = CurrencyList[this.currencyCode]?.name;
         let currencyIcon = CurrencyList[this.currencyCode]?.icon;
 
-        if (currencyName !== undefined || currencyName !== null || !currencyName) {
+        if (currencyName !== undefined) {
             this.currencyName = currencyName;
         } else{
             this.currencyName = "";
         }
 
-        if (currencyIcon !== undefined || currencyIcon !== null || !currencyIcon) {
+        if (currencyIcon !== undefined) {
             this.currencyIcon = currencyIcon;
         } else {
             this.currencyIcon = "";
@@ -146,8 +146,9 @@ CurrencyRateSchema.methods.getPercentageChange = async function () {
             };
         }
 
-        const buyRateChange = this.buyRate - prevRate.buyRate
-        const sellRateChange = this.sellRate - prevRate.sellRate;
+
+        const buyRateChange = parseFloat((this.buyRate - prevRate.buyRate).toFixed(2));
+        const sellRateChange = parseFloat((this.sellRate - prevRate.sellRate).toFixed(2));
 
         const buyRateChangeInPercentage = ((buyRateChange) / prevRate.buyRate) * 100;
         const sellRateChangeInPercentage = ((sellRateChange) / prevRate.sellRate) * 100;
