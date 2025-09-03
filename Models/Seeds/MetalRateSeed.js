@@ -55,8 +55,8 @@ async function seedMetalRates() {
 
         if(documentCount < 1){
             for (const metal of MetalRates) {
-                await metal.save();
-                console.log(`Saved metal rate: ${metal._id}`);
+                await metal?.save();
+                console.log(`Saved metal rate: ${metal?._id}`);
             }
         } else {
             console.log("Metal rate seeds already exist, skipping seeding.");

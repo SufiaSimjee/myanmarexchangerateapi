@@ -218,7 +218,7 @@ try{
             let previousHashes = {};
             cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
                 await connectDb();
-                const uploaders = await CurrencyRate.aggregate([
+                const uploaderList = await CurrencyRate.aggregate([
                     {
                         $group: {
                             _id: "$uploadedBy"
@@ -232,7 +232,7 @@ try{
                     }
                 ]).cursor();
 
-                let uploader = await uploaders.next();
+                let uploader = await uploaderList.next();
                 while (uploader) {
                     const uniqueSources = await CurrencyRate.aggregate([
                         {
@@ -314,7 +314,7 @@ try{
 
                         uniqueSource = await uniqueSources.next();
                     }
-                    uploader = await uploaders.next();
+                    uploader = await uploaderList.next();
                 }
             })
         }

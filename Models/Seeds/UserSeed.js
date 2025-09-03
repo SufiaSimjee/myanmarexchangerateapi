@@ -33,8 +33,8 @@ async function seedUsers() {
 
         if (documentCount < 1) {
             for (const user of Users) {
-                await user.save();
-                console.log(`Saved user: ${user._id}`);
+                await user?.save();
+                console.log(`Saved user: ${user?._id}`);
             }
         } else {
             console.log("Users seeds already exist, skipping seeding.");

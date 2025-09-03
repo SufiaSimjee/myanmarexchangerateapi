@@ -2170,7 +2170,7 @@ async function seedCurrencyRates() {
         let documentCount = await CurrencyRate.countDocuments();
         if(documentCount < 1){
             for (const currency of CurrencyRates) {
-                await currency.save();
+                await currency?.save();
                 console.log(`Saved currency rate: ${currency?._id}`);
             }
         } else {

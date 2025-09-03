@@ -6,7 +6,6 @@ const ObjectId = require('mongoose').Types.ObjectId;
 const moment = require("moment-timezone");
 const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
-const yangonDate = require("../Helpers/YangonDate");
 
 
 let currencyRateUpdateTracker = 0;
