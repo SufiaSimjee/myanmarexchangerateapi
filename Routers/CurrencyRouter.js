@@ -1312,22 +1312,6 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: cacheTime, de
                 console.log("Failed to get percentage change: ", error);
             }
 
-
-
-            // Apply Yangon timezone formatting
-            try{
-                currencyRates = currencyRates.map(rate => ({
-                    ...rate,
-                    uploadedDate: yangonDate(rate.uploadedDate),
-                    createdAt: yangonDate(rate.createdAt),
-                    updatedAt: yangonDate(rate.updatedAt)
-
-                }));
-            } catch (error) {
-                console.log("Failed to convert time into yangon timezone: ", error);
-            }
-
-
             return res.status(200).json({
                 message: "Exchange rate retrieved successfully.",
                 uploader: uploader,

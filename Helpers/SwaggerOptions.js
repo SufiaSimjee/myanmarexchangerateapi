@@ -119,7 +119,7 @@ const swaggerOptions = {
                             type: "string",
                             format: "date-time",
                             description: "Date when the rate was uploaded (Yangon timezone)",
-                            example: "2025-09-03T10:00:00+06:30"
+                            example: "2025-09-03 09:30:10"
                         },
                         uploadedBy: {
                             type: "string",

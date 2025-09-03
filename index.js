@@ -155,8 +155,9 @@ try{
     });
 
 
+    let io;
     try{
-        const io = new Server(server, {
+        io = new Server(server, {
             cors: { origin: "*" },
             connectionStateRecovery: {}
         });
