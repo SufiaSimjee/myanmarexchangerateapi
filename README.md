@@ -6,6 +6,8 @@ This API provides information about foreign currency exchange rates in Myanmar. 
 
 It is designed to help people conveniently check exchange rates from a single place, rather than browsing multiple sources individually.
 
+Users can also create accounts and contribute by uploading their own exchange rates, making the platform more collaborative and transparent for the general public.
+
 This API is intended to offer a general overview of currency rates in Myanmar and does not intend to replace official, unofficial, or other sources.
 
 Users should treat the data as indicative rather than authoritative, and the developer cannot be held responsible for any inaccuracies, misinterpretations, or outcomes resulting from its use.
@@ -85,14 +87,21 @@ Users should treat the data as indicative rather than authoritative, and the dev
 2. Currency Rate Api Tutorial: https://myanmarexchangerateapi.onrender.com/currency-docs
 3. Live Notification Tutorial:  https://myanmarexchangerateapi.onrender.com/notification-docs
 
+## c. Target Audience:
+- Sellers (both individuals and currency exchange counters) who want to share exchange rates.
+- General public who simply want to view and compare exchange rates from different sources in one place.
 
-## c. Disclaimer
+## d.Vision
+- The developer believes there should be a platform where sellers can upload their exchange rates transparently, while the general public can easily view and compare rates from multiple sources. This would create more accessibility, fairness, and convenience in how exchange rate information is shared in Myanmar.
+
+
+## e. Disclaimer
 
 1. The data may not be 100% accurate.
 2. The developer does not take any responsibility for any discrepancies, losses, or damages resulting from the use of this API or the data it provides.
 3. This API is provided for informational purposes only. Users are solely responsible for verifying any data before relying on it.
 
-## d. Motivation
+## f. Motivation
 
 The main purpose of this API is to inform users about daily exchange rates from both unofficial and official sources. In Myanmar, multiple rates exist, such as:
 
@@ -101,23 +110,23 @@ The main purpose of this API is to inform users about daily exchange rates from 
 3. Market Rate
 
 
-## e. Data Sources
+## g. Data Sources
 
 1.  Facebook Pages/Groups reporting currency rates
 2.  Myanmar Market Price App
 3.  Other Online Sources
 
-## f. Recommended Usage
+## h. Recommended Usage
 1. Use the API for quick reference of Myanmar currency rates.
 2. Monitor API updates and check the notification feature once it’s re-enabled.
 
-## g. Technology Stack
+## i. Technology Stack
 
 1.  **Backend:** Node.js (Express.js)
 2.  **Database:** MongoDB (MongoDB Atlas)
 3.  **Protocols:** HTTPS and WebSocket (Socket IO)
 
-## h. Project Dependencies
+## j. Project Dependencies
 
 ### i. Core Libraries
 1. **express (^5.1.0)** – Web framework for building the API and handling HTTP requests.
@@ -152,7 +161,7 @@ The main purpose of this API is to inform users about daily exchange rates from 
 3. **cors (^2.8.5)** – To enable Cross-Origin Resource Sharing for allowing requests from different origins.
 4. **marked (^5.x)** – Converts Markdown (`.md`) files into HTML for rendering with Pug.
 
-## i. Getting Started (Self Hosting)
+## k. Getting Started (Self Hosting)
 
 ### 1. Prerequisites
 
@@ -170,8 +179,8 @@ Create a `.env` file in the project root with the following variables:
 -   **NODE_ENV** (development or production)
 -   **DEFAULT_SOURCE** (Label for the default source of exchange rates (e.g., Private Bank).)
 -   **DEFAULT_UPLOADER** (Username of the default data uploader)
--   **DEFAULT_ADMIN_USERNAME** (Username of default admin account)
--   **DEFAULT_ADMIN_PASSWORD** (Password of default admin account)
+-   **DEFAULT_ADMIN_USERNAME** (Username of a default admin account)
+-   **DEFAULT_ADMIN_PASSWORD** (Password of a default admin account)
 -   **ON_RENDER** (Boolean flag (true / false) to check if app is running on Render cloud service)
 -   **LIVE_EXCHANGE_RATE** (Enables/disables websocket (Socket IO) notifications for real-time updates of exchange rate)
 -   **NOTIFICATION_INTERVAL** (Interval rate (minute) for notification)
