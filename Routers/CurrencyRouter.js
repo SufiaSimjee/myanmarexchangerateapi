@@ -13,6 +13,8 @@ let currencyRateUpdateTracker = 0;
 let defaultSource = process.env.DEFAULT_SOURCE;
 let defaultUploader = process.env.DEFAULT_UPLOADER;
 
+let cacheTime = 3600000; //60 Minutes
+
 
 /**
  * @swagger
@@ -875,7 +877,7 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
  *       500:
  *         description: Internal server error
  */
-currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
+currencyRouter.get('/:id', expressCache({ timeOut: cacheTime, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -971,7 +973,7 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
  *       500:
  *         description: Internal server error
  */
-currencyRouter.get("/:currencyCode/:date/highest", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res)=>{
+currencyRouter.get("/:currencyCode/:date/highest", expressCache({ timeOut: cacheTime, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res)=>{
     try{
         const { currencyCode, date } = req.params;
         let {source, uploader} = req.query;
@@ -1100,7 +1102,7 @@ currencyRouter.get("/:currencyCode/:date/highest", expressCache({ timeOut: 60000
  *       500:
  *         description: Internal server error
  */
-currencyRouter.get("/:currencyCode/:date/lowest", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
+currencyRouter.get("/:currencyCode/:date/lowest", expressCache({timeOut: cacheTime, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
     async (req, res) => {
         try {
             const { currencyCode, date } = req.params;
@@ -1201,7 +1203,7 @@ currencyRouter.get("/:currencyCode/:date/lowest", expressCache({timeOut: 60000, 
  *       500:
  *         description: Internal server error
  */
-currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
+currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: cacheTime, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode } = req.params;
         let {source, uploader} = req.query;
@@ -1424,7 +1426,7 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
  *       500:
  *         description: Internal server error
  */
-currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}) ,async (req, res) => {
+currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: cacheTime, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}) ,async (req, res) => {
     try {
         const { currencyCode, date } = req.params;
         let {skip, limit} = req.query;
@@ -1628,7 +1630,7 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
  *       500:
  *         description: Internal server error
  */
-currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
+currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: cacheTime, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode, fromDate, toDate } = req.params;
         let {source, uploader, skip, limit} = req.query;
