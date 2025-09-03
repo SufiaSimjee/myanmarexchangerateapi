@@ -87,11 +87,11 @@ Users should treat the data as indicative rather than authoritative, and the dev
 2. Currency Rate Api Tutorial: https://myanmarexchangerateapi.onrender.com/currency-docs
 3. Live Notification Tutorial:  https://myanmarexchangerateapi.onrender.com/notification-docs
 
-## c. Target Audience:
+## c. Target Audience
 - Sellers (both individuals and currency exchange counters) who want to share exchange rates.
 - General public who simply want to view and compare exchange rates from different sources in one place.
 
-## d.Vision
+## d. Vision
 - The developer believes there should be a platform where sellers can upload their exchange rates transparently, while the general public can easily view and compare rates from multiple sources. This would create more accessibility, fairness, and convenience in how exchange rate information is shared in Myanmar.
 
 

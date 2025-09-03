@@ -40,6 +40,7 @@ const swaggerOptions = require("./Helpers/SwaggerOptions");
 
 try{
     process.env.TZ = "Asia/Yangon";
+    console.log("Today Time: ", new Date().toLocaleString());
 
     const useHttp = process.env.ON_RENDER === "true";
 
