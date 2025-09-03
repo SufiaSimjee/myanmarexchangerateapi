@@ -58,9 +58,8 @@ try{
     }
 
     try{
-        app.set('trust proxy', (ip) => {
+        app.set('trust proxy', (_) => {
             try{
-                console.log("IP Address of Trusted Proxy :", ip);
                 return true;
             } catch (error){
                 console.log(error)
