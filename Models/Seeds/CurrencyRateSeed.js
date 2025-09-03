@@ -1987,7 +1987,7 @@ const currencyRateJson = [
         "buyRate": 4230.00,
         "sellRate": 4315.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "EUR",
@@ -1995,7 +1995,7 @@ const currencyRateJson = [
         "buyRate": 4920.00,
         "sellRate": 5015.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "GBP",
@@ -2003,7 +2003,7 @@ const currencyRateJson = [
         "buyRate": 5650.00,
         "sellRate": 5765.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "SGD",
@@ -2011,7 +2011,7 @@ const currencyRateJson = [
         "buyRate": 3300.00,
         "sellRate": 3370.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "THB",
@@ -2019,7 +2019,7 @@ const currencyRateJson = [
         "buyRate": 130.72,
         "sellRate": 133.33,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "CNY",
@@ -2027,7 +2027,7 @@ const currencyRateJson = [
         "buyRate": 593.00,
         "sellRate": 604.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "MYR",
@@ -2035,7 +2035,7 @@ const currencyRateJson = [
         "buyRate": 1000.00,
         "sellRate": 1020.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "JPY",
@@ -2043,7 +2043,7 @@ const currencyRateJson = [
         "buyRate": 28.44,
         "sellRate": 29.01,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "KRW",
@@ -2051,7 +2051,7 @@ const currencyRateJson = [
         "buyRate": 3.04,
         "sellRate": 3.10,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "AED",
@@ -2059,7 +2059,7 @@ const currencyRateJson = [
         "buyRate": 1150.00,
         "sellRate": 1175.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "TWD",
@@ -2067,7 +2067,7 @@ const currencyRateJson = [
         "buyRate": 138.00,
         "sellRate": 141.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "AUD",
@@ -2075,7 +2075,7 @@ const currencyRateJson = [
         "buyRate": 2760.00,
         "sellRate": 2815.00,
         "uploadedDate": "2025-09-03T14:33:00",
-        "source": "Myanmar Market Price Pro"
+        "source": "Myanmar Market Price"
     },
     {
         "currencyCode": "NZD",
@@ -2171,7 +2171,7 @@ async function seedCurrencyRates() {
         if(documentCount < 1){
             for (const currency of CurrencyRates) {
                 await currency.save();
-                console.log(`Saved currency rate: ${currency._id}`);
+                console.log(`Saved currency rate: ${currency?._id}`);
             }
         } else {
             console.log("Currency rate seeds already exist, skipping seeding.");
