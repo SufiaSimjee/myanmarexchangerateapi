@@ -12,11 +12,39 @@ const generateJWTToken = require("../Auth/JwtTokenGenerator");
 
 let userUpdateTracker = 0;
 
+/**
+ * @swagger
+ * /user/test-token:
+ *   get:
+ *     tags:
+ *       - Authentication
+ *     summary: Verify JWT token
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Token is valid and user info returned
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/TokenValidationResponse'
+ *       401:
+ *         description: Unauthorized, invalid or missing token
+ */
 
 userRouter.get("/test-token", passport.authenticate("jwt", { session: false }), (req, res) => {
         try {
-            delete req.user.password;
-            res.status(200).json({message: "Token is valid!", user: req.user});
+            let userAccount = req.user;
+
+            try{
+                if(userAccount?.password) {
+                    userAccount.password = undefined;
+                }
+            } catch(err) {
+                console.error(err);
+            }
+
+            res.status(200).json({message: "Token is valid!", user: userAccount});
         } catch (error) {
             console.error("Error in /test-token:", error);
             res.status(500).json({
@@ -29,6 +57,33 @@ userRouter.get("/test-token", passport.authenticate("jwt", { session: false }), 
 
 
 
+
+/**
+ * @swagger
+ * /user/delete/{id}:
+ *   delete:
+ *     tags:
+ *       - Authentication
+ *     summary: Delete a user account
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: MongoDB ObjectId of the user to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       204:
+ *         description: Account deleted successfully
+ *       400:
+ *         description: Invalid ID format
+ *       403:
+ *         description: Forbidden, user cannot delete other accounts
+ *       404:
+ *         description: User not found
+ */
 userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
         const { id } = req.params;
@@ -76,6 +131,43 @@ userRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }
         });
     }
 })
+
+/**
+ * @swagger
+ * /user/signup:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: "Create a new user account (Role: admin, user)"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *             required:
+ *               - password
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
+ *       400:
+ *         description: Invalid request data
+ *       409:
+ *         description: User already exists
+ */
 
 userRouter.post("/signup", async (req, res) => {
     try {
@@ -137,6 +229,43 @@ userRouter.post("/signup", async (req, res) => {
     }
 });
 
+
+/**
+ * @swagger
+ * /user/login:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Authenticate a user and return a JWT token
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *             required:
+ *               - password
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LoginResponse'
+ *       400:
+ *         description: Invalid request
+ *       401:
+ *         description: Incorrect password
+ *       404:
+ *         description: User not found
+ */
 
 userRouter.post("/login", async (req, res) => {
     try {

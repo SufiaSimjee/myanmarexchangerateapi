@@ -18,6 +18,9 @@ const { readFileSync } = require('fs');
 const cron = require("node-cron");
 const crypto = require('crypto');
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+
 const { Server } = require("socket.io");
 const {connectDb} = require('./Services/DbService');
 const strategy = require("./Auth/JwtStrategy");
@@ -31,6 +34,7 @@ const seedFuelRates = require("./Models/Seeds/FuelRateSeed");
 const seedMetalRates = require("./Models/Seeds/MetalRateSeed");
 const seedCurrencyRates = require("./Models/Seeds/CurrencyRateSeed");
 const seedUsers = require("./Models/Seeds/UserSeed");
+const swaggerOptions = require("./Helpers/SwaggerOptions");
 
 
 
@@ -55,6 +59,7 @@ try{
     try{
         app.set('trust proxy', (ip) => {
             try{
+                console.log("IP Address of Trusted Proxy :", ip);
                 return true;
             } catch (error){
                 console.log(error)
@@ -95,9 +100,16 @@ try{
     app.use(express.urlencoded({ extended: true }));
 
     // register passport strategy
-    passport.use("jwt", strategy);
-    app.use(passport.initialize());
-    console.log("Registered JWT strategy:", passport._strategy('jwt')?.name);
+    try{
+        passport.use("jwt", strategy);
+        app.use(passport.initialize());
+        console.log("Registered JWT strategy:", passport._strategy('jwt')?.name);
+    } catch (error) {
+        console.error("Failed to set up passport JWT (Authentication): ",error.message);
+    }
+
+
+
 
 
 
@@ -136,41 +148,55 @@ try{
     server.timeout = 120000;
 
 
+
     server.on('timeout', (socket) => {
         console.log('timeout');
         socket.destroy();
     });
 
 
+    try{
+        const io = new Server(server, {
+            cors: { origin: "*" },
+            connectionStateRecovery: {}
+        });
+
+        app.use((req, res, next) => {
+            req.io = io;
+            return next();
+        });
+
+        io.on('connection', async (socket) => {
+            try{
+                console.log('a user connected');
+                socket.on('disconnect', () => {
+                    console.log('user disconnected');
+                });
+
+            } catch(error){
+                console.log(error);
+            }
+        });
+    } catch(error){
+        console.error("Failed to set up Socker IO: ",error.message);
+    }
 
 
-    const io = new Server(server, {
-        cors: { origin: "*" },
-        connectionStateRecovery: {}
-    });
-
-    app.use((req, res, next) => {
-        req.io = io;
-        return next();
-    });
-
-
-    io.on('connection', async (socket) => {
-      try{
-          console.log('a user connected');
-          socket.on('disconnect', () => {
-              console.log('user disconnected');
-          });
-
-      } catch(error){
-          console.log(error);
-      }
-    });
 
     //route
     app.use(TutorialRouter);
     app.use("/user",userRouter);
     app.use("/currency", currencyRouter)
+
+
+    // Swagger definition
+    try{
+        const swaggerDocs = swaggerJSDoc(swaggerOptions);
+        app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+    } catch (error){
+        console.log("Failed to add swagger: ",error);
+    }
 
 
     server.listen(process.env.PORT, process.env.HOST,async ()=> {
@@ -180,7 +206,6 @@ try{
         await seedMetalRates();
         await seedCurrencyRates();
         await seedUsers();
-
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";

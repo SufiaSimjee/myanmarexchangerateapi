@@ -1,6 +1,18 @@
 const express = require("express");
 const TutorialRouter = express.Router();
 
+/**
+ * @swagger
+ * /currency-docs:
+ *   get:
+ *     tags:
+ *       - Documentation
+ *     summary: Render currency API documentation
+ *     responses:
+ *       200:
+ *         description: Successfully rendered currency documentation
+ */
+
 TutorialRouter.get('/currency-docs', (req, res) => {
     try {
         const protocol = req.protocol;
@@ -18,6 +30,17 @@ TutorialRouter.get('/currency-docs', (req, res) => {
 });
 
 
+/**
+ * @swagger
+ * /auth-docs:
+ *   get:
+ *     tags:
+ *       - Documentation
+ *     summary: Render authentication API documentation
+ *     responses:
+ *       200:
+ *         description: Successfully rendered authentication documentation
+ */
 TutorialRouter.get('/auth-docs', (req, res) => {
     try {
         const protocol = req.protocol;
@@ -34,6 +57,17 @@ TutorialRouter.get('/auth-docs', (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /notification-docs:
+ *   get:
+ *     tags:
+ *       - Documentation
+ *     summary: Render notification API documentation
+ *     responses:
+ *       200:
+ *         description: Successfully rendered notification documentation
+ */
 TutorialRouter.get('/notification-docs', (req, res) => {
     try {
         const protocol = req.protocol;

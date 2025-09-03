@@ -19,13 +19,19 @@ const jwtVerify = async (payload, done) => {
             done(null, false)
         }
 
-        delete user.password;
+        try{
+            if(user?.password) {
+                delete user?.password;
+            }
+        } catch(e){
+            console.log(e);
+        }
+
         done(null, user);
 
     } catch(err) {
         console.error(err);
         done(null, false);
-
     }
 };
 

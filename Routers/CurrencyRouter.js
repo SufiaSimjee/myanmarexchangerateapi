@@ -13,6 +13,59 @@ let currencyRateUpdateTracker = 0;
 let defaultSource = process.env.DEFAULT_SOURCE;
 let defaultUploader = process.env.DEFAULT_UPLOADER;
 
+
+/**
+ * @swagger
+ * /currency/uploaderList:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve a paginated list of unique uploaders
+ *     parameters:
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *           minimum: 0
+ *         description: "Number of records to skip (for pagination)"
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *         description: "Maximum number of records to return"
+ *     responses:
+ *       200:
+ *         description: "Successfully retrieved uploader list"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 skip:
+ *                   type: integer
+ *                 limit:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       username:
+ *                         type: string
+ *       400:
+ *         description: "Invalid query parameters (skip or limit)"
+ *       404:
+ *         description: No uploaders found
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get("/uploaderList", async (req, res) => {
     try {
         let { skip, limit } = req.query;
@@ -85,6 +138,48 @@ currencyRouter.get("/uploaderList", async (req, res) => {
     }
 });
 
+
+/**
+ * @swagger
+ * /currency/sourceList:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve a paginated list of unique sources for a specific uploader
+ *     parameters:
+ *       - in: query
+ *         name: uploader
+ *         schema:
+ *           type: string
+ *         description: "Username of the uploader (optional, defaults to system default)"
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *           minimum: 0
+ *         description: Number of records to skip (for pagination)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *         description: Maximum number of records to return
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved source list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/SourceListResponse'
+ *       400:
+ *         description: Invalid query parameters (skip or limit)
+ *       404:
+ *         description: No sources found
+ *       500:
+ *         description: Internal server error
+ */
 
 currencyRouter.get("/sourceList", async (req, res) => {
     try {
@@ -170,6 +265,74 @@ currencyRouter.get("/sourceList", async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /currency/currencyList:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve a paginated list of currencies filtered by source and uploader
+ *     parameters:
+ *       - in: query
+ *         name: source
+ *         schema:
+ *           type: string
+ *         description: "Name of the source (optional, defaults to system default)"
+ *       - in: query
+ *         name: uploader
+ *         schema:
+ *           type: string
+ *         description: "Username of the uploader (optional, defaults to system default)"
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *           minimum: 0
+ *         description: "Number of records to skip (for pagination)"
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *         description: Maximum number of records to return
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved currency list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 uploader:
+ *                   type: string
+ *                 source:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 skip:
+ *                   type: integer
+ *                 limit:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       currencyCode:
+ *                         type: string
+ *                       currencyName:
+ *                         type: string
+ *       400:
+ *         description: Invalid query parameters (skip or limit)
+ *       404:
+ *         description: No currencies found
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get("/currencyList", async (req, res) => {
     try {
         let {source, uploader, skip, limit} = req.query;
@@ -271,7 +434,70 @@ currencyRouter.get("/currencyList", async (req, res) => {
     }
 });
 
-
+/**
+ * @swagger
+ * /currency/findUploader&Source/{currencyCode}:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve a paginated list of uploader & source combinations for a specific currency
+ *     parameters:
+ *       - in: path
+ *         name: currencyCode
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Currency code to search for
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *           minimum: 0
+ *         description: Number of records to skip (for pagination)
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *         description: Maximum number of records to return
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved uploader and source list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 skip:
+ *                   type: integer
+ *                 limit:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       currencyCode:
+ *                         type: string
+ *                       currencyName:
+ *                         type: string
+ *                       uploadedBy:
+ *                         type: string
+ *                       source:
+ *                         type: string
+ *       400:
+ *         description: Invalid query parameters (skip or limit)
+ *       404:
+ *         description: No currency uploader and source found
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
     try {
         let {currencyCode} = req.params;
@@ -359,6 +585,85 @@ currencyRouter.get("/findUploader&Source/:currencyCode", async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /currency/add:
+ *   post:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Add a new currency exchange rate
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currencyCode
+ *               - unit
+ *               - buyRate
+ *               - sellRate
+ *               - uploadedDate
+ *               - source
+ *             properties:
+ *               currencyCode:
+ *                 type: string
+ *                 description: ISO code of the currency
+ *               unit:
+ *                 type: integer
+ *                 description: Unit of the currency
+ *               buyRate:
+ *                 type: number
+ *                 description: Buy rate of the currency
+ *               sellRate:
+ *                 type: number
+ *                 description: Sell rate of the currency
+ *               uploadedDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Date and time the rate was uploaded ("YYYY-MM-DD HH:mm:ss" or ISO format)
+ *               source:
+ *                 type: string
+ *                 description: Source of the exchange rate
+ *     responses:
+ *       201:
+ *         description: Exchange rate added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     currencyCode:
+ *                       type: string
+ *                     unit:
+ *                       type: integer
+ *                     buyRate:
+ *                       type: number
+ *                     sellRate:
+ *                       type: number
+ *                     source:
+ *                       type: string
+ *                     uploadedDate:
+ *                       type: string
+ *                       format: date-time
+ *                     uploadedBy:
+ *                       type: string
+ *       400:
+ *         description: Missing required fields or invalid date format
+ *       409:
+ *         description: Exchange rate already exists
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), async (req, res) => {
     try{
         let { currencyCode, unit, buyRate, sellRate, uploadedDate, source } = req.body;
@@ -446,7 +751,41 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
     }
 })
 
-
+/**
+ * @swagger
+ * /currency/delete/{id}:
+ *   delete:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Delete a currency exchange rate by ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the currency exchange rate to delete
+ *     responses:
+ *       204:
+ *         description: Currency exchange rate deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid ID format
+ *       403:
+ *         description: User does not have permission to delete this exchange rate
+ *       404:
+ *         description: No currency exchange rate found with the provided ID
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: false }), async (req, res) => {
     try {
         const { id } = req.params;
@@ -497,7 +836,45 @@ currencyRouter.delete('/delete/:id', passport.authenticate("jwt", { session: fal
     }
 });
 
-
+/**
+ * @swagger
+ * /currency/{id}:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve a currency exchange rate by ID with percentage change
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the currency exchange rate
+ *     responses:
+ *       200:
+ *         description: Currency exchange rate retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 uploader:
+ *                   type: string
+ *                 source:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Invalid ID format
+ *       404:
+ *         description: Currency exchange rate not found
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}),async (req, res) => {
     try {
         const { id } = req.params;
@@ -538,7 +915,62 @@ currencyRouter.get('/:id', expressCache({ timeOut: 60000, dependsOn: () => [curr
     }
 });
 
-
+/**
+ * @swagger
+ * /currency/{currencyCode}/{date}/highest:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve the highest exchange rate for a specific currency on a given date
+ *     parameters:
+ *       - in: path
+ *         name: currencyCode
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ISO code of the currency (cannot be "ALL")
+ *       - in: path
+ *         name: date
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date in 'YYYY-MM-DD' format
+ *       - in: query
+ *         name: source
+ *         schema:
+ *           type: string
+ *         description: "Source of the exchange rate (default: defaultSource)"
+ *       - in: query
+ *         name: uploader
+ *         schema:
+ *           type: string
+ *         description: "Uploader of the exchange rate (default: defaultUploader)"
+ *     responses:
+ *       200:
+ *         description: Highest exchange rate retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 uploader:
+ *                   type: string
+ *                 source:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Invalid request (e.g., currencyCode = "ALL" or invalid date format)
+ *       404:
+ *         description: No highest exchange rate found for the given date
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get("/:currencyCode/:date/highest", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res)=>{
     try{
         const { currencyCode, date } = req.params;
@@ -612,6 +1044,62 @@ currencyRouter.get("/:currencyCode/:date/highest", expressCache({ timeOut: 60000
 });
 
 
+/**
+ * @swagger
+ * /currency/{currencyCode}/{date}/lowest:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve the lowest exchange rate for a specific currency on a given date
+ *     parameters:
+ *       - in: path
+ *         name: currencyCode
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ISO code of the currency (cannot be "ALL")
+ *       - in: path
+ *         name: date
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Date in 'YYYY-MM-DD' format
+ *       - in: query
+ *         name: source
+ *         schema:
+ *           type: string
+ *         description: "Source of the exchange rate (default: defaultSource)"
+ *       - in: query
+ *         name: uploader
+ *         schema:
+ *           type: string
+ *         description: "Uploader of the exchange rate (default: defaultUploader)"
+ *     responses:
+ *       200:
+ *         description: Lowest exchange rate retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 uploader:
+ *                   type: string
+ *                 source:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Invalid request (e.g., currencyCode = "ALL" or invalid date format)
+ *       404:
+ *         description: No lowest exchange rate found for the given date
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get("/:currencyCode/:date/lowest", expressCache({timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => {console.log(`Cache removed for key: ${key}`);}}),
     async (req, res) => {
         try {
@@ -681,7 +1169,38 @@ currencyRouter.get("/:currencyCode/:date/lowest", expressCache({timeOut: 60000, 
     }
 );
 
-
+/**
+ * @swagger
+ * /currency/{currencyCode}/latest:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve the latest exchange rate(s) for a currency or all currencies
+ *     parameters:
+ *       - in: path
+ *         name: currencyCode
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ISO code of the currency (use "ALL" for all currencies)
+ *       - in: query
+ *         name: source
+ *         schema:
+ *           type: string
+ *         description: "Source of the exchange rate (default: defaultSource)"
+ *       - in: query
+ *         name: uploader
+ *         schema:
+ *           type: string
+ *         description: "Uploader of the exchange rate (default: defaultUploader)"
+ *     responses:
+ *       200:
+ *         description: Latest exchange rate retrieved successfully
+ *       404:
+ *         description: No latest exchange rate found
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode } = req.params;
@@ -827,6 +1346,84 @@ currencyRouter.get("/:currencyCode/latest",expressCache({ timeOut: 60000, depend
 });
 
 
+/**
+ * @swagger
+ * /currency/{currencyCode}/{date}:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve exchange rate(s) for a specific currency on a given date
+ *     parameters:
+ *       - in: path
+ *         name: currencyCode
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The currency code to fetch (use "ALL" to get all currencies)
+ *       - in: path
+ *         name: date
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: The date in 'YYYY-MM-DD' format
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *         required: false
+ *         description: Number of records to skip for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         required: false
+ *         description: Maximum number of records to return
+ *       - in: query
+ *         name: source
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: The source of the currency rates (default applied if omitted)
+ *       - in: query
+ *         name: uploader
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Username of the uploader (default applied if omitted)
+ *     responses:
+ *       200:
+ *         description: Exchange rate(s) retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 uploader:
+ *                   type: string
+ *                 source:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 skip:
+ *                   type: integer
+ *                 limit:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/CurrencyRate'
+ *       400:
+ *         description: Invalid input (pagination or date format)
+ *       404:
+ *         description: No exchange rate record found for the given currency/date
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}) ,async (req, res) => {
     try {
         const { currencyCode, date } = req.params;
@@ -946,6 +1543,91 @@ currencyRouter.get("/:currencyCode/:date",expressCache({ timeOut: 60000, depends
     }
 });
 
+/**
+ * @swagger
+ * /currency/{currencyCode}/{fromDate}/{toDate}:
+ *   get:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Retrieve exchange rates for a currency between two dates
+ *     parameters:
+ *       - in: path
+ *         name: currencyCode
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The currency code to fetch (use "ALL" to get all currencies)
+ *       - in: path
+ *         name: fromDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: Start date in 'YYYY-MM-DD' format
+ *       - in: path
+ *         name: toDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         required: true
+ *         description: End date in 'YYYY-MM-DD' format
+ *       - in: query
+ *         name: skip
+ *         schema:
+ *           type: integer
+ *           default: 0
+ *         required: false
+ *         description: Number of records to skip for pagination
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         required: false
+ *         description: Maximum number of records to return
+ *       - in: query
+ *         name: source
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Source of the currency rates (defaults if omitted)
+ *       - in: query
+ *         name: uploader
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Username of the uploader (defaults if omitted)
+ *     responses:
+ *       200:
+ *         description: Exchange rate(s) retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 uploader:
+ *                   type: string
+ *                 source:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 skip:
+ *                   type: integer
+ *                 limit:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/CurrencyRate'
+ *       400:
+ *         description: Invalid input (pagination or date format)
+ *       404:
+ *         description: No exchange rate records found for the given criteria
+ *       500:
+ *         description: Internal server error
+ */
 currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: 60000, dependsOn: () => [currencyRateUpdateTracker], onTimeout: (key, _) => { console.log(`Cache removed for key: ${key}`); }}), async (req, res) => {
     try {
         const { currencyCode, fromDate, toDate } = req.params;
