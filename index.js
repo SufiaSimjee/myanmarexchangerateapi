@@ -170,6 +170,7 @@ try{
         io.on('connection', async (socket) => {
             try{
                 console.log('a user connected');
+                io.emit("test_notification_event", "sent notification");
                 socket.on('disconnect', () => {
                     console.log('user disconnected');
                 });
