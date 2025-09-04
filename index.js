@@ -195,7 +195,6 @@ try{
     try{
         const swaggerDocs = swaggerJSDoc(swaggerOptions);
         app.use('/swagger', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
     } catch (error){
         console.log("Failed to add swagger: ",error);
     }
@@ -211,13 +210,15 @@ try{
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
-    let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 60;
+    let NOTIFICATION_INTERVAL = process.env.NOTIFICATION_INTERVAL || 1;
 
 
     try{
         if(liveExchangeRate){
+            console.log("Scheduling Cron Job");
             let previousHashes = {};
             cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
+                console.log("Starting Cron Job");
                 await connectDb();
                 const uploaderList = await CurrencyRate.aggregate([
                     {
@@ -317,6 +318,8 @@ try{
                     }
                     uploader = await uploaderList.next();
                 }
+
+                console.log("Ending Cron Job");
             })
         }
     } catch(error){
