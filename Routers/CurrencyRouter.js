@@ -733,8 +733,11 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
 
         currencyRateUpdateTracker++;
 
-
-        req.io.emit(`${result.uploadedBy}_${result.source}_${result.currencyCode}`, JSON.stringify(result));
+        try{
+            req.io.emit(`${result.uploadedBy}_${result.source}_${result.currencyCode}`, JSON.stringify(result));
+        } catch (error) {
+            console.log("Failed to send notification: ", error.message);
+        }
 
         return res.status(201).json({ // 201 Created
             message: `Exchange rate for ${currencyCode} added successfully.`,
@@ -751,6 +754,183 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
         });
     }
 })
+
+
+/**
+ * @swagger
+ * /currency/addMany:
+ *   post:
+ *     tags:
+ *       - Exchange Rates
+ *     summary: Add multiple currency exchange rates at once
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               type: object
+ *               required:
+ *                 - currencyCode
+ *                 - unit
+ *                 - buyRate
+ *                 - sellRate
+ *                 - uploadedDate
+ *                 - source
+ *               properties:
+ *                 currencyCode:
+ *                   type: string
+ *                   description: The 3-letter ISO currency code
+ *                   example: "USD"
+ *                 unit:
+ *                   type: number
+ *                   description: Unit of currency (e.g., 1, 100)
+ *                   example: 1
+ *                 buyRate:
+ *                   type: number
+ *                   description: Buy rate of the currency
+ *                   example: 2100.5
+ *                 sellRate:
+ *                   type: number
+ *                   description: Sell rate of the currency
+ *                   example: 2150.25
+ *                 uploadedDate:
+ *                   type: string
+ *                   format: date-time
+ *                   description: Date of the exchange rate (Yangon timezone)
+ *                   example: "2025-09-03 10:00:00"
+ *                 source:
+ *                   type: string
+ *                   description: Source of the currency rate
+ *                   example: "defaultSource"
+ *     responses:
+ *       201:
+ *         description: Exchange rates added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 uploader:
+ *                   type: string
+ *                 totalCount:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/CurrencyRate'
+ *       400:
+ *         description: Missing or invalid fields in request body
+ *       409:
+ *         description: Exchange rate already exists for given currency, date, and uploader
+ *       500:
+ *         description: Internal server error
+ */
+
+currencyRouter.post("/addMany", passport.authenticate("jwt", { session: false }), async (req, res) => {
+    try {
+        let currencyRates = req.body;
+        let newRates = [];
+        let { username } = req.user;
+
+        if (!currencyRates || !Array.isArray(currencyRates) || currencyRates.length === 0) {
+            return res.status(400).json({ message: "No currency rates provided." });
+        }
+
+        for (let currency of currencyRates) {
+            let { currencyCode, unit, buyRate, sellRate, uploadedDate, source } = currency;
+
+            if (!currencyCode || !unit || !buyRate || !sellRate || !uploadedDate || !source) {
+                return res.status(400).json({
+                    message: `Currency ${currencyCode}: These fields are required: currencyCode, unit, buyRate, sellRate, uploadedDate, source.`,
+                });
+            }
+
+            // Validate uploadedDate
+            if (!moment(uploadedDate, "YYYY-MM-DD HH:mm:ss", true).isValid() &&
+                !moment(uploadedDate, moment.ISO_8601, true).isValid()) {
+                return res.status(400).json({
+                    message: `Currency ${currencyCode}: Invalid uploadedDate format. Please use 'YYYY-MM-DD HH:mm:ss' or ISO format.`,
+                });
+            }
+
+            const unformattedDate = moment.tz(uploadedDate, "Asia/Yangon");
+            const currentDate = moment.tz("Asia/Yangon");
+
+            if (unformattedDate.isAfter(currentDate)) {
+                return res.status(400).json({ message: `Currency ${currencyCode}: Uploaded date cannot be in the future!` });
+            }
+
+            const formattedDate = unformattedDate.toDate();
+
+            const existingRate = await CurrencyRate.findOne({
+                currencyCode: currencyCode.toUpperCase(),
+                unit,
+                buyRate,
+                sellRate,
+                source: { $regex: `^${source}$`, $options: 'i' },
+                uploadedDate: formattedDate,
+                uploadedBy: username
+            });
+
+            if (existingRate) {
+                return res.status(409).json({
+                    message: `An exchange rate for ${currencyCode} on ${uploadedDate} by ${username} already exists.`,
+                });
+            }
+
+            newRates.push(new CurrencyRate({
+                currencyCode: currencyCode.toUpperCase(),
+                unit,
+                buyRate,
+                sellRate,
+                source,
+                uploadedDate: formattedDate,
+                uploadedBy: username,
+            }));
+        }
+
+
+        const result = await CurrencyRate.bulkSave(newRates);
+
+        currencyRateUpdateTracker = currencyRateUpdateTracker + newRates?.length;
+
+        const insertedIds = Object.values(result.insertedIds); // ["68bbd0bd7bf8b473bfc26b78", "68bbd0bd7bf8b473bfc26b7a"]
+
+        const insertedDocs = await CurrencyRate.find({
+            _id: { $in: insertedIds }
+        });
+
+
+        try{
+            insertedDocs.forEach(doc => {
+                req.io.emit(`${doc.uploadedBy}_${doc.source}_${doc.currencyCode}`, JSON.stringify(doc));
+            });
+        } catch (error) {
+            console.log("Failed to send notification: ", error.message);
+        }
+
+        return res.status(201).json({
+            message: `${result?.insertedCount} exchange rate(s) added successfully.`,
+            uploader: username,
+            totalCount: result?.insertedCount,
+            data: insertedDocs,
+        });
+
+    } catch (error) {
+        console.error("Add Exchange Rate Error (Bulk) :", error);
+        return res.status(500).json({
+            message: "An unexpected error occurred while adding the exchange rate in bulk.",
+            details: process.env.NODE_ENV === "development" ? error.message : undefined
+        });
+    }
+});
+
 
 /**
  * @swagger
@@ -1739,5 +1919,10 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: c
         });
     }
 });
+
+
+
+
+
 
 module.exports = currencyRouter;
