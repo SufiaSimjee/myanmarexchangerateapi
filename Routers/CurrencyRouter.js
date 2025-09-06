@@ -898,7 +898,7 @@ currencyRouter.post("/addMany", passport.authenticate("jwt", { session: false })
 
         const result = await CurrencyRate.bulkSave(newRates);
 
-        currencyRateUpdateTracker = currencyRateUpdateTracker + newRates?.length;
+        currencyRateUpdateTracker = currencyRateUpdateTracker + result?.insertedCount;
 
         const insertedIds = Object.values(result.insertedIds); // ["68bbd0bd7bf8b473bfc26b78", "68bbd0bd7bf8b473bfc26b7a"]
 
