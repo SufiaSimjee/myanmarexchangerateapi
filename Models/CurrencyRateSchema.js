@@ -143,9 +143,9 @@ CurrencyRateSchema.methods.getPercentageChange = async function () {
 
         if (!prevRate || !prevRate.buyRate || !prevRate.sellRate) {
             result.percentageChange = {
-                buyRateChangeInPercentage: 0,
+                buyRateChangeInPercentage: "0.00%",
                 buyRateChange: 0,
-                sellRateChangeInPercentage: 0,
+                sellRateChangeInPercentage: "0.00%",
                 sellRateChange: 0
             }
             return result;
