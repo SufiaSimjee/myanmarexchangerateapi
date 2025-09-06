@@ -137,15 +137,19 @@ CurrencyRateSchema.methods.getPercentageChange = async function () {
             .select('_id buyRate sellRate uploadedDate')
 
 
-        if (!prevRate || !prevRate.buyRate || !prevRate.sellRate) {
-            return {
-                buyRateChangeInPercentage: null,
-                buyRateChange: null,
-                sellRateChangeInPercentage: null,
-                sellRateChange: null
-            };
-        }
+        const result = this.toObject();
 
+        result.currencyInfo = CurrencyList[this.currencyCode];
+
+        if (!prevRate || !prevRate.buyRate || !prevRate.sellRate) {
+            result.percentageChange = {
+                buyRateChangeInPercentage: 0,
+                buyRateChange: 0,
+                sellRateChangeInPercentage: 0,
+                sellRateChange: 0
+            }
+            return result;
+        }
 
         const buyRateChange = parseFloat((this.buyRate - prevRate.buyRate).toFixed(2));
         const sellRateChange = parseFloat((this.sellRate - prevRate.sellRate).toFixed(2));
@@ -153,10 +157,7 @@ CurrencyRateSchema.methods.getPercentageChange = async function () {
         const buyRateChangeInPercentage = ((buyRateChange) / prevRate.buyRate) * 100;
         const sellRateChangeInPercentage = ((sellRateChange) / prevRate.sellRate) * 100;
 
-        const result = this.toObject();
 
-        result.currencyInfo = CurrencyList[this.currencyCode];
-        
         result.percentageChange = {
             buyRateChangeInPercentage: buyRateChangeInPercentage !== null ? buyRateChangeInPercentage.toFixed(2) + "%" : null,
             buyRateChange: buyRateChange,
@@ -165,6 +166,7 @@ CurrencyRateSchema.methods.getPercentageChange = async function () {
         };
 
         return result;
+
     } catch (err) {
         const result = this.toObject();
         result.percentageChange = {
