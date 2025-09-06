@@ -21,7 +21,7 @@ let cacheTime = 3600000; //60 Minutes
  *   get:
  *     tags:
  *       - Exchange Rates
- *     summary: Retrieve a paginated list of unique uploaders
+ *     summary: Retrieve a paginated list of unique uploader
  *     parameters:
  *       - in: query
  *         name: skip
@@ -63,7 +63,7 @@ let cacheTime = 3600000; //60 Minutes
  *       400:
  *         description: "Invalid query parameters (skip or limit)"
  *       404:
- *         description: No uploaders found
+ *         description: No uploader found
  *       500:
  *         description: Internal server error
  */
@@ -85,7 +85,7 @@ currencyRouter.get("/uploaderList", async (req, res) => {
 
         if (totalCount === 0) {
             return res.status(404).json({
-                message: "No uploaders found in the database.",
+                message: "No uploader found in the database.",
                 totalCount: 0
             });
         }
