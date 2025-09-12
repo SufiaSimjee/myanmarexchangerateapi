@@ -49,6 +49,25 @@ try{
     app.use(cors());
     app.use(helmet());
 
+    //log client ip address to console
+    try{
+        app.use(
+            function (req, res, next) {
+                try{
+                    let ip = req?.ip ;
+                    console.log("Logging Client Ip Address:", ip);
+                    next();
+                }catch (error){
+                    console.log(error?.message)
+                    next();
+                }
+
+            }
+        )
+    } catch (error){
+        console.log(error?.message)
+    }
+
     // Set Pug as the view engine
     try{
         app.set('view engine', 'pug');
