@@ -238,7 +238,7 @@ try{
 
 
     try{
-        if(liveExchangeRate){
+        if(liveExchangeRate === true){
             console.log("Scheduling Cron Job");
             let previousHashes = {};
             cron.schedule(`0 */${NOTIFICATION_INTERVAL} * * * *`, async () => {
