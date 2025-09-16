@@ -12,8 +12,9 @@ This API is intended to offer a general overview of currency rates in Myanmar an
 
 Users should treat the data as indicative rather than authoritative, and the developer cannot be held responsible for any inaccuracies, misinterpretations, or outcomes resulting from its use.
 
-Additionally, the developer is building a front-end hybrid app using React Native for both Android and Web. You can view the latest exchange rates at this link: **https://poutzay.netlify.app/**
-Alternate Url (Front End): **https://poutzay.expo.app/**
+Additionally, the developer is building a front-end hybrid app using React Native for both Android and Web. You can view the latest exchange rates at this link: **https://poutzay.expo.app/**
+
+
 
 (currently a work in progress).
 
