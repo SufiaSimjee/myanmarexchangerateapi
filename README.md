@@ -2,7 +2,7 @@
 
 ## a. Description (Api Url: https://myanmarexchangerateapi.onrender.com)
 
-This API provides information about foreign currency exchange rates in Myanmar. The data is collected personally by the developer from various publicly available online resources, including Facebook pages/groups/posts, the Myanmar Market Price app, and other applications/websites reporting currency rates.
+This API provides information about foreign currency exchange rates in Myanmar. The data is collected personally by the developer from various publicly available online resources, including Facebook pages/groups/posts and other applications/websites reporting currency rates.
 
 It is designed to help people conveniently check exchange rates from a single place, rather than browsing multiple sources individually.
 
@@ -99,13 +99,11 @@ Additionally, the developer is building a front-end hybrid app using React Nativ
 
 
 ## e. Disclaimer
-
 1. The data may not be 100% accurate.
 2. The developer does not take any responsibility for any discrepancies, losses, or damages resulting from the use of this API or the data it provides.
 3. This API is provided for informational purposes only. Users are solely responsible for verifying any data before relying on it.
 
 ## f. Motivation
-
 The main purpose of this API is to inform users about daily exchange rates from both unofficial and official sources. In Myanmar, multiple rates exist, such as:
 
 1. Central Bank of Myanmar Rate
@@ -114,17 +112,14 @@ The main purpose of this API is to inform users about daily exchange rates from 
 
 
 ## g. Data Sources
-
 1.  Facebook Pages/Groups reporting currency rates
-2.  Myanmar Market Price App
-3.  Other Online Sources
+2.  Online Sources
 
 ## h. Recommended Usage
 1. Use the API for quick reference of Myanmar currency rates.
-2. Monitor API updates and check the notification feature once it’s re-enabled.
+2. Monitor API updates and check the notification feature once it’s re-enabled. Currently, use polling to stay updated.
 
 ## i. Technology Stack
-
 1.  **Backend:** Node.js (Express.js)
 2.  **Database:** MongoDB (MongoDB Atlas)
 3.  **Protocols:** HTTPS and WebSocket (Socket IO)
