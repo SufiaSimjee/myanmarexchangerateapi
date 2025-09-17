@@ -224,13 +224,32 @@ try{
     }
 
 
+    try{
+        app.get('/log', (req, res) => {
+            try {
+                return res.sendFile(path.join(__dirname, "/log/access.log"));
+            } catch(error){
+                return res.status(500).json({
+                    message: "Unexpected error occurred while fetching log file.",
+                    details: process.env.NODE_ENV === "development" ? error.message : undefined
+                });
+            }
+        })
+    } catch(error){
+        console.log(error);
+    }
+
     server.listen(process.env.PORT, process.env.HOST,async ()=> {
         console.log(`listening on ${process.env.HOST}:${process.env.PORT}`);
-        await connectDb();
-        await seedFuelRates();
-        await seedMetalRates();
-        await seedCurrencyRates();
-        await seedUsers();
+        try{
+            await connectDb();
+            await seedFuelRates();
+            await seedMetalRates();
+            await seedCurrencyRates();
+            await seedUsers();
+        } catch(error){
+            console.log(error);
+        }
     });
 
     let liveExchangeRate = process.env.LIVE_EXCHANGE_RATE === "true";
