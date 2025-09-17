@@ -55,7 +55,7 @@ Additionally, the developer is building a front-end hybrid app using React Nativ
 
   If no data is available for that currency and date, a `404 Not Found` response is returned.
 
-- **Get live updates for a specific currency using Socket.IO:**  
+- **Get live updates for a specific currency using Socket.IO (Currently This Feature is Not Available) :**  
   `https://myanmarexchangerateapi.onrender.com/`  
   Users can receive **real-time currency rate updates** via Socket.IO by listening to a specific event. The event naming convention is:
 
@@ -88,7 +88,7 @@ Additionally, the developer is building a front-end hybrid app using React Nativ
 ## b. How To Use Api 
 1. Authentication Tutorial: https://myanmarexchangerateapi.onrender.com/auth-docs
 2. Currency Rate Api Tutorial: https://myanmarexchangerateapi.onrender.com/currency-docs
-3. Live Notification Tutorial:  https://myanmarexchangerateapi.onrender.com/notification-docs
+3. Live Notification Tutorial (Not Available Currently): https://myanmarexchangerateapi.onrender.com/notification-docs
 
 ## c. Target Audience
 - Sellers (both individuals and currency exchange counters) who want to share exchange rates.
