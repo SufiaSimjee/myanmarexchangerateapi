@@ -225,7 +225,7 @@ try{
 
 
     try{
-        app.get('/log', (req, res) => {
+        app.get('/log',passport.authenticate("jwt", { session: false }), (req, res) => {
             try {
                 return res.sendFile(path.join(__dirname, "/log/access.log"));
             } catch(error){
