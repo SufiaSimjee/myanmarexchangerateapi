@@ -1,4 +1,4 @@
-# Myanmar Foreign Currency Exchange Rate API (Version: 0 – Under Development)
+# Myanmar Foreign Currency Exchange Rate API (Version: 1.0.0)
 
 ## a. Description (Api Url: https://myanmarexchangerateapi.onrender.com)
 

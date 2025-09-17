@@ -805,7 +805,7 @@ currencyRouter.post("/add", passport.authenticate("jwt", { session: false }), as
  *                 source:
  *                   type: string
  *                   description: Source of the currency rate
- *                   example: "defaultSource"
+ *                   example: "Myanmar Market Price"
  *     responses:
  *       201:
  *         description: Exchange rates added successfully
@@ -1121,12 +1121,12 @@ currencyRouter.get('/:id', expressCache({ timeOut: cacheTime, dependsOn: () => [
  *         name: source
  *         schema:
  *           type: string
- *         description: "Source of the exchange rate (default: defaultSource)"
+ *         description: "Source of the exchange rate (default: Myanmar Market Price)"
  *       - in: query
  *         name: uploader
  *         schema:
  *           type: string
- *         description: "Uploader of the exchange rate (default: defaultUploader)"
+ *         description: "Uploader of the exchange rate (default: admin123)"
  *     responses:
  *       200:
  *         description: Highest exchange rate retrieved successfully
@@ -1250,12 +1250,12 @@ currencyRouter.get("/:currencyCode/:date/highest", expressCache({ timeOut: cache
  *         name: source
  *         schema:
  *           type: string
- *         description: "Source of the exchange rate (default: defaultSource)"
+ *         description: "Source of the exchange rate (default: Myanmar Market Price)"
  *       - in: query
  *         name: uploader
  *         schema:
  *           type: string
- *         description: "Uploader of the exchange rate (default: defaultUploader)"
+ *         description: "Uploader of the exchange rate (default: admin123)"
  *     responses:
  *       200:
  *         description: Lowest exchange rate retrieved successfully
@@ -1368,12 +1368,12 @@ currencyRouter.get("/:currencyCode/:date/lowest", expressCache({timeOut: cacheTi
  *         name: source
  *         schema:
  *           type: string
- *         description: "Source of the exchange rate (default: defaultSource)"
+ *         description: "Source of the exchange rate (default: Myanmar Market Price)"
  *       - in: query
  *         name: uploader
  *         schema:
  *           type: string
- *         description: "Uploader of the exchange rate (default: defaultUploader)"
+ *         description: "Uploader of the exchange rate (default: admin123)"
  *     responses:
  *       200:
  *         description: Latest exchange rate retrieved successfully

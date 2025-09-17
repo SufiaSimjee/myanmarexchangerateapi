@@ -129,7 +129,7 @@ const swaggerOptions = {
                         source: {
                             type: "string",
                             description: "Source of the currency rate",
-                            example: "defaultSource"
+                            example: "Myanmar Market Price"
                         },
                         createdAt: {
                             type: "string",
