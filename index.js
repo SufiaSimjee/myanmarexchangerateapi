@@ -212,9 +212,9 @@ try{
     }
 
 
-    server.requestTimeout = 60000;
-    server.headersTimeout = 65000;
-    server.keepAliveTimeout = 60000;
+    server.requestTimeout = 120000;
+    server.headersTimeout = 120000;
+    server.keepAliveTimeout = 120000;
     server.timeout = 120000;
 
 
