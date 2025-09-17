@@ -133,10 +133,6 @@ try{
     }
 
 
-
-
-
-
     app.get('/', (req, res) => {
         try {
             const markdownPath = join(__dirname, 'README.md');
@@ -210,9 +206,25 @@ try{
 
 
     //route
-    app.use(TutorialRouter);
-    app.use("/user",userRouter);
-    app.use("/currency", currencyRouter)
+    try {
+        app.use(TutorialRouter);
+    } catch (error) {
+        console.error("Error mounting TutorialRouter:", error);
+    }
+
+    try {
+        app.use("/user",userRouter);
+    } catch (error) {
+        console.error("Error mounting userRouter:", error);
+    }
+
+
+    try {
+        app.use("/currency", currencyRouter)
+    } catch (error) {
+        console.error("Error mounting currencyRouter:", error);
+    }
+
 
 
     // Swagger definition
