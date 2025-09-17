@@ -2,8 +2,8 @@ const swaggerOptions = {
     swaggerDefinition: {
         openapi: '3.0.0',
         info: {
-            title: 'Myanmar Foreign Currency Exchange Rate API (Version: 0 – Under Development)',
-            version: '0',
+            title: 'Myanmar Foreign Currency Exchange Rate API (Version: 1.0.0)',
+            version: '1',
             description: "This API provides information about foreign currency exchange rates in Myanmar, collected from publicly available online resources such as Facebook pages, groups, posts, the Myanmar Market Price app, and other websites. It helps users conveniently check exchange rates from a single source. The data is indicative and should not replace official or unofficial sources. All requests and responses use JSON format. Login is required if you want to post or submit currency exchange rates.",
         },
         servers: [
