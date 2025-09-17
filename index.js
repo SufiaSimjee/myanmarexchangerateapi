@@ -46,8 +46,18 @@ try{
 
     const app = express();
 
-    app.use(cors());
-    app.use(helmet());
+
+    try {
+        app.use(cors());
+    } catch (error) {
+        console.error("Error mounting CORS middleware:", error);
+    }
+
+    try {
+        app.use(helmet());
+    } catch (error) {
+        console.error("Error mounting Helmet middleware:", error);
+    }
 
     //log client ip address to console
     try{
@@ -104,24 +114,64 @@ try{
     }
 
     //rate limit
-    const rateLimiter = rateLimit({
-        max: 100,
-        windowMs: 60 * 60 * 1000,
-        message: "Too many request from this IP"
-    });
+    let rateLimiter;
+    try {
+        rateLimiter = rateLimit({
+            max: 100,
+            windowMs: 60 * 60 * 1000,
+            message: "Too many request from this IP"
+        });
+    } catch (error) {
+        console.error("Error creating rate limiter:", error);
+        rateLimiter = (req, res, next) => next(); // fallback: disable limiter if it fails
+    }
+
 
     //middleware
-    app.use(compression());
-    app.use(rateLimiter);
+    try {
+        app.use(compression());
+    } catch (error) {
+        console.error("Error mounting compression middleware:", error);
+    }
 
-    const accessLogStream = rfs.createStream('access.log', {
-        interval: '1d',
-        path: path.join(__dirname, 'log')
-    });
+    try {
+        app.use(rateLimiter);
+    } catch (error) {
+        console.error("Error mounting rate limiter middleware:", error);
+    }
 
-    app.use(morgan('combined',  { stream: accessLogStream }));
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
+
+    let accessLogStream;
+    try {
+        accessLogStream = rfs.createStream('access.log', {
+            interval: '1d',
+            path: path.join(__dirname, 'log')
+        });
+    } catch (error) {
+        console.error("Error creating access log stream:", error);
+        accessLogStream = process.stdout; // fallback so morgan still works
+    }
+
+
+    try {
+        app.use(morgan('combined',  { stream: accessLogStream }));
+
+    } catch (error) {
+        console.error("Error mounting morgan logger:", error);
+    }
+
+    try {
+        app.use(express.json());
+    } catch (error) {
+        console.error("Error mounting express.json middleware:", error);
+    }
+
+    try {
+        app.use(express.urlencoded({ extended: true }));
+    } catch (error) {
+        console.error("Error mounting express.urlencoded middleware:", error);
+    }
+
 
     // register passport strategy
     try{
@@ -166,7 +216,6 @@ try{
     server.headersTimeout = 65000;
     server.keepAliveTimeout = 60000;
     server.timeout = 120000;
-
 
 
     server.on('timeout', (socket) => {
