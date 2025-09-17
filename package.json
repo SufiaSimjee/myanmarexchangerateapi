@@ -1,7 +1,7 @@
 {
   "name": "myanmarexchangerateapi",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple API that provides the latest Myanmar currency exchange rates in JSON format, with Swagger support for easy testing and integration.",
   "main": "index.js",
   "module": "export",
   "scripts": {
