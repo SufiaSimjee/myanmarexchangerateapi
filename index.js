@@ -166,7 +166,6 @@ try{
     }
 
     try{
-
         app.get('/ping', (req, res) => {
             res.status(200).write("Myanmar Exchange Rate API Working!");
         })
