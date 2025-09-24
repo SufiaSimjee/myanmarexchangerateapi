@@ -167,7 +167,7 @@ try{
 
     try{
         app.get('/ping', (req, res) => {
-            res.status(200).write("Myanmar Exchange Rate API Working!");
+            res.status(200).send("Myanmar Exchange Rate API Working!");
         })
     } catch (error){
         console.log(error)
