@@ -59,24 +59,7 @@ try{
         console.error("Error mounting Helmet middleware:", error);
     }
 
-    //log client ip address to console
-    try{
-        app.use(
-            function (req, res, next) {
-                try{
-                    let ip = req?.ip ;
-                    console.log("Logging Client Ip Address:", ip);
-                    next();
-                }catch (error){
-                    console.log(error?.message)
-                    next();
-                }
-
-            }
-        )
-    } catch (error){
-        console.log(error?.message)
-    }
+ 
 
     // Set Pug as the view engine
     try{
@@ -182,6 +165,14 @@ try{
         console.error("Failed to set up passport JWT (Authentication): ",error.message);
     }
 
+    try{
+
+        app.get('/ping', (req, res) => {
+            res.status(200).write("Myanmar Exchange Rate API Working!");
+        })
+    } catch (error){
+        console.log(error)
+    }
 
     app.get('/', (req, res) => {
         try {
