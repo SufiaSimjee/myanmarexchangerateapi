@@ -1131,6 +1131,46 @@ const CurrencyList = {
         "rounding": 0,
         "code": "ZWL",
         "name_plural": "Zimbabwean Dollar"
+    },
+    "16PeYe": {
+        "symbol": "🏅",
+        "name": "16 Pe Ye",
+        "symbol_native": "🏅",
+        "decimal_digits": 0,
+        "rounding": 0,
+        "icon": "🏅",
+        "code": "GOLD16",
+        "name_plural": "16 Pe Ye"
+    },
+    "15PeYe": {
+        "symbol": "🏅",
+        "name": "15 Pe Ye",
+        "symbol_native": "🏅",
+        "decimal_digits": 0,
+        "rounding": 0,
+        "icon": "🏅",
+        "code": "GOLD15",
+        "name_plural": "15 Pe Ye"
+    },
+    "New15PeYe": {
+        "symbol": "🏅",
+        "name": "New 15 Pe Ye",
+        "symbol_native": "🏅",
+        "decimal_digits": 0,
+        "rounding": 0,
+        "icon": "🏅",
+        "code": "NGOLD15",
+        "name_plural": "New 15 Pe Ye"
+    },
+    "New16PeYe": {
+        "symbol": "🏅",
+        "name": "New 16 Pe Ye",
+        "symbol_native": "🏅",
+        "decimal_digits": 0,
+        "rounding": 0,
+        "icon": "🏅",
+        "code": "NGOLD16",
+        "name_plural": "New 16 Pe Ye"
     }
 }
 
