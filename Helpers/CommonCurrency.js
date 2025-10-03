@@ -1139,7 +1139,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "icon": "🏅",
-        "code": "GOLD16",
+        "code": "16PEYE",
         "name_plural": "16 Pe Ye"
     },
     "15PEYE": {
@@ -1149,7 +1149,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "icon": "🏅",
-        "code": "GOLD15",
+        "code": "15PEYE",
         "name_plural": "15 Pe Ye"
     },
     "NEW15PEYE": {
@@ -1159,7 +1159,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "icon": "🏅",
-        "code": "NGOLD15",
+        "code": "NEW15PEYE",
         "name_plural": "New 15 Pe Ye"
     },
     "NEW16PEYE": {
@@ -1169,7 +1169,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "icon": "🏅",
-        "code": "NGOLD16",
+        "code": "NEW16PEYE",
         "name_plural": "New 16 Pe Ye"
     },
     "GOLD1OZ": {
@@ -1199,7 +1199,7 @@ const CurrencyList = {
         "decimal_digits": 0,
         "rounding": 0,
         "icon": "🏅",
-        "code": "GOLD1KT",
+        "code": "GOLD1KYATTHAR",
         "name_plural": "Gold 1 Kyatthar"
     }
 }
