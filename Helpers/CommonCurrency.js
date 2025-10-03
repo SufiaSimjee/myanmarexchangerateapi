@@ -1152,7 +1152,7 @@ const CurrencyList = {
         "code": "GOLD15",
         "name_plural": "15 Pe Ye"
     },
-    "New15PEYE": {
+    "NEW15PEYE": {
         "symbol": "🏅",
         "name": "New 15 Pe Ye",
         "symbol_native": "🏅",
@@ -1162,7 +1162,7 @@ const CurrencyList = {
         "code": "NGOLD15",
         "name_plural": "New 15 Pe Ye"
     },
-    "New16PEYE": {
+    "NEW16PEYE": {
         "symbol": "🏅",
         "name": "New 16 Pe Ye",
         "symbol_native": "🏅",
