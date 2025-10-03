@@ -1132,7 +1132,7 @@ const CurrencyList = {
         "code": "ZWL",
         "name_plural": "Zimbabwean Dollar"
     },
-    "16PeYe": {
+    "16PEYE": {
         "symbol": "🏅",
         "name": "16 Pe Ye",
         "symbol_native": "🏅",
@@ -1142,7 +1142,7 @@ const CurrencyList = {
         "code": "GOLD16",
         "name_plural": "16 Pe Ye"
     },
-    "15PeYe": {
+    "15PEYE": {
         "symbol": "🏅",
         "name": "15 Pe Ye",
         "symbol_native": "🏅",
@@ -1152,7 +1152,7 @@ const CurrencyList = {
         "code": "GOLD15",
         "name_plural": "15 Pe Ye"
     },
-    "New15PeYe": {
+    "New15PEYE": {
         "symbol": "🏅",
         "name": "New 15 Pe Ye",
         "symbol_native": "🏅",
@@ -1162,7 +1162,7 @@ const CurrencyList = {
         "code": "NGOLD15",
         "name_plural": "New 15 Pe Ye"
     },
-    "New16PeYe": {
+    "New16PEYE": {
         "symbol": "🏅",
         "name": "New 16 Pe Ye",
         "symbol_native": "🏅",
@@ -1172,7 +1172,7 @@ const CurrencyList = {
         "code": "NGOLD16",
         "name_plural": "New 16 Pe Ye"
     },
-    "Gold1oz": {
+    "GOLD1OZ": {
         "symbol": "🏅",
         "name": "Gold 1 oz",
         "symbol_native": "🏅",
@@ -1182,7 +1182,7 @@ const CurrencyList = {
         "code": "GOLD1OZ",
         "name_plural": "Gold 1 oz"
     },
-    "Gold1g": {
+    "GOLD1G": {
         "symbol": "🏅",
         "name": "Gold 1 g",
         "symbol_native": "🏅",
@@ -1192,7 +1192,7 @@ const CurrencyList = {
         "code": "GOLD1G",
         "name_plural": "Gold 1 g"
     },
-    "Gold1Kyatthar": {
+    "GOLD1KYATTHAR": {
         "symbol": "🏅",
         "name": "Gold 1 Kyatthar",
         "symbol_native": "🏅",
