@@ -1171,6 +1171,36 @@ const CurrencyList = {
         "icon": "🏅",
         "code": "NGOLD16",
         "name_plural": "New 16 Pe Ye"
+    },
+    "Gold1oz": {
+        "symbol": "🏅",
+        "name": "Gold 1 oz",
+        "symbol_native": "🏅",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "icon": "🏅",
+        "code": "GOLD1OZ",
+        "name_plural": "Gold 1 oz"
+    },
+    "Gold1g": {
+        "symbol": "🏅",
+        "name": "Gold 1 g",
+        "symbol_native": "🏅",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "icon": "🏅",
+        "code": "GOLD1G",
+        "name_plural": "Gold 1 g"
+    },
+    "Gold1Kyatthar": {
+        "symbol": "🏅",
+        "name": "Gold 1 Kyatthar",
+        "symbol_native": "🏅",
+        "decimal_digits": 0,
+        "rounding": 0,
+        "icon": "🏅",
+        "code": "GOLD1KT",
+        "name_plural": "Gold 1 Kyatthar"
     }
 }
 
