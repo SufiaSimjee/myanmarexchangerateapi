@@ -26,7 +26,11 @@ const ISO4217Codes = [
     "PTE","ROK","ROL","CSD","SLL","SKK","SIT","SDG","RHD","ESA","ESB","SDD",
     "SDP","SRG","CHC","TJR","TPE","TRL","TMM","UGS","UGW","UAK","SUR","USS",
     "UYN","UYP","VEB","VEF","VNC","YDD","YUD","YUM","YUN","ZRN","ZRZ","ZMK",
-    "ZWC","ZWD","ZWN","ZWR","ZWL","XFO","XRE","XFU"
+    "ZWC","ZWD","ZWN","ZWR","ZWL","XFO","XRE","XFU",
+
+    // Gold
+    "NEW16PEYE", "NEW15PEYE", "15PEYE", "16PEYE", "GOLD1OZ", "GOLD1G", "GOLD1KYATTHAR"
+
 ];
 
 module.exports = ISO4217Codes;
