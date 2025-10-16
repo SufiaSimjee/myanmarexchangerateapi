@@ -16,21 +16,21 @@ Additionally, the developer is building a front-end hybrid app using React Nativ
 
 
 ### Swagger Documentation:
-- You can test and explore the API at: https://myanmarexchangerateapi.onrender.com/swagger
+- You can test and explore the API at: https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/swagger
 
 #### Example API Endpoints (Note: All requests and responses use JSON format for simplicity and compatibility across different platforms)
 
 - **Get the latest USD rate:**  
-  `https://myanmarexchangerateapi.onrender.com/currency/USD/latest`  
+  `https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/currency/USD/latest`  
   This endpoint returns the most recent exchange rate for the US Dollar (USD) in Myanmar.
 
 - **Get the latest rates for all currencies:**  
-  `https://myanmarexchangerateapi.onrender.com/currency/all/latest`  
+  `https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/currency/all/latest`  
   This endpoint returns the latest exchange rates for all supported foreign currencies in Myanmar.
 
 
 - **Get all currency rates for a specific date with filters and pagination:**  
-  `https://myanmarexchangerateapi.onrender.com/currency/all/2025-08-28?uploader=admin123&source=Myanmar%20Market%20Price&skip=0&limit=10`  
+  `https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/currency/all/2025-08-28?uploader=admin123&source=Myanmar%20Market%20Price&skip=0&limit=10`  
   This endpoint returns exchange rate data for **all supported currencies** on the date **2025-08-27**, filtered by:
     - **uploader:** `admin123`
     - **source:** `Myanmar Market Price`
@@ -40,7 +40,7 @@ Additionally, the developer is building a front-end hybrid app using React Nativ
   It allows you to retrieve filtered historical data for multiple currencies with pagination support.
 
 - **Get the highest exchange rate for a specific currency on a specific date:**  
-  `https://myanmarexchangerateapi.onrender.com/currency/USD/2025-08-28/highest?uploader=admin123&source=Myanmar%20Market%20Price`  
+  `https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/currency/USD/2025-08-28/highest?uploader=admin123&source=Myanmar%20Market%20Price`  
   This endpoint returns the **highest exchange rate** (based on `sellRate`) for the currency **USD** on the date **2025-08-28**, filtered by:
   - **uploader:** `admin123`
   - **source:** `Myanmar Market Price`
@@ -48,7 +48,7 @@ Additionally, the developer is building a front-end hybrid app using React Nativ
   If no data is available for that currency and date, a `404 Not Found` response is returned.
 
 - **Get the lowest exchange rate for a specific currency on a specific date:**  
-  `https://myanmarexchangerateapi.onrender.com/currency/USD/2025-08-28/lowest?uploader=admin123&source=Myanmar%20Market%20Price`  
+  `https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/currency/USD/2025-08-28/lowest?uploader=admin123&source=Myanmar%20Market%20Price`  
   This endpoint returns the **lowest exchange rate** (based on `sellRate`) for the currency **USD** on the date **2025-08-28**, filtered by:
   - **uploader:** `admin123`
   - **source:** `Myanmar Market Price`
@@ -56,7 +56,7 @@ Additionally, the developer is building a front-end hybrid app using React Nativ
   If no data is available for that currency and date, a `404 Not Found` response is returned.
 
 - **Get live updates for a specific currency using Socket.IO (Currently This Feature is Not Available) :**  
-  `https://myanmarexchangerateapi.onrender.com/`  
+  `https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/`  
   Users can receive **real-time currency rate updates** via Socket.IO by listening to a specific event. The event naming convention is:
 
     ```
@@ -86,9 +86,9 @@ Additionally, the developer is building a front-end hybrid app using React Nativ
 #### i. Github Repo: https://github.com/kmnaing123/myanmarexchangerateapi
 
 ## b. How To Use Api 
-1. Authentication Tutorial: https://myanmarexchangerateapi.onrender.com/auth-docs
-2. Currency Rate Api Tutorial: https://myanmarexchangerateapi.onrender.com/currency-docs
-3. Live Notification Tutorial (Not Available Currently): https://myanmarexchangerateapi.onrender.com/notification-docs
+1. Authentication Tutorial: https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/auth-docs
+2. Currency Rate Api Tutorial: https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/currency-docs
+3. Live Notification Tutorial (Not Available Currently): https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/notification-docs
 
 ## c. Target Audience
 - Sellers (both individuals and currency exchange counters) who want to share exchange rates.

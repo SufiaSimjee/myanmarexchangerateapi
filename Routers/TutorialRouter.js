@@ -20,7 +20,7 @@ TutorialRouter.get('/currency-docs', (req, res) => {
         let baseUrl = `${protocol}://${host}/currency`;
 
         if(process.env.ON_RENDER === "true"){
-            baseUrl = 'https://myanmarexchangerateapi.onrender.com/currency'
+            baseUrl = 'https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/currency'
         }
         res.render('CurrencyDocs', { baseUrl });
     } catch (error) {
@@ -48,7 +48,7 @@ TutorialRouter.get('/auth-docs', (req, res) => {
         let baseUrl = `${protocol}://${host}/user`;
 
         if(process.env.ON_RENDER === "true"){
-            baseUrl = 'https://myanmarexchangerateapi.onrender.com/user'
+            baseUrl = 'https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com/user'
         }
         res.render('AuthDocs', { baseUrl });
     } catch (error) {
@@ -75,7 +75,7 @@ TutorialRouter.get('/notification-docs', (req, res) => {
         let baseUrl = `${protocol}://${host}`;
 
         if(process.env.ON_RENDER === "true"){
-            baseUrl = 'https://myanmarexchangerateapi.onrender.com'
+            baseUrl = 'https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com'
         }
 
         res.render('NotificationDocs', { baseUrl });
