@@ -30,8 +30,7 @@ const currencyRouter = require("./Routers/CurrencyRouter");
 const CurrencyRate = require("./Models/CurrencyRateSchema");
 const TutorialRouter = require("./Routers/TutorialRouter");
 
-const seedFuelRates = require("./Models/Seeds/FuelRateSeed");
-const seedMetalRates = require("./Models/Seeds/MetalRateSeed");
+
 const seedCurrencyRates = require("./Models/Seeds/CurrencyRateSeed");
 const seedUsers = require("./Models/Seeds/UserSeed");
 const swaggerOptions = require("./Helpers/SwaggerOptions");
