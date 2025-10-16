@@ -289,8 +289,6 @@ try{
         console.log(`listening on ${process.env.HOST}:${process.env.PORT}`);
         try{
             await connectDb();
-            await seedFuelRates();
-            await seedMetalRates();
             await seedCurrencyRates();
             await seedUsers();
         } catch(error){
