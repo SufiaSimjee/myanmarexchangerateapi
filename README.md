@@ -1,6 +1,6 @@
 # Myanmar Foreign Currency Exchange Rate API (Version: 1.0.0)
 
-## a. Description (Api Url: https://myanmarexchangerateapi.onrender.com)
+## a. Description (Api Url: https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com)
 
 This API provides information about foreign currency exchange rates in Myanmar. The data is collected personally by the developer from various publicly available online resources, including Facebook pages/groups/posts and other applications/websites reporting currency rates.
 
