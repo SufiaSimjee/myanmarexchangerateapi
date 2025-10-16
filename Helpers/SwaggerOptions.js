@@ -8,7 +8,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url:  process.env.ON_RENDER === "true" ? 'https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com': `https://localhost:${process.env.PORT}`,
+                url:  "https://758huyl2ob.execute-api.ap-southeast-2.amazonaws.com",
             },
         ],
         components: {
