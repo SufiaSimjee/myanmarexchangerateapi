@@ -1,5 +1,5 @@
 const express = require('express');
-const https = require('spdy');
+const https = require('https');
 const http = require('http');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
@@ -87,12 +87,7 @@ try{
     if(!useHttp){
         cert = {
             key: fs.readFileSync(path.join(__dirname, process.env.SSL_KEY_PATH || "localhost-key.pem")),
-            cert: fs.readFileSync(path.join(__dirname, process.env.SSL_CERT_PATH || "localhost.pem")),
-            spdy: {
-                plain: false,
-                protocols: ["h2", "http/1.1"],
-                "x-forwarded-for": true,
-            }
+            cert: fs.readFileSync(path.join(__dirname, process.env.SSL_CERT_PATH || "localhost.pem"))
         }
     }
 
