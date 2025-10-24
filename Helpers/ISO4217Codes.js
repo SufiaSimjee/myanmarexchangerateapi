@@ -40,6 +40,12 @@ const ISO4217Codes = [
     //PALLADIUM
     "PALLADIUM1OZ", "PALLADIUM1G",
 
+
+    // CRYPTO
+    "BTC", "ETH", "USDT"
+
+
+
 ];
 
 module.exports = ISO4217Codes;

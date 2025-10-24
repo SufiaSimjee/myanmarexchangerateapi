@@ -576,6 +576,87 @@ try{
         console.log("Cannot start cron job to retrieve world gold price:", error);
     }
 
+    //cron job to add international bitcoin price
+    try {
+        cron.schedule("*/5 * * * *", async function() {
+            console.log("Starting Cron Job to add Crypto Rate from gold-api");
+            try {
+                axios.get('https://api.gold-api.com/price/BTC')
+                    .then(response => {
+                        try {
+                            console.log(response.data);
+                            const WorldGoldRate = new CurrencyRate({
+                                currencyCode: "BTC",
+                                unit: "1",
+                                buyRate: response.data?.price,
+                                sellRate: response.data?.price,
+                                source: "International Crypto Price",
+                                uploadedDate: moment?.tz(response.data?.updatedAt, "Asia/Yangon").toDate(),
+                                uploadedBy: "admin123"
+                            });
+                            WorldGoldRate?.save().then((docs) => {
+                                console.log(docs);
+                                console.log("data from gold-api saved!");
+                            });
+                        } catch (error) {
+                            console.log("Failed to retrieve data from gold-api: ", error);
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data', error);
+                    });
+            } catch (error) {
+                console.log("Failed to execute cron function: ", error);
+            }
+        });
+
+
+    } catch(error){
+        console.log("Cannot start cron job to retrieve world gold price:", error);
+    }
+
+
+    //cron job to add international eth price
+    try {
+        cron.schedule("*/5 * * * *", async function() {
+            console.log("Starting Cron Job to add Crypto Rate from gold-api");
+            try {
+                axios.get('https://api.gold-api.com/price/ETH')
+                    .then(response => {
+                        try {
+                            console.log(response.data);
+                            const WorldGoldRate = new CurrencyRate({
+                                currencyCode: "ETH",
+                                unit: "1",
+                                buyRate: response.data?.price,
+                                sellRate: response.data?.price,
+                                source: "International Crypto Price",
+                                uploadedDate: moment?.tz(response.data?.updatedAt, "Asia/Yangon").toDate(),
+                                uploadedBy: "admin123"
+                            });
+                            WorldGoldRate?.save().then((docs) => {
+                                console.log(docs);
+                                console.log("data from gold-api saved!");
+                            });
+                        } catch (error) {
+                            console.log("Failed to retrieve data from gold-api: ", error);
+                        }
+
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data', error);
+                    });
+            } catch (error) {
+                console.log("Failed to execute cron function: ", error);
+            }
+        });
+
+
+    } catch(error){
+        console.log("Cannot start cron job to retrieve world gold price:", error);
+    }
+
 
 
 } catch (error) {

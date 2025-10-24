@@ -1265,6 +1265,39 @@ const CurrencyList = {
         "code": "PALLADIUM1G",
         "name_plural": "Palladium 1 g"
     },
+
+    "BTC": {
+        "symbol": "₿",
+        "name": "Bitcoin",
+        "symbol_native": "₿",
+        "decimal_digits": 8,
+        "rounding": 0,
+        "icon": "₿",
+        "code": "BTC",
+        "name_plural": "Bitcoin"
+    },
+
+    "ETH": {
+        "symbol": "Ξ",
+        "name": "Ethereum",
+        "symbol_native": "Ξ",
+        "decimal_digits": 18,
+        "rounding": 0,
+        "icon": "Ξ",
+        "code": "ETH",
+        "name_plural": "Ethereum"
+    },
+
+    "USDT": {
+        "symbol": "₮",
+        "name": "Tether",
+        "symbol_native": "₮",
+        "decimal_digits": 6,
+        "rounding": 0,
+        "icon": "₮",
+        "code": "USDT",
+        "name_plural": "Tether"
+    }
 }
 
 module.exports = {CurrencyList}
