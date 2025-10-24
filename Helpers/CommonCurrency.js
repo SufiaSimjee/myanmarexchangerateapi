@@ -1201,7 +1201,70 @@ const CurrencyList = {
         "icon": "🏅",
         "code": "GOLD1KYATTHAR",
         "name_plural": "Gold 1 Kyatthar"
-    }
+    },
+    "SILVER1OZ": {
+        "symbol": "🥈",
+        "name": "Silver 1 oz",
+        "symbol_native": "🥈",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "icon": "🥈",
+        "code": "SILVER1OZ",
+        "name_plural": "Silver 1 oz"
+    },
+
+    "SILVER1G": {
+        "symbol": "🥈",
+        "name": "Silver 1 g",
+        "symbol_native": "🥈",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "icon": "🥈",
+        "code": "SILVER1G",
+        "name_plural": "Silver 1 g"
+    },
+
+    "COPPER1OZ": {
+        "symbol": "🟠",
+        "name": "Copper 1 oz",
+        "symbol_native": "🟠",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "icon": "🟠",
+        "code": "COPPER1OZ",
+        "name_plural": "Copper 1 oz"
+    },
+    "COPPER1G": {
+        "symbol": "🟠",
+        "name": "Copper 1 g",
+        "symbol_native": "🟠",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "icon": "🟠",
+        "code": "COPPER1G",
+        "name_plural": "Copper 1 g"
+    },
+
+    "PALLADIUM1OZ": {
+        "symbol": "⚙️",
+        "name": "Palladium 1 oz",
+        "symbol_native": "⚙️",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "icon": "⚙️",
+        "code": "PALLADIUM1OZ",
+        "name_plural": "Palladium 1 oz"
+    },
+    "PALLADIUM1G": {
+        "symbol": "⚙️",
+        "name": "Palladium 1 g",
+        "symbol_native": "⚙️",
+        "decimal_digits": 2,
+        "rounding": 0,
+        "icon": "⚙️",
+        "code": "PALLADIUM1G",
+        "name_plural": "Palladium 1 g"
+    },
 }
 
 module.exports = {CurrencyList}

@@ -29,7 +29,16 @@ const ISO4217Codes = [
     "ZWC","ZWD","ZWN","ZWR","ZWL","XFO","XRE","XFU",
 
     // Gold
-    "NEW16PEYE", "NEW15PEYE", "15PEYE", "16PEYE", "GOLD1OZ", "GOLD1G", "GOLD1KYATTHAR"
+    "NEW16PEYE", "NEW15PEYE", "15PEYE", "16PEYE", "GOLD1OZ", "GOLD1G", "GOLD1KYATTHAR",
+
+    //Silver
+    "SILVER1OZ", "SILVER1G",
+
+    //Copper
+    "COPPER1OZ", "COPPER1G",
+
+    //PALLADIUM
+    "PALLADIUM1OZ", "PALLADIUM1G",
 
 ];
 
