@@ -1174,7 +1174,7 @@ const CurrencyList = {
     },
     "GOLD1OZ": {
         "symbol": "🏅",
-        "name": "Gold 1 oz",
+        "name": "Gold",
         "symbol_native": "🏅",
         "decimal_digits": 2,
         "rounding": 0,
@@ -1184,7 +1184,7 @@ const CurrencyList = {
     },
     "GOLD1G": {
         "symbol": "🏅",
-        "name": "Gold 1 g",
+        "name": "Gold",
         "symbol_native": "🏅",
         "decimal_digits": 2,
         "rounding": 0,
