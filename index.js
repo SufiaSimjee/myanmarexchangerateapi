@@ -418,7 +418,7 @@ try{
 
     //cron job to add world gold price
     try {
-        cron.schedule("*/30 * * * *", function() {
+        cron.schedule("*/5 * * * *", function() {
             console.log("Starting Cron Job to add World Gold Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/XAU')
