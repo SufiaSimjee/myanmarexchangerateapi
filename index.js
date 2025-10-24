@@ -416,6 +416,7 @@ try{
         console.log("Cannot start live notification feature:", error);
     }
 
+    //cron job to add world gold price
     try {
         cron.schedule("*/30 * * * *", function() {
             console.log("Starting Cron Job to add World Gold Rate from gold-api");
