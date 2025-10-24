@@ -538,7 +538,7 @@ try{
 
     //cron job to add world Palladium price
     try {
-        cron.schedule("*/7 * * * *", function() {
+        cron.schedule("*/8 * * * *", function() {
             console.log("Starting Cron Job to add World Palladium Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/XPD')
