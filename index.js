@@ -419,31 +419,35 @@ try{
     try {
         cron.schedule("*/30 * * * *", function() {
             console.log("Starting Cron Job to add World Gold Rate from gold-api");
-            axios.get('https://api.gold-api.com/price/XAU')
-                .then(response => {
-                    try {
-                        console.log(response.data);
-                        const WorldGoldRate = new CurrencyRate({
-                            currencyCode: "GOLD1OZ",
-                            unit: "1",
-                            buyRate: response.data?.price,
-                            sellRate: response.data?.price,
-                            source: "World Gold Price",
-                            uploadedDate: moment?.tz(response.data?.updatedAt, "Asia/Yangon").toDate(),
-                            uploadedBy: "admin123"
-                        });
-                        WorldGoldRate?.save().then((docs) => {
-                            console.log(docs);
-                            console.log("data from gold-api saved!");
-                        });
-                    } catch (error) {
-                        console.log("Failed to retrieve data from gold-api: ", error);
-                    }
+            try {
+                axios.get('https://api.gold-api.com/price/XAU')
+                    .then(response => {
+                        try {
+                            console.log(response.data);
+                            const WorldGoldRate = new CurrencyRate({
+                                currencyCode: "GOLD1OZ",
+                                unit: "1",
+                                buyRate: response.data?.price,
+                                sellRate: response.data?.price,
+                                source: "World Gold Price",
+                                uploadedDate: moment?.tz(response.data?.updatedAt, "Asia/Yangon").toDate(),
+                                uploadedBy: "admin123"
+                            });
+                            WorldGoldRate?.save().then((docs) => {
+                                console.log(docs);
+                                console.log("data from gold-api saved!");
+                            });
+                        } catch (error) {
+                            console.log("Failed to retrieve data from gold-api: ", error);
+                        }
 
-                })
-                .catch(error => {
-                    console.error('Error fetching data', error);
-                });
+                    })
+                    .catch(error => {
+                        console.error('Error fetching data', error);
+                    });
+            } catch (error) {
+                console.log("Failed to execute cron function: ", error);
+            }
         });
 
 
