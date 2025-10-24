@@ -418,7 +418,7 @@ try{
 
     //cron job to add world gold price
     try {
-        cron.schedule("*/5 * * * *", function() {
+        cron.schedule("*/30 * * * *", function() {
             console.log("Starting Cron Job to add World Gold Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/XAU')
@@ -458,7 +458,7 @@ try{
 
     //cron job to add world silver price
     try {
-        cron.schedule("*/6 * * * *", function() {
+        cron.schedule("*/45 * * * *", function() {
             console.log("Starting Cron Job to add World Silver Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/XAG')
@@ -498,7 +498,7 @@ try{
 
     //cron job to add world copper price
     try {
-        cron.schedule("*/7 * * * *", function() {
+        cron.schedule("*/40 * * * *", function() {
             console.log("Starting Cron Job to add World Copper Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/HG')
@@ -538,7 +538,7 @@ try{
 
     //cron job to add world Palladium price
     try {
-        cron.schedule("*/8 * * * *", function() {
+        cron.schedule("*/30 * * * *", function() {
             console.log("Starting Cron Job to add World Palladium Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/XPD')

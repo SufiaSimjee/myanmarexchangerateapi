@@ -1204,7 +1204,7 @@ const CurrencyList = {
     },
     "SILVER1OZ": {
         "symbol": "🥈",
-        "name": "Silver 1 oz",
+        "name": "Silver",
         "symbol_native": "🥈",
         "decimal_digits": 2,
         "rounding": 0,
@@ -1215,7 +1215,7 @@ const CurrencyList = {
 
     "SILVER1G": {
         "symbol": "🥈",
-        "name": "Silver 1 g",
+        "name": "Silver",
         "symbol_native": "🥈",
         "decimal_digits": 2,
         "rounding": 0,
@@ -1226,7 +1226,7 @@ const CurrencyList = {
 
     "COPPER1OZ": {
         "symbol": "🟠",
-        "name": "Copper 1 oz",
+        "name": "Copper",
         "symbol_native": "🟠",
         "decimal_digits": 2,
         "rounding": 0,
@@ -1236,7 +1236,7 @@ const CurrencyList = {
     },
     "COPPER1G": {
         "symbol": "🟠",
-        "name": "Copper 1 g",
+        "name": "Copper",
         "symbol_native": "🟠",
         "decimal_digits": 2,
         "rounding": 0,
@@ -1247,7 +1247,7 @@ const CurrencyList = {
 
     "PALLADIUM1OZ": {
         "symbol": "⚙️",
-        "name": "Palladium 1 oz",
+        "name": "Palladium",
         "symbol_native": "⚙️",
         "decimal_digits": 2,
         "rounding": 0,
@@ -1257,7 +1257,7 @@ const CurrencyList = {
     },
     "PALLADIUM1G": {
         "symbol": "⚙️",
-        "name": "Palladium 1 g",
+        "name": "Palladium",
         "symbol_native": "⚙️",
         "decimal_digits": 2,
         "rounding": 0,
