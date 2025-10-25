@@ -29,6 +29,8 @@ const strategy = require("./Auth/JwtStrategy");
 
 const userRouter = require("./Routers/UserRouter");
 const currencyRouter = require("./Routers/CurrencyRouter");
+let {currencyRateUpdateTracker} = require("./Routers/CurrencyRouter");
+
 const CurrencyRate = require("./Models/CurrencyRateSchema");
 const TutorialRouter = require("./Routers/TutorialRouter");
 
@@ -418,7 +420,7 @@ try{
 
     //cron job to add world gold price
     try {
-        cron.schedule("*/30 * * * *", function() {
+        cron.schedule("*/60 * * * *", function() {
             console.log("Starting Cron Job to add World Gold Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/XAU')
@@ -458,7 +460,7 @@ try{
 
     //cron job to add world silver price
     try {
-        cron.schedule("*/45 * * * *", function() {
+        cron.schedule("*/60 * * * *", function() {
             console.log("Starting Cron Job to add World Silver Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/XAG')
@@ -498,7 +500,7 @@ try{
 
     //cron job to add world copper price
     try {
-        cron.schedule("*/40 * * * *", function() {
+        cron.schedule("*/60 * * * *", function() {
             console.log("Starting Cron Job to add World Copper Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/HG')
@@ -516,6 +518,7 @@ try{
                             });
                             WorldGoldRate?.save().then((docs) => {
                                 console.log(docs);
+                                currencyRateUpdateTracker++;
                                 console.log("data from gold-api saved!");
                             });
                         } catch (error) {
@@ -538,7 +541,7 @@ try{
 
     //cron job to add world Palladium price
     try {
-        cron.schedule("*/30 * * * *", function() {
+        cron.schedule("*/60 * * * *", function() {
             console.log("Starting Cron Job to add World Palladium Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/XPD')
@@ -556,6 +559,7 @@ try{
                             });
                             WorldGoldRate?.save().then((docs) => {
                                 console.log(docs);
+                                currencyRateUpdateTracker++;
                                 console.log("data from gold-api saved!");
                             });
                         } catch (error) {
@@ -578,7 +582,7 @@ try{
 
     //cron job to add international bitcoin price
     try {
-        cron.schedule("*/5 * * * *", async function() {
+        cron.schedule("*/60 * * * *", async function() {
             console.log("Starting Cron Job to add Crypto Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/BTC')
@@ -596,6 +600,7 @@ try{
                             });
                             WorldGoldRate?.save().then((docs) => {
                                 console.log(docs);
+                                currencyRateUpdateTracker++;
                                 console.log("data from gold-api saved!");
                             });
                         } catch (error) {
@@ -619,7 +624,7 @@ try{
 
     //cron job to add international eth price
     try {
-        cron.schedule("*/5 * * * *", async function() {
+        cron.schedule("*/60 * * * *", async function() {
             console.log("Starting Cron Job to add Crypto Rate from gold-api");
             try {
                 axios.get('https://api.gold-api.com/price/ETH')
@@ -637,6 +642,7 @@ try{
                             });
                             WorldGoldRate?.save().then((docs) => {
                                 console.log(docs);
+                                currencyRateUpdateTracker++;
                                 console.log("data from gold-api saved!");
                             });
                         } catch (error) {

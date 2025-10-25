@@ -8,7 +8,7 @@ const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
 
 
-let currencyRateUpdateTracker = 0;
+export let currencyRateUpdateTracker = 0;
 let defaultSource = process.env.DEFAULT_SOURCE;
 let defaultUploader = process.env.DEFAULT_UPLOADER;
 
