@@ -8,7 +8,8 @@ const currencyRouter = express.Router();
 const CurrencyRate = require("../Models/CurrencyRateSchema");
 
 
-export let currencyRateUpdateTracker = 0;
+let currencyRateUpdateTracker = 0;
+
 let defaultSource = process.env.DEFAULT_SOURCE;
 let defaultUploader = process.env.DEFAULT_UPLOADER;
 
@@ -1925,4 +1926,4 @@ currencyRouter.get("/:currencyCode/:fromDate/:toDate", expressCache({ timeOut: c
 
 
 
-module.exports = currencyRouter;
+module.exports = {currencyRouter, currencyRateUpdateTracker};

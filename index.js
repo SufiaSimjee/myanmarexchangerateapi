@@ -28,7 +28,7 @@ const {connectDb} = require('./Services/DbService');
 const strategy = require("./Auth/JwtStrategy");
 
 const userRouter = require("./Routers/UserRouter");
-const currencyRouter = require("./Routers/CurrencyRouter");
+const {currencyRouter} = require("./Routers/CurrencyRouter");
 let {currencyRateUpdateTracker} = require("./Routers/CurrencyRouter");
 
 const CurrencyRate = require("./Models/CurrencyRateSchema");
